@@ -1,0 +1,14 @@
+<appendix id="env_case_vars">
+<title>env_case.xml variables</title>
+
+<para>
+The following table lists all the environment variables set in the &env_case.xml; file.
+These variables cannot be modified.
+</para>
+
+&env_case_list;
+
+</appendix>
+
+
+

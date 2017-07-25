@@ -1,0 +1,8 @@
+-spmd -smp
+-chem trop_mozart
+-dyn fv
+-res 1.9x2.5
+-debug
+-offline_dyn
+-phys cam4
+-s

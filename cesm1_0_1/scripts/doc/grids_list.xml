@@ -1,0 +1,224 @@
+<table><title>supported grids</title>
+<tgroup cols="7">
+<thead>
+<row>
+<entry> Grid (Shortname) </entry>
+<entry>atm_grid</entry>
+<entry>lnd_grid</entry>
+<entry>ice_grid</entry>
+<entry>ocn_grid</entry>
+<entry>atm_grid type</entry>
+<entry>ocn_grid type</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry>pt1_pt1 (pt1)</entry>
+<entry>pt1   </entry>
+<entry>pt1   </entry>
+<entry>pt1   </entry>
+<entry>pt1   </entry>
+<entry> NA </entry>
+<entry> NA </entry>
+</row>
+<row>
+<entry>0.23x0.31_0.23x0.31 (f02_f02)</entry>
+<entry>0.23x0.31   </entry>
+<entry>0.23x0.31   </entry>
+<entry>0.23x0.31   </entry>
+<entry>0.23x0.31   </entry>
+<entry> finite volume </entry>
+<entry> finite volume </entry>
+</row>
+<row>
+<entry>0.23x0.31_gx1v6 (f02_g16)</entry>
+<entry>0.23x0.31   </entry>
+<entry>0.23x0.31   </entry>
+<entry>gx1v6   </entry>
+<entry>gx1v6   </entry>
+<entry> finite volume </entry>
+<entry> displaced pole </entry>
+</row>
+<row>
+<entry>0.23x0.31_tx0.1v2 (f02_t12)</entry>
+<entry>0.23x0.31   </entry>
+<entry>0.23x0.31   </entry>
+<entry>tx0.1v2   </entry>
+<entry>tx0.1v2   </entry>
+<entry> finite volume </entry>
+<entry> triple pole </entry>
+</row>
+<row>
+<entry>0.47x0.63_0.47x0.63 (f05_f05)</entry>
+<entry>0.47x0.63   </entry>
+<entry>0.47x0.63   </entry>
+<entry>0.47x0.63   </entry>
+<entry>0.47x0.63   </entry>
+<entry> finite volume </entry>
+<entry> finite volume </entry>
+</row>
+<row>
+<entry>0.47x0.63_gx1v6 (f05_g16)</entry>
+<entry>0.47x0.63   </entry>
+<entry>0.47x0.63   </entry>
+<entry>gx1v6   </entry>
+<entry>gx1v6   </entry>
+<entry> finite volume </entry>
+<entry> displaced pole </entry>
+</row>
+<row>
+<entry>0.47x0.63_tx0.1v2 (f05_t12)</entry>
+<entry>0.47x0.63   </entry>
+<entry>0.47x0.63   </entry>
+<entry>tx0.1v2   </entry>
+<entry>tx0.1v2   </entry>
+<entry> finite volume </entry>
+<entry> triple pole </entry>
+</row>
+<row>
+<entry>0.9x1.25_0.9x1.25 (f09_f09)</entry>
+<entry>0.9x1.25   </entry>
+<entry>0.9x1.25   </entry>
+<entry>0.9x1.25   </entry>
+<entry>0.9x1.25   </entry>
+<entry> finite volume </entry>
+<entry> finite volume </entry>
+</row>
+<row>
+<entry>0.9x1.25_gx1v6 (f09_g16)</entry>
+<entry>0.9x1.25   </entry>
+<entry>0.9x1.25   </entry>
+<entry>gx1v6   </entry>
+<entry>gx1v6   </entry>
+<entry> finite volume </entry>
+<entry> displaced pole </entry>
+</row>
+<row>
+<entry>1.9x2.5_1.9x2.5 (f19_f19)</entry>
+<entry>1.9x2.5   </entry>
+<entry>1.9x2.5   </entry>
+<entry>1.9x2.5   </entry>
+<entry>1.9x2.5   </entry>
+<entry> finite volume </entry>
+<entry> finite volume </entry>
+</row>
+<row>
+<entry>1.9x2.5_gx1v6 (f19_g16)</entry>
+<entry>1.9x2.5   </entry>
+<entry>1.9x2.5   </entry>
+<entry>gx1v6   </entry>
+<entry>gx1v6   </entry>
+<entry> finite volume </entry>
+<entry> displaced pole </entry>
+</row>
+<row>
+<entry>4x5_4x5 (f45_f45)</entry>
+<entry>4x5   </entry>
+<entry>4x5   </entry>
+<entry>4x5   </entry>
+<entry>4x5   </entry>
+<entry> finite volume </entry>
+<entry> finite volume </entry>
+</row>
+<row>
+<entry>4x5_gx3v7 (f45_g37)</entry>
+<entry>4x5   </entry>
+<entry>4x5   </entry>
+<entry>gx3v7   </entry>
+<entry>gx3v7   </entry>
+<entry> finite volume </entry>
+<entry> displaced pole </entry>
+</row>
+<row>
+<entry>T62_gx3v7 (T62_g37)</entry>
+<entry>96x192   </entry>
+<entry>96x192   </entry>
+<entry>gx3v7   </entry>
+<entry>gx3v7   </entry>
+<entry> spectral </entry>
+<entry> displaced pole </entry>
+</row>
+<row>
+<entry>T62_tx0.1v2 (T62_t12)</entry>
+<entry>96x192   </entry>
+<entry>96x192   </entry>
+<entry>tx0.1v2   </entry>
+<entry>tx0.1v2   </entry>
+<entry> spectral </entry>
+<entry> triple pole </entry>
+</row>
+<row>
+<entry>T62_gx1v6 (T62_g16)</entry>
+<entry>96x192   </entry>
+<entry>96x192   </entry>
+<entry>gx1v6   </entry>
+<entry>gx1v6   </entry>
+<entry> spectral </entry>
+<entry> displaced pole </entry>
+</row>
+<row>
+<entry>T31_T31 (T31_T31)</entry>
+<entry>48x96   </entry>
+<entry>48x96   </entry>
+<entry>48x96   </entry>
+<entry>48x96   </entry>
+<entry> spectral </entry>
+<entry> spectral </entry>
+</row>
+<row>
+<entry>T31_gx3v7 (T31_g37)</entry>
+<entry>48x96   </entry>
+<entry>48x96   </entry>
+<entry>gx3v7   </entry>
+<entry>gx3v7   </entry>
+<entry> spectral </entry>
+<entry> displaced pole </entry>
+</row>
+<row>
+<entry>T42_T42 (T42_T42)</entry>
+<entry>64x128   </entry>
+<entry>64x128   </entry>
+<entry>64x128   </entry>
+<entry>64x128   </entry>
+<entry> spectral </entry>
+<entry> spectral </entry>
+</row>
+<row>
+<entry>10x15_10x15 (f10_f10)</entry>
+<entry>10x15   </entry>
+<entry>10x15   </entry>
+<entry>10x15   </entry>
+<entry>10x15   </entry>
+<entry> finite volume </entry>
+<entry> finite volume </entry>
+</row>
+<row>
+<entry>ne30np4_1.9x2.5_gx1v6 (ne30_f19_g16)</entry>
+<entry>ne30np4   </entry>
+<entry>1.9x2.5   </entry>
+<entry>gx1v6   </entry>
+<entry>gx1v6   </entry>
+<entry> cubed sphere  </entry>
+<entry> displaced pole </entry>
+</row>
+<row>
+<entry>ne240np4_0.23x0.31_gx1v6 (ne240_f02_g16)</entry>
+<entry>ne240np4   </entry>
+<entry>0.23x0.31   </entry>
+<entry>gx1v6   </entry>
+<entry>gx1v6   </entry>
+<entry> cubed sphere  </entry>
+<entry> displaced pole </entry>
+</row>
+<row>
+<entry>T85_T85 (T85_T85)</entry>
+<entry>128x256   </entry>
+<entry>128x256   </entry>
+<entry>128x256   </entry>
+<entry>128x256   </entry>
+<entry> spectral </entry>
+<entry> spectral </entry>
+</row>
+</tbody>
+</tgroup>
+</table>

@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_slap
+END
+dmset.F
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_slap/dmset.F
+END
+dlaputil.F
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_slap/dlaputil.F
+END
+xersla.F
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_slap/xersla.F
+END
+dcgs.F
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_slap/dcgs.F
+END
+blas.F
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_slap/blas.F
+END
+dmvops.F
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_slap/dmvops.F
+END
+mach.F
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_slap/mach.F
+END

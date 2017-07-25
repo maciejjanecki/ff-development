@@ -1,0 +1,13 @@
+<appendix id="env_run_vars">
+<title>env_run.xml variables</title>
+
+<para>
+The following table lists all the xml variables set in the &env_run.xml; file.
+</para>
+
+&env_run_list;
+
+</appendix>
+
+
+

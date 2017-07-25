@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers
+END
+test_shr_infnan.F90
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_shr_infnan.F90
+END
+test_shr_inputinfo.F90
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_shr_inputinfo.F90
+END
+test_shr_date.F90
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_shr_date.F90
+END
+test_dshr_bundle.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_dshr_bundle.F90
+END
+test_shr_streams.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_shr_streams.F90
+END
+test_shr_sys.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_shr_sys.F90
+END
+bundle_expected.F90
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/bundle_expected.F90
+END
+test_shr_file.F90
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_shr_file.F90
+END
+test_shr_orb.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_shr_orb.F90
+END
+test_shr_mpi.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_shr_mpi.F90
+END
+test_shr_tInterp.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_shr_tInterp.F90
+END
+make.Macros
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/make.Macros
+END
+test_dshr_tInterp.F90
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_dshr_tInterp.F90
+END
+run_file_test
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/run_file_test
+END
+test_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/test_mod.F90
+END
+run_dshr_bundle_test
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/run_dshr_bundle_test
+END
+namelist
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/namelist
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/csm_share/unit_testers/Makefile
+END

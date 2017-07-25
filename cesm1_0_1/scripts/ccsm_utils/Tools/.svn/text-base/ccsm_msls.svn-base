@@ -1,0 +1,63 @@
+#!/bin/csh -f
+
+#------------------------------------------------------------------
+# Make a directory on the local mass store
+# "Usage ccsm_msls mssdir"
+#------------------------------------------------------------------
+
+#------------------------------------------------------------------
+# Check for 1 argument
+#------------------------------------------------------------------
+if ("$#argv" == 1) then
+  set rd = $argv[1]
+else
+  echo "Usage ccsm_msls mssdir"
+  exit 1
+endif
+
+#------------------------------------------------------------------
+# Execute site dependent mass store ls
+#------------------------------------------------------------------
+
+# If NAS pleiades at NASA/AMES
+if( ${MACH} == "pleiades" | ${MACH} == "pleiades_wes" ) then
+  echo "ccsm_msls: ssh -q bridge2 ssh -q lou ls -l ${rd} "
+  ssh -q bridge2 "ssh -q lou ls -l ${rd}"
+  exit
+endif
+
+# NCAR
+if (`which msls | wc -w` == 1 ) then
+  echo "ccsm_msls: msls -l ${rd}"
+  msls -l ${rd}
+  exit
+endif
+
+# If LANL psi command exists, use it.
+if (`which psi | wc -w` == 1 ) then
+  echo "ccsm_ls: psi ?"
+  echo untested
+# psi ls 
+  exit
+endif
+
+# If NERSC/ORNL hsi command exists, use it.
+if (`which hsi | wc -w` == 1 ) then
+  echo "ccsm_msls: hsi 'ls -al ${rd}'"
+  hsi -q "ls -al ${rd}"
+  endif
+  exit
+endif
+
+# If PSC far command exists, use it.
+if (`which far | wc -w` == 1 ) then
+  echo "ccsm_msls: far ls ${rd}"
+  far ls ${rd}
+  exit
+endif
+
+exit
+
+
+
+

@@ -1,0 +1,77 @@
+10
+
+dir
+221
+https://svn-ccsm-release.cgd.ucar.edu/model_versions/cesm1_0_1/models/lnd/clm/tools
+https://svn-ccsm-release.cgd.ucar.edu
+
+
+
+2010-09-17T17:11:29.676270Z
+25
+mvr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6ec7379f-1bbc-4938-b9b9-58fa9e6a5fe1
+
+mksurfdata
+dir
+
+ncl_scripts
+dir
+
+interpinic
+dir
+
+mkgriddata
+dir
+
+mkdatadomain
+dir
+
+README
+file
+
+
+
+
+2015-11-09T12:06:03.882972Z
+4eb1d0386eb61d5e5cc7889256ca76aa
+2010-09-17T17:11:29.676270Z
+25
+mvr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2437
+

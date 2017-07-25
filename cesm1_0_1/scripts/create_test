@@ -1,0 +1,542 @@
+#!/bin/csh -f
+
+#===================================================================
+# Create test case
+#===================================================================
+
+if ($#argv < 1) then
+  echo "invoke create_test -help for usage."
+  exit -1;
+endif
+
+#set verbose
+echo " "
+
+# default directory values
+set mypwd = `pwd`
+set commandpath = $0
+if ($commandpath =~ */*) then
+  set scriptsroot = $commandpath:h
+else
+  set scriptsroot = "."
+endif
+set ccsmroot = $scriptsroot/..
+set testroot = `pwd`
+set baseline_name_gen = ""
+set baseline_name_cmp = ""
+set arguments = "$argv"
+
+# print help messages
+set helpheader = 0
+set i = `echo $argv[1]|cut -c2-`
+if( $i == "help" || $i == "h") then
+  set helpheader = 1
+endif
+
+#===================================================================
+
+if ( $helpheader ) then
+cat << EOF1
+NAME   
+
+      create_test - creates a new ccsm test case
+
+SYNOPSIS 
+
+      create_test -testname full-test-name 
+         [-compare baseline_name] 
+         [-generate baseline_name] 
+         [-testroot test-root-directory] 
+         [-pes_file PES_file] 
+         [-compset_file COMPSET_file] 
+         [-testid id] 
+         [-inputdataroot input-data-root-directory]
+         [-baselineroot baseline_root_directory] 
+         [-clean clean_option] 
+         [-help]
+
+OPTIONS 
+
+     -baselineroot baseline_root_directory
+            Specifies an alternate root directory for baseline datasets
+            used for bfb generate/compare testing.  This option is 
+            ignored unless baseline generation or comparison is being 
+            done.  this will overwrite any env CCSM_BASELINE setting.
+
+     -compare baseline_name
+            Specifies the ccsm tag name to compare results with.
+            This directory is assumed to be contained in baseline_root_directory.
+
+     -clean clean_option
+            -clean  [ on | off ]
+            clean_option = on :  Remove all object, executable, and data 
+            files after succesful completion of the test.  
+            clean_option = off :  Do not remove anything after the test 
+            completes.  This is the default.  
+
+     -generate baseline_name
+            Specifies the ccsm tag name to generate results for.
+            This directory is assumed to be contained in baseline_root_directory.
+
+     -help 
+            Get usage documentation.
+
+     -inputdataroot input-data-root-directory
+            Specifies an alternate root directory for ccsm input data. 
+            If -inputdataroot is not specified as an argument, 
+            it will be set to a machine-specific default value.
+
+     -pes_file PES_file
+	    Full pathname of pes setup file to use (will overwrite default settings) (optional).
+
+     -compset_file COMPSET_file full pathname
+            Specifies the compset file to be used.
+
+     -testid id
+            Sets the testId string.  Default is to have the script
+            pick an arbitrary string.  this can be any length.
+            WARNING:  This option is intended for use by script developers.  
+            WARNING:  Creation of identical tests with the same testid can 
+            WARNING:  lead to obscure errors.  
+
+     -testname full-test-name
+            Set full test name including test case, resolution, component set,
+            and machines.  Example is ERS.f19_g16.B.bluefire.  USE shortnames
+            for best success.  Each testcase can have options appended.  The
+            current supported options are
+              _D  = debug
+              _E  = esmf interfaces
+              _P* = pe count setting where * is the pecount (S,M,L,XL,1,etc)
+              _R* = regional/single point mode (pts mode) where * is the pt setting (01,02,etc)
+
+     -testroot test-root-directory
+            Set the directory where you want the test case created
+
+EXAMPLES
+
+     create_test -help
+
+     create_test -testname ERS.f19_g16.B.bluefire
+
+     create_test -testname ERS.f19_g16.B.bluefire -testid xyz123
+
+     create_test -testname ERS.f19_g16.B.bluefire -pes_file myPEfile
+
+     create_test -testname ERS.f19_g16.B.bluefire -generate ccsm4_0_beta40 -baselineroot /ptmp/my_dir/mybaselines
+
+     create_test -testname ERS.f19_g16.B.bluefire -compare  ccsm4_0_beta41 -baselineroot /ptmp/my_dir/mybaselines
+
+     create_test -testname ERS.f19_g16.B.bluefire -generate ccsm4_0_beta40 -compare ccsm4_0_beta40 -baselineroot /ptmp/my_dir/mybaselines
+
+
+SUPPORT DETAILS
+EOF1
+
+$scriptsroot/create_newcase -list -testlist
+exit;
+endif
+
+#===================================================================
+
+while ( 1 )
+  if ( $#argv < 1 ) break;
+  set i = $argv[1];
+### check the error of the input argument.
+      shift argv
+      if($#argv <1 ) then
+          echo "ERROR in ${0}: Please input the content for $i."
+          exit -1
+      endif
+      set dash = "-"
+      if( $argv[1] =~ $dash* ) then
+          echo "ERROR in ${0}: wrong argument for $i.";
+          exit -1
+      endif
+### end of check the error for the input argument
+  switch ( $i )
+    case "-testname"
+      set testname = $argv[1]
+      breaksw
+    case "-testroot"
+      set testroot = $argv[1]
+      breaksw
+    case "-pes_file"
+      set pes_file = $argv[1]
+      breaksw
+    case "-compset_file"
+      set compset_file = $argv[1]
+      breaksw
+    case "-testid"
+      set testId = $argv[1]
+      breaksw
+    case "-inputdataroot"
+      set inputdataroot = $argv[1]
+      breaksw
+    case "-compare"
+      set baseline_name_cmp = $argv[1]
+      breaksw
+    case "-generate"
+      set baseline_name_gen = $argv[1]
+      breaksw
+    case "-baselineroot"
+      if ($argv[1] =~ /* ) then
+         set baseline_root = $argv[1]
+      else
+         set baseline_root = $mypwd/$argv[1]
+      endif
+      breaksw
+    case "-clean"
+      set clean_option = $argv[1]
+      breaksw
+    default:
+      echo "unknown input, invoked create_test with no arguments for usage"
+      exit -1
+      breaksw
+  endsw
+  shift argv
+end
+
+#===================================================================
+
+# Parse testname:
+# Field delimited by a ".".
+# Grid can also have up to 2 dots in it, but only in the
+#  atm/lnd grid name.  The ocean grid name is assumed to
+#  appear after the _ and will not have a dot or underscore.
+# All because grid can be "2x2.5_gx1v3" which contains a dot. 
+#   TC updated this may, 2006
+#   check where the grid is assuming an "_*" without "." or "_"
+#     to the end of the grid name (T31_gx1v3, 1x1.5_gxa, 1.9x2.5_gx1v3)
+
+  set gtest = `echo $testname | cut -f 2 -d "."`
+  set gtest1 = `echo $gtest | cut -f 1 -d "_"`
+  if ($gtest1 != $gtest) then
+    set testcase        = `echo $testname | cut -f 1   -d "." `
+    set grid            = `echo $testname | cut -f 2   -d "." `
+    set compset         = `echo $testname | cut -f 3   -d "." `
+    set mach            = `echo $testname | cut -f 4-   -d "." `
+
+  else
+
+    set gtest = `echo $testname | cut -f 3 -d "."`
+    set gtest1 = `echo $gtest | cut -f 1 -d "_"`
+    if ($gtest1 != $gtest) then
+      set testcase        = `echo $testname | cut -f 1   -d "." `
+      set grid            = `echo $testname | cut -f 2-3 -d "." `
+      set compset         = `echo $testname | cut -f 4   -d "." `
+      set mach            = `echo $testname | cut -f 5-   -d "." `
+
+    else
+
+      set gtest = `echo $testname | cut -f 4 -d "."`
+      set gtest1 = `echo $gtest | cut -f 1 -d "_"`
+      if ($gtest1 != $gtest) then
+        set testcase        = `echo $testname | cut -f 1   -d "." `
+        set grid            = `echo $testname | cut -f 2-4 -d "." `
+        set compset         = `echo $testname | cut -f 5   -d "." `
+        set mach            = `echo $testname | cut -f 6-   -d "." `
+      endif
+    endif
+  endif
+
+  setenv MACH $mach
+
+#===================================================================
+
+setenv SCRIPTSROOT $scriptsroot
+
+if !($?testcase && $?grid && $?compset && $?mach) then
+    echo "ERROR in ${0}: incomplete input arguments, -test, -mach, -res, -compset." 
+    echo ""
+    exit;
+endif
+
+# sort out testname
+set fullname = $testcase
+
+if !($?testId) then
+  ###set the test case id.
+  set yy = `date +%y`
+  set mm = `date +%m`
+  set dd = `date +%d`
+  set hh = `date +%H`
+  set mm = `date +%M`
+  set ss = `date +%S`
+  set testId = $hh$mm$ss
+endif
+
+# Document
+  echo " "
+  echo "Setting up the following test:"
+  echo "  testcase:  $fullname"
+  echo "  grid:      $grid"
+  echo "  compset:   $compset"
+  echo "  machine:   $mach"
+  echo "  testid:    $testId"
+
+set casebase = $fullname.$grid.$compset.$mach
+set case = $casebase.$testId
+if ($testId =~ *_bl) then
+  set casebaseid = ${casebase}_bl
+else
+  set casebaseid = $casebase
+endif
+
+set ptsmode = ""
+if ($testcase =~ *_R* ) then
+   set ptsmode = "undef"
+   if ($testcase =~ *_RLA* ) set ptsmode = "-pts_lat 42 -pts_lon 260"
+   if ($testcase =~ *_RLB* ) set ptsmode = "-pts_lat -5 -pts_lon 290"
+   if ($testcase =~ *_ROA* ) set ptsmode = "-pts_lat 30 -pts_lon 315"
+   if ($testcase =~ *_ROB* ) set ptsmode = "-pts_lat 0 -pts_lon 160"
+   if ("$ptsmode" ==  "undef" ) then
+      echo "ERROR: create_test pts mode option _R has invalid setting"
+      exit -1
+   endif
+   echo "  ptsmode :  $ptsmode"
+endif
+
+#===================================================================
+# generate/compare
+
+unsetenv GENERATE_BASELINE
+unsetenv BASEGEN_DIR
+unsetenv BASEGEN_CPLLOGFILE
+unsetenv BASEGEN_CPLHISTFILE
+unsetenv COMPARE_BASELINE
+unsetenv BASECMP_DIR
+unsetenv BASECMP_CPLLOGFILE
+unsetenv BASECMP_CPLHISTFILE
+if ( $baseline_name_gen != "" || $baseline_name_cmp != "") then
+  unsetenv BASELINE_ROOT
+  if ( $?baseline_root ) then
+    setenv BASELINE_ROOT ${baseline_root}
+    if ! ( -d $baseline_root ) then
+      echo "ERROR in ${0}:  cannot find baselineroot directory $baseline_root"; echo
+      exit -1
+    endif
+  endif
+  set regcode = ""
+  if ( $baseline_name_gen != "") then
+    setenv GENERATE_BASELINE
+    set regcode = "${regcode}G"
+    setenv BASEGEN_CASE $baseline_name_gen/$casebase
+  endif
+  if ( $baseline_name_cmp != "") then
+    setenv COMPARE_BASELINE
+    set regcode = "${regcode}C"
+    setenv BASECMP_CASE $baseline_name_cmp/$casebase
+  endif
+
+  # TBH:  This would be better, but file length and compiler problems get in 
+  # TBH:  way!  Thus the hack below...  
+  set case = $casebase.$regcode.$testId
+endif
+
+#======================================================================
+# Continue documentation
+
+  if ( $?GENERATE_BASELINE ) then
+  echo "  generate:  $BASEGEN_CASE"
+  endif
+  if ( $?COMPARE_BASELINE ) then
+  echo "  compare:   $BASECMP_CASE"
+  endif
+  if ( $?INPUTDATA_ROOT ) then
+  echo "  inputdata: $INPUTDATA_ROOT"
+  endif
+  echo " "
+
+#======================================================================
+# General error checking
+
+if !(-d $testroot) then
+  mkdir -p $testroot
+  if !(-d $testroot) then
+    echo "ERROR in ${0}: directory testroot $testroot does not exist."
+    exit -1
+  endif
+endif
+if (-d "$testroot/$case") then
+  echo "ERROR in ${0}: test case $testroot/$case exists."
+  exit -1
+endif
+unsetenv INPUTDATA_ROOT
+if ( $?inputdataroot ) then
+  setenv INPUTDATA_ROOT $inputdataroot
+  if ! ( -d $INPUTDATA_ROOT ) then
+    echo "ERROR in ${0}: directory inputdataroot $INPUTDATA_ROOT does not exist."
+    exit -1
+  endif
+endif
+
+#======================================================================
+# pes file
+
+if ($?pes_file) then
+  if !(-e $pes_file) then
+    echo ERROR: from create_test, pes_file $pes_file does not exist, exiting; echo
+    exit -1
+  endif
+else if ($testcase =~ SEQ* ) then
+  set pes_file = "${scriptsroot}/ccsm_utils/Testcases/SEQ_auto_pes_file"
+else if ($testcase =~ PEM* ) then
+  set pes_file = "${scriptsroot}/ccsm_utils/Testcases/PEM_auto_pes_file"
+else if ($testcase =~ PST* ) then
+  set pes_file = "${scriptsroot}/ccsm_utils/Testcases/PST_auto_pes_file"
+else if ($testcase =~ PMT* ) then
+  set pes_file = "${scriptsroot}/ccsm_utils/Testcases/PMT_auto_pes_file"
+endif
+
+#======================================================================
+# compset file
+if ($?compset_file) then
+  if !(-e $compset_file) then
+    echo ERROR: from create_test, compset_file $compset_file does not exist, exiting; echo
+    exit -1
+  endif
+endif
+#======================================================================
+# cleanup option, the default setting will NOT clean up.
+
+unsetenv CLEANUP
+if ( $?clean_option ) then
+  if ( $clean_option == "on" ) setenv CLEANUP
+endif
+
+#======================================================================
+#---- create cs.status.$CSENV_TESTID.$mach ---
+if ($?CSENV_TESTID) then
+
+   set temproot = ${testroot}
+
+   foreach filelist (cs.status.$CSENV_TESTID)
+      set tempfile = $filelist
+
+      if !(-e $temproot/$tempfile) then
+         cat >! $temproot/$tempfile <<EOF
+#!/bin/csh -f
+
+echo "Possible test result outcomes:"
+echo "  UNDEF - undefined result"
+echo "  SFAIL - scripts case generation failed"
+echo "  TFAIL - test setup error"
+echo "  GEN   - case generated"
+echo "  PEND  - case submitted"
+echo "  RUN   - case running or died during run, likely failure"
+echo "  PASS  - case passed"
+echo "  CHECK - manual review of data is required"
+echo "  FAIL  - case failed"
+echo "  BFAIL - compare test couldn't find base result"
+echo "  ERROR - test checker failed, test may or may not have passed"
+echo " "
+
+EOF
+      endif
+
+      if (-e $temproot/$tempfile) then
+         if (`grep "$case/TestStatus " $temproot/$tempfile | wc -l` == 0) then
+            cat >> $temproot/$tempfile <<EOF
+cat $testroot/$case/TestStatus  
+EOF
+
+           chmod +x $temproot/$tempfile
+         endif
+      endif
+   end
+endif
+
+# --- end create test suite support scripts ---
+#======================================================================
+# setup testcase
+
+set caseroot = $testroot/$case
+
+if ($?pes_file) then
+   if ($?compset_file) then
+     $scriptsroot/create_newcase -case $caseroot -res $grid -mach $mach -compset $compset  -testname $testcase -pes_file $pes_file -compset_file $compset_file  ${ptsmode}
+   else
+     $scriptsroot/create_newcase -case $caseroot -res $grid -mach $mach -compset $compset  -testname $testcase -pes_file $pes_file  ${ptsmode}
+   endif
+else
+   if ($?compset_file) then
+     $scriptsroot/create_newcase -case $caseroot -res $grid -mach $mach -compset $compset  -testname $testcase -compset_file $compset_file  ${ptsmode}
+   else
+     $scriptsroot/create_newcase -case $caseroot -res $grid -mach $mach -compset $compset  -testname $testcase  ${ptsmode}
+   endif
+endif
+if ($status != 0) then
+  echo "ERROR: create_newcase invokation of create_newcase failed"
+  exit -1
+endif
+
+echo "create_test $arguments" >>& $testroot/$case/README.case
+echo "create_test $arguments" >& $testroot/$case/CaseStatus.test
+cat $testroot/$case/CaseStatus >>& $testroot/$case/CaseStatus.test
+mv  $testroot/$case/CaseStatus.test $testroot/$case/CaseStatus
+echo "SFAIL $case " >&! $testroot/$case/TestStatus
+if ($status != 0) then
+  echo "ERROR: create_newcase failed"
+  exit -1
+endif
+
+# sort out testname, check if it has _something, add/overwrite based on debug option
+setenv TESTCASE `echo $fullname | cut -d _ -f 1`
+cd $caseroot
+source ./Tools/ccsm_getenv
+cd $mypwd
+source $scriptsroot/ccsm_utils/Tools/testcase_setup.csh  
+if ($status != 0) then
+  echo "ERROR: testcase_setup failed"
+  exit -1
+endif
+
+#======================================================================
+# --- begin create test suite support scripts ---
+
+if ($?CSENV_TESTID) then
+set temproot = ${testroot}
+
+#---- create cs.submit.$CSENV_TESTID.$mach ---
+set tempfile = "cs.submit.$CSENV_TESTID.$mach"
+
+if ($?BATCHSUBMIT &&  !(-e $temproot/$tempfile)) then
+cat >! $temproot/$tempfile <<EOF
+#!/bin/csh -f
+
+set dobuild = TRUE
+
+EOF
+endif
+
+if ($?BATCHSUBMIT &&  (-e $temproot/$tempfile)) then
+if (`grep "# $case " $temproot/$tempfile | wc -l` == 0) then
+cat >> $temproot/$tempfile <<EOF
+# $case    
+  cd $testroot/$case
+  source ./Tools/ccsm_getenv
+  setenv CCSMBUILDONLY TRUE
+  ./check_input_data -inputdata \$DIN_LOC_ROOT_CSMDATA -export
+  if (\$dobuild == "TRUE") ./$case.build
+  unsetenv CCSMBUILDONLY
+  $BATCHSUBMIT $case.test
+  echo "PEND  $case " >&! $testroot/$case/TestStatus
+
+EOF
+
+chmod +x $temproot/$tempfile
+
+endif
+endif
+
+endif
+#======================================================================
+# update TestStatus
+
+set basestatus = "GEN  "
+echo "$basestatus $case " >&! $testroot/$case/TestStatus
+
+echo "Successfully created test $case"
+echo " "
+
+exit 0

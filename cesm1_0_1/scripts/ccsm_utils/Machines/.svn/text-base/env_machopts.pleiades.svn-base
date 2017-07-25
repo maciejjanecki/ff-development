@@ -1,0 +1,27 @@
+#! /bin/csh -f
+
+#-------------------------------------------------------------------------------
+# pleiades machine specific settings
+#-------------------------------------------------------------------------------
+
+#--- set modules
+if (-e /usr/share/modules/init/csh) then
+  source /usr/share/modules/init/csh
+  module purge
+  module load comp/intel/10.1.021_64 mpi-mvapich2/1.4.1/intel netcdf/4.0-i10.1 nas
+#  module list
+endif
+
+#--- set runtime env variables
+
+#setenv P4_GLOBMEMSIZE 500000000
+
+setenv MPI_GROUP_MAX 1024
+setenv MPI_TYPE_MAX 100000
+
+setenv KMP_AFFINITY noverbose,disabled
+setenv KMP_SCHEDULE static,balanced
+setenv KMP_LIBRARY throughput
+setenv KMP_BLOCKTIME infinite
+setenv OMP_DYNAMIC FALSE
+

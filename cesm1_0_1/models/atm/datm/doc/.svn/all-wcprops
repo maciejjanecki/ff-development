@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc
+END
+dlnd.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/dlnd.xml
+END
+rundocbook.csh
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/rundocbook.csh
+END
+strdata.xml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/strdata.xml
+END
+docn.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/docn.xml
+END
+dice.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/dice.xml
+END
+datm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/datm.xml
+END
+bookinfo.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/bookinfo.xml
+END
+SOM.pdf
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/SOM.pdf
+END
+modes.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/modes.xml
+END
+dglc.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/dglc.xml
+END
+index.html
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/index.html
+END
+intro.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/intro.xml
+END
+ug.xml
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/ug.xml
+END
+streams.xml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/datm/doc/streams.xml
+END

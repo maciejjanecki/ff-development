@@ -1,0 +1,202 @@
+#!/usr/bin/env perl
+#=======================================================================
+#
+#
+#=======================================================================
+
+use Cwd;
+use strict;
+#use diagnostics;
+use Getopt::Long;
+use English;
+
+#-----------------------------------------------------------------------------------------------
+
+#Figure out where configure directory is and where can use the XML/Lite module from
+my $ProgName;
+($ProgName = $PROGRAM_NAME) =~ s!(.*)/!!; # name of program
+my $ProgDir = $1;                         # name of directory where program lives
+
+my $cmdline = "@ARGV";                    # Command line arguments to script
+my $cwd = getcwd();                       # current working directory
+my $cfgdir = $cwd;
+
+if ($ProgDir) { 
+   $cfgdir = $ProgDir; 
+} else { 
+   $cfgdir = $cwd; 
+}
+
+# Defaults
+my $csmdata       = "\$DIN_LOC_ROOT";
+my $strmstmpldir  = "$cfgdir/../Components";
+my $template_name = "template.streams.xml";
+my @models = ( "cice", "datm", "dlnd", "dice", "docn" );
+
+sub usage {
+    die <<EOF;
+SYNOPSIS
+     $ProgName [options]
+
+REQUIRED OPTIONS:
+
+           -datasource "source"   [or -s] Use given data source type. 
+     AND Either
+           -model      "name"     [or -m] Give the model type name (@models) and use the appropriate model template file.
+                                          use the template file named 
+                                          ($strmstmpldir/name.$template_name)
+     Or
+           -template "filename"   [or -t] Full pathname to the input streams template file to use.
+
+OPTIONS THAT MAY BE REQUIRED (depending on input template and datasource)
+
+     -case      "casename"   [or -c]  Replace any template case indicators (%c see below) with this casename.
+     -domain    "filename"   [or -do] Use given domain filename for domain 
+                                      (required when template uses %do).
+     -dompath   "directory"  [or -dp] Use given domain filepath for domain files.
+                                      (required when template uses %dp).
+     -filepath  "directory"  [or -p]  Full path to where datafiles are (required when template uses %p).
+                                      (Default use path in template file relative to -csmdata option)
+     -res       "resolution" [or -r]  Resolution for filenames if source in template is resolution dependent.
+     -yearfirst "year"       [or -b]  The first year to cycle input datasets over.
+                                      (required input if input template has year-month indicators (%y or %ym) )
+     -yearlast  "year"       [or -e]  The last year to cycle input datasets over.
+                                      (required input if input template has year-month indicators (%y or %ym) )
+
+OPTIONS
+
+     -csmdata   "directory"           Give input ccsm inputdata directory. (replaces %d used in template) (default $csmdata)
+     -fexists                         Check that the domain and filenames indicated by the output streams 
+                                      file actually exist.
+     -filenames "file_or_indicator"   Use input fileNames string for filenames.
+                                      (Replace following strings appropriately: )
+                                          %c   = Case (from above -case command line option)
+                                          %do  = Use domain file
+                                          %y   = Year (through range given from begyear to endyear)
+                                          %ym  = Year-Month (all 12 months through year range)
+                                          %6ym = Like %ym but 6 digit year (ie. YYYYYY-MM).
+                                                 (can replace the 6 with any digit 1-9)
+
+     -help                   [or -h]  Print this usage of $ProgName to STDERR.
+     -lastmonth                       Include the last month of the previous year for %ym.
+     -outfile   "filename"   [or -o]  Output streams file to create. (default send to stdout)
+     -verbose                [or -v]  Turns on verbose printing mode.
+
+EOF
+
+}
+
+#-----------------------------------------------------------------------------------------------
+# Add $cfgdir to the list of paths that Perl searches for modules
+my @dirs = ( $cfgdir, "$cfgdir/perl5lib", "$cfgdir/../../../../scripts/ccsm_utils/Tools"
+);
+unshift @INC, @dirs;
+my $result = eval "require XML::Lite";
+if ( ! defined($result) ) {
+   die <<"EOF";
+** Cannot find perl module \"XML/Lite.pm\" from directories: @dirs **
+EOF
+}
+require XML::Lite;
+require Streams::Template;
+
+my %opts = ( template      => undef,
+             domain        => "",
+             dompath       => "",
+             csmdata       => $csmdata,
+             outfile       => "",
+             filepath      => "",
+             filenames     => "",
+             res           => "",
+             generic       => undef,
+             fexists       => 0,
+             model         => undef,
+             yearfirst     => -1,
+             yearlast      => -1,
+             help          => undef,
+             lastmonth     => undef,
+             case          => "",
+             verbose       => 0,
+             datasource    => undef,
+           );
+
+GetOptions(
+    "t|template=s"              => \$opts{'template'},
+    "o|outfile=s"               => \$opts{'outfile'},
+    "m|model=s"                 => \$opts{'model'},
+    "c|case=s"                  => \$opts{'case'},
+    "p|filepath=s"              => \$opts{'filepath'},
+    "csmdata=s"                 => \$opts{'csmdata'},
+    "do|domain=s"               => \$opts{'domain'},
+    "dp|dompath=s"              => \$opts{'dompath'},
+    "filenames=s"               => \$opts{'filenames'},
+    "b|yearfirst=s"             => \$opts{'yearfirst'},
+    "e|yearlast=s"              => \$opts{'yearlast'},
+    "fexists"                   => \$opts{'fexists'},
+    "lastmonth"                 => \$opts{'lastmonth'},
+    "generic"                   => \$opts{'generic'},
+    "res=s"                     => \$opts{'res'},
+    "v|verbose"                 => \$opts{'verbose'},
+    "s|datasource=s"            => \$opts{'source'},
+    "h|help"                    => \$opts{'help'},
+)  or usage();
+
+# Give usage message.
+usage() if $opts{'help'};
+
+# Check for unparsed arguments
+if (@ARGV) {
+    print "ERROR: unrecognized arguments: @ARGV\n";
+    usage();
+}
+my $model = $opts{'model'};
+if ( ! defined($model) && ! defined($opts{'template'} ) ) {
+    print "ERROR: Either -model or -template are required command-line arguments to $ProgName\n";
+    usage();
+}
+if ( ! defined($opts{'template'} ) ) {
+   $opts{'template'} = "$strmstmpldir/$model.$template_name";
+}
+if ( ! -f $opts{'template'} ) {
+    print "ERROR: input template file does NOT exist: $opts{'template'}\n";
+    print "Either enter a correct model name or the complete path to a template file.\n";
+    usage();
+}
+if ( ! defined($opts{'source'} ) ) {
+    print "ERROR: datasource is a required input argument\n";
+    usage();
+}
+
+  my %inputopts;
+  if ( $opts{'verbose'} ) {
+     $inputopts{'printing'} = 1;
+  } else {
+     $inputopts{'printing'} = 0;
+  }
+  $inputopts{'ProgName'}    = $ProgName;
+  $inputopts{'ProgDir'}     = $cfgdir;
+  $inputopts{'yearfirst'}   = $opts{'yearfirst'};
+  $inputopts{'yearlast'}    = $opts{'yearlast'};
+  $inputopts{'filepath'}    = $opts{'filepath'};
+  $inputopts{'cmdline'}     = $cmdline;
+  if ( $opts{'generic'} ) {
+     $inputopts{'type'}     = "generic";
+  } else {
+     $inputopts{'type'}     = "";
+  }
+  $inputopts{'res'}         = $opts{'res'};
+  $inputopts{'datasource'}  = $opts{'source'};
+  $inputopts{'case'}        = $opts{'case'};
+  $inputopts{'domain'}      = $opts{'domain'};
+  $inputopts{'domainpath'}  = $opts{'dompath'};
+  $inputopts{'filenames'}   = $opts{'filenames'};
+  $inputopts{'csmdata'}     = $opts{'csmdata'};
+  $inputopts{'res'}         = $opts{'res'};
+
+  my $streams = Streams::Template->new( \%inputopts );
+  $streams->Read( $opts{'template'} );
+  if ( $opts{'fexists'} ) {
+     $streams->TestFilesExist( "data"   );
+     $streams->TestFilesExist( "domain" );
+  }
+  $streams->Write( $opts{'outfile'}, $opts{'lastmonth'} );

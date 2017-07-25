@@ -1,0 +1,22 @@
+===============================================================
+Originator: tcraig
+Date: Apr 2, 2009
+Model: esmf_wrf_timemgr
+Version: esmf_wrf_timemgr_090402
+One-line Summary:  Add alarmcount to ESMF_ClockGet interface
+
+Required to support alarms properly in ccsm4
+Also add ChangeLog
+
+A      ChangeLog
+M      ESMF_ClockMod.F90
+	
+===============================================================
+
+Originator: 
+Date: 
+Model: esmf_wrf_timemgr
+Version: esmf_wrf_timemgr_080717
+One-line Summary:  
+
+===============================================================

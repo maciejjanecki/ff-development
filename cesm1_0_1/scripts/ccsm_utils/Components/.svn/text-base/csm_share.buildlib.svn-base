@@ -1,0 +1,50 @@
+#! /bin/csh -f
+#===============================================================================
+# Purpose:
+#     (a) Build csm_share library
+#===============================================================================
+
+#--------------------------------------------------------------------
+# Filepath: list of source code directories (in order of importance).
+#--------------------------------------------------------------------
+
+if ($USE_ESMF_LIB == 'FALSE') then
+  set esmf_wrf_timemgr = $CODEROOT/utils/esmf_wrf_timemgr
+else
+  set esmf_wrf_timemgr = " "
+endif 
+
+set comp = "unknown"
+if ($COMP_INTERFACE == 'MCT' ) set comp = mct
+if ($COMP_INTERFACE == 'ESMF') set comp = esmf
+
+cat >! Filepath << EOF
+$CASEROOT/SourceMods/src.share
+$CODEROOT/drv/shr_$comp
+$CODEROOT/drv/shr
+$CODEROOT/dead_share
+$SHAREROOT/shr
+$CODEROOT/utils/timing
+$esmf_wrf_timemgr
+EOF
+
+set libdir = $EXEROOT/csm_share; cd $libdir
+
+#------------------------------------------------------------------------------
+# run make
+#------------------------------------------------------------------------------
+
+gmake complib -j $GMAKE_J MODEL=csm_share COMPLIB=$libdir/libcsm_share.a  MACFILE=$CASEROOT/Macros.$MACH -f $CASETOOLS/Makefile   || exit 2
+
+#------------------------------------------------------------------------------
+# copy the library and modules 
+#------------------------------------------------------------------------------
+
+cp -p -f libcsm_share.a $LIBROOT/
+cp -p -f *.mod $LIBROOT/include/
+
+exit 0
+
+#==============================================================================
+# end of script
+#==============================================================================

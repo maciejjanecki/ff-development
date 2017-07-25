@@ -1,0 +1,125 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+
+
+  <!ENTITY bookinfo          SYSTEM "bookinfo.xml">
+  <!ENTITY chap1             SYSTEM "chap1.xml">
+  <!ENTITY chap2             SYSTEM "chap2.xml">
+  <!ENTITY chap3             SYSTEM "chap3.xml">
+  <!ENTITY chap4             SYSTEM "chap4.xml">
+  <!ENTITY chap5             SYSTEM "chap5.xml">
+  <!ENTITY chap5a            SYSTEM "chap5a.xml">
+  <!ENTITY chap6             SYSTEM "chap6.xml">
+  <!ENTITY chap7             SYSTEM "chap7.xml">
+  <!ENTITY chap8             SYSTEM "chap8.xml">
+  <!ENTITY chap9             SYSTEM "chap9.xml">
+  <!ENTITY app1              SYSTEM "app1.xml">
+  <!ENTITY app2              SYSTEM "app2.xml">
+  <!ENTITY app3              SYSTEM "app3.xml">
+  <!ENTITY app4              SYSTEM "app4.xml">
+  <!ENTITY app5              SYSTEM "app5.xml">
+  <!ENTITY app6              SYSTEM "app6.xml">
+  <!ENTITY app7              SYSTEM "app7.xml">
+  <!ENTITY app8              SYSTEM "app8.xml">
+  <!ENTITY glossary          SYSTEM "glossary.xml">
+  <!ENTITY compsets_list     SYSTEM "compsets_list.xml">
+  <!ENTITY grids_list        SYSTEM "grids_list.xml">
+  <!ENTITY machines_list     SYSTEM "machines_list.xml">
+  <!ENTITY env_case_list     SYSTEM "env_case_list.xml">
+  <!ENTITY env_conf_list     SYSTEM "env_conf_list.xml">
+  <!ENTITY env_mach_pes_list SYSTEM "env_mach_pes_list.xml">
+  <!ENTITY env_build_list    SYSTEM "env_build_list.xml">
+  <!ENTITY env_run_list      SYSTEM "env_run_list.xml">
+
+  <!ENTITY bldnm             "<command>build-namelist</command>">
+  <!ENTITY check_input_data  "<command>check_input_data</command>">
+  <!ENTITY configure         "<command>configure</command>">
+  <!ENTITY create_clone      "<command>create_clone</command>">
+  <!ENTITY create_newcase    "<command>create_newcase</command>">
+
+  <!ENTITY cam               "<acronym>CAM</acronym>">
+  <!ENTITY cam_root          "<envar>CAM_ROOT</envar>">
+  <!ENTITY ccsm              "<acronym>CCSM</acronym>">
+  <!ENTITY cesm              "<acronym>CESM</acronym>">
+  <!ENTITY cice              "<acronym>CICE</acronym>">
+  <!ENTITY esmf              "<acronym>ESMF</acronym>">
+  <!ENTITY env_build.xml     "<filename>env_build.xml</filename>">
+  <!ENTITY env_case.xml      "<filename>env_case.xml</filename>">
+  <!ENTITY env_conf.xml      "<filename>env_conf.xml</filename>">
+  <!ENTITY env_mach_pes.xml  "<filename>env_mach_pes.xml</filename>">
+  <!ENTITY env_run.xml       "<filename>env_run.xml</filename>">
+  <!ENTITY env_mach_specific "<filename>env_mach_specific</filename>">
+  <!ENTITY filepath          "<filename>Filepath</filename>">
+  <!ENTITY fortran           "<acronym>Fortran</acronym>">
+  <!ENTITY gmake             "<command>gmake</command>">
+  <!ENTITY gnu               "<acronym>GNU</acronym>">
+  <!ENTITY lapack            "<acronym>LAPACK</acronym>">
+  <!ENTITY link_dirtree      "<command>link_dirtree</command>">
+  <!ENTITY make              "<command>make</command>">
+  <!ENTITY makefile          "<filename>Makefile</filename>">
+  <!ENTITY mpi               "<acronym>MPI</acronym>">
+  <!ENTITY netcdf            "<acronym>NetCDF</acronym>">
+  <!ENTITY omp               "<acronym>OpenMP</acronym>">
+  <!ENTITY Perl              "<acronym>Perl</acronym>">
+  <!ENTITY perl              "<command>perl</command>">
+  <!ENTITY pnetcdf           "<acronym>PnetCDF</acronym>">
+  <!ENTITY xml               "<acronym>XML</acronym>">
+  <!ENTITY xmlchange         "<command>xmlchange</command>">
+
+  <!ENTITY csmdata              "<envar>CSMDATA</envar>">
+  <!ENTITY din_loc_root         "<envar>DIN_LOC_ROOT</envar>">
+  <!ENTITY DIN_LOC_ROOT         "<envar>DIN_LOC_ROOT</envar>">
+  <!ENTITY DIN_LOC_ROOT_CSMDATA "<envar>DIN_LOC_ROOT_CSMDATA</envar>">
+  <!ENTITY CCSM                 "<envar>CCSM</envar>">
+  <!ENTITY COMPSET              "<envar>COMPSET</envar>">
+  <!ENTITY RES                  "<envar>RES</envar>">
+  <!ENTITY MACH                 "<envar>MACH</envar>">
+  <!ENTITY CASEROOT             "<envar>CASEROOT</envar>">
+  <!ENTITY CASE                 "<envar>CASE</envar>">
+  <!ENTITY CCSMROOT             "<envar>CCSMROOT</envar>">
+  <!ENTITY CLONEROOT            "<envar>CLONEROOT</envar>">
+  <!ENTITY SCRATCHROOT          "<envar>SCRATCHROOT</envar>">
+  <!ENTITY EXEROOT              "<envar>EXEROOT</envar>">
+  <!ENTITY RUNDIR               "<envar>RUNDIR</envar>">
+  <!ENTITY DEBUG                "<envar>DEBUG</envar>">
+  <!ENTITY GMAKE_J              "<envar>GMAKE_J</envar>">
+
+  <!ENTITY dir               "<userinput>&lt;dir&gt;</userinput>">
+  <!ENTITY dirs              "<userinput>&lt;dir1&gt;[,&lt;dir2&gt;[,&lt;dir3&gt;[...]]]</userinput>">
+  <!ENTITY list              "<userinput>&lt;list&gt;</userinput>">
+  <!ENTITY name              "<userinput>&lt;name&gt;</userinput>">
+  <!ENTITY num               "<userinput>&lt;n&gt;</userinput>">
+  <!ENTITY string            "<userinput>&lt;string&gt;</userinput>">
+
+  <!ENTITY % ISOamsa.module "INCLUDE">
+  <![ %ISOamsa.module; [
+  <!ENTITY % ISOamsa PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Arrow Relations//EN"> 
+   %ISOamsa;
+  <!--end of ISOamsa.module-->]]>
+
+]>
+
+<book>
+
+  &bookinfo;
+  &chap1;
+  &chap2;
+  &chap3;
+  &chap4;
+  &chap5;
+  &chap5a;
+  &chap6;
+  &chap7;
+  &chap8;
+  &chap9;
+  &app1;
+  &app2;
+  &app3;
+  &app4;
+  &app5;
+  &app6;
+  &app7;
+  &app8;
+  &glossary;
+
+</book>

@@ -1,0 +1,472 @@
+<chapter id="port">
+<title>Porting CCSM</title>
+
+<para> One of the first steps many users will have to address is
+getting the CCSM4 model running on their local machine.  This section
+addresses that step.  This section will describe two different
+ways of going about that.  First, using a generic machine
+to setup a case, get that case running, then backing out the new
+machine settings.  Second, setting up some new machine settings,
+creating a case, testing it, and iterating on the machine settings.
+There are similarities and overlap in both
+methods.  The generic method is likely to produce a running case
+faster.  But eventually, users will want to setup the CCSM4 
+scripts so their local machine is supported out-of-the-box.  This
+greatly eases setting up cases and benefits groups of users by
+requiring the port be done only once.
+Finally, some steps to validate the model will be recommended.
+</para>
+
+<note>
+<para>
+When porting using either of the two methods described above, you will want to initially get a dead, X, compset running at a low resolution.  So you could, for instance, start with an X compset at resolution f45_g37.  This allows you to determine whether all prerequisite software is in place and working.  Once that is working move to an A compset with resolution f45_g37.  Once that's working, run a B compset at resolution f45_g37. Finally when all the previous steps have run correctly, run your target compset and resolution. 
+</para></note>
+
+<!-- ======================================================================= -->
+
+<sect1 id="port_new">
+<title>Porting to a new machine</title>
+
+<sect2 id="port_generic">
+<title>Porting using a generic machine</title>
+
+<para>
+This section describes how to setup a case using a generic machine name
+and then within that case, how to modify the scripts to get that 
+case running on a local machine.  In this section, the case name
+test1 and the generic machine generic_linux_intel will be
+used in the example.  But the specific casename, generic machine, resolution,
+and compset to test is at the discretion of the user.  
+</para>
+
+<orderedlist>
+
+<listitem><para>
+Run &create_newcase; choosing a generic machine name that is closest
+to the local machine type.  Typing 
+<screen>
+> create_newcase -l
+</screen>
+will provide a list of possible machines.  The generic machines start
+with the name "generic_".  The generic machines are different from the
+supported machines because extra inline documentation is provided and
+the user will have to modify some of the resolved scripts.
+</para>
+<para>
+Additional command line arguments are required for the generic machines
+to help setup some of the local environment variables.  Typing
+<screen>
+> create_newcase -h
+</screen>
+provides a description of the command line arguments.  The &create_newcase; will
+look something like this for a generic machine
+<screen>
+> cd ccsm4/scripts
+> create_newcase -case test1 \
+                 -res f19_g16 \
+                 -compset X \
+                 -mach generic_linux_intel \
+                 -scratchroot /ptmp/username \
+                 -din_loc_root_csmdata /home/ccsm/inputdata \
+                 -max_tasks_per_node 8 \
+</screen>
+</para></listitem>
+
+<listitem><para>
+Run configure.
+<screen>
+> cd test1
+> configure -case
+</screen>
+If there are errors at this step, the best approach might be to port starting
+from the machine files instead of a generic machine.  See <xref linkend="port_adding_mach"/>.
+</para></listitem>
+
+<listitem><para>
+Edit the scripts to be consistent with the local  machine.  Search for "GENERIC_USER" in the scripts.  That
+tag will highlight inline documentation and areas that will likely need to be modified.
+In particular, modifications will be needed in the following files.
+<itemizedlist>
+<listitem><para>
+env_mach_specific is where modules, paths, or machine environment variables need to be
+set.  See the "GENERIC_USER" inline documentation in that file.
+</para></listitem>
+
+<listitem><para>
+Macros.generic_linux_intel is a Macros file for gmake for the system.  In general, that entire file
+should be reviewed but there are some particular comments about setting the paths for the
+netcdf and mpi external libraries.  See the "GENERIC_USER" inline documentation in that file.
+While CCSM supports use of pnetcdf in pio, it's generally best to ignore that feature during
+initial porting.  pio works well with standard netcdf.
+</para></listitem>
+
+<listitem><para>
+test1.generic_linux_intel.run is the job submission script.  Modifications are needed there to address
+the local batch environment and the job launch.  See the "GENERIC_USER" inline documentation in that file.
+</para></listitem>
+
+</itemizedlist>
+</para></listitem>
+
+<listitem><para>
+Build the case
+<screen>
+> ./test1.generic_linux_intel.build
+</screen>
+This step will often fail if paths to compilers, compiler versions, or libraries are not set properly,
+if compiler options are not set properly, or if machine environment variables are not set properly.
+Review and edit the env_mach_specific and Macros.generic_linux_intel files, clean the build, 
+<screen>
+> ./test1.generic_linux_intel.clean_build
+</screen>
+and try rebuilding again.
+</para></listitem>
+
+<listitem><para>
+Run the job using the local job submission command.  qsub is used here for example.
+<screen>
+> qsub test1.generic_linux_intel.run
+</screen>
+The job will fail to submit if the batch commands are not set properly.  The job
+could fail to run if the launch command is incorrect or if the batch commands are
+not set consistent with the job resource needs.  Review the run script and try
+resubmitting.
+</para></listitem>
+
+<listitem><para>
+Once a case is running, then the local setup for the case can be converted into a
+specific set of machine files, so future cases can be setup using the user defined
+machine name, not the generic machine, and cases should be able to run out-of-the-box.
+This step is very similar to the steps associated with porting using user defined
+machine files, see <xref linkend="port_adding_mach"/>.
+</para><para>
+Basically, files in ccsm4/scripts/ccsm_utils/Machines will be added or modified
+to support the user defined machine out-of-the-box.  An env_machopts, Macros, and
+mkbatch file will be added and the config_machines.xml file will be modified.
+First, pick a name that will be associated with the local machine.  Generally, that's the name
+of the local machine, but it could be anything.  bugsbunny will be used in the
+description to follow and the bugsbunny setup will be based on the test1 example case
+above that is running on bugsbunny.  To add bugsbunny to the list of supported machines,
+do the following
+
+<itemizedlist>
+<listitem><para>
+Edit ccsm4/scripts/ccsm_utils/Machines/config_machines.xml.  Add an entry for 
+bugsbunny.  A good idea is to copy one of the existing entries and then edit it.  
+The machine specific env variables that need to be set in 
+config_machines.xml for bugsbunny are already set in the env files in the test1 
+case directory that was created from the generic machine.  Those values can
+be translated directly into the config_machines.xml files for bugsbunny.  That's
+a starting point anyway.  In some cases, variables might need to be made more
+general.  For instance, the port person's user name and the initial test case
+should not appear in the variable definitions.
+</para></listitem>
+
+<listitem><para>
+Copy the env_mach_specific file from the test1 case directory to ccsm4/scripts/ccsm_utils/Machines
+as follows
+<screen>
+> cd ccsm4/scripts/test1
+> cp env_mach_specific ../ccsm_utils/Machines/env_machopts.bugsbunny
+</screen>
+</para></listitem>
+
+<listitem><para>
+Copy the Macros file from the test1 case directory to ccsm4/scripts/ccsm_utils/Machines as follows
+<screen>
+> cd ccsm4/scripts/test1
+> cp Macros.generic_linux_intel  ../ccsm_utils/Machines/Macros.bugsbunny
+</screen>
+Then edit the ccsm4/scripts/ccsm_utils/Machines/Macros.bugsbunny file and delete everything
+up to the lines
+<screen>
+#===============================================================================
+# The following always need to be set
+</screen>
+That first section of the Macros file is added automatically when a case is configured so
+should not be included in the machine specific setting.
+</para></listitem>
+
+<listitem><para>
+Create a mkbatch.bugsbunny file in ccsm4/scripts/ccsm_utils/Machines.  The easiest way
+to do this is probably to copy the mkbatch.generic_linux_intel file from that directory
+to mkbatch.bugsbunny 
+<screen>
+> cd ccsm4/scripts/ccsm_utils/Machines
+> cp mkbatch.generic_linux_intel mkbatch.bugsbunny
+</screen>
+Then edit the mkbatch.bugsbunny to match the changes made in the
+test1.generic_linux_intel.run file in the test1 case.  Remove the GENERIC_USER
+inline documentation and where that documentation existed, update the batch
+commands and job launch commands to be consistent with the test1 run script.
+The first part of the mkbatch script computes values that can be used in the
+batch commands.  It might require some extra iteration to get this working for
+all cases, processor counts, and processor layouts.
+</para></listitem>
+
+<listitem><para>
+Test the new machine setup.  Create a new case based on test1 using the
+bugsbunny machine setup
+<screen>
+> cd ccsm4/scripts
+> create_newcase -case test1_bugsbunny \
+                 -res f09_g16 \
+                 -compset X \
+                 -mach bugsbunny 
+</screen>
+Then configure, build, and run the case and confirm that test1_bugsbunny
+runs fine and is consistent with the original test1 case.  Once that works,
+test other configurations then move to port validation, see <xref linkend="port_process"/>.
+</para></listitem>
+
+</itemizedlist>
+
+</para></listitem>
+
+</orderedlist>
+
+</sect2>
+
+<sect2 id="port_adding_mach">
+<title>Porting via user defined machine files</title>
+
+<para>
+This section describes how to add support for a new machine 
+using machine specific files.  The basic approach is to add support for
+the new machine to the CCSM4 scripts directly and then to test and
+iterate on that setup.  
+Files in ccsm4/scripts/ccsm_utils/Machines will be added or modified
+to support the user defined machine out-of-the-box.  An env_machopts, Macros, and
+mkbatch file will be added and the config_machines.xml file will be modified.
+First, pick a name that will be associated with the local machine.  Generally, that's the name
+of the local machine, but it could be anything.  wilycoyote will be used in the
+description to follow.  It's also helpful to identify an existing supported
+machine that is similar to your machine to use as a starting point in porting.  
+If the user defined machine is a linux cluster with an intel compiler, then after reviewing
+the current supported machines using
+<screen>
+> cd ccsm4/scripts
+> ./create_newcase -l
+</screen>
+dublin_intel, hadley, or generic_linux_intel would be good candidates as
+starting points.  Starting with a generic machine provides some additional
+inline documentation to aid in porting.  If a generic machine is used, search
+for the tag "GENERIC_USER" in the scripts for additional documentation.
+In the example below, dublin_intel will be used as the
+starting point.  To add wilycoyote to the list of supported machines,
+do the following
+</para>
+
+<itemizedlist>
+<listitem><para>
+Edit ccsm4/scripts/ccsm_utils/Machines/config_machines.xml.  Add an entry for 
+wilycoyote.  A good idea is to copy one of the existing entries and then edit
+the values for wilycoyote.  You could start with the dublin_intel settings although
+nearly any machine will be ok.  There are several variable settings here.  The
+definition of these variables can be found in the appendix, see <xref linkend="env_case_vars"/>,
+<xref linkend="env_conf_vars"/>, <xref linkend="env_mach_pes_vars"/>, <xref linkend="env_build_vars"/>,
+and <xref linkend="env_run_vars"/>.
+Some of the important ones are MACH which should be set to wilycoyote, EXEROOT
+which should be set to a generic working directory like /tmp/scratch/$CCSMUSER/$CASE,
+DIN_LOC_ROOT_CSMDATA which should be set to the path to the ccsm inputdata directory,
+BATCHQUERY and BATCHJOBS which specify the query and submit command lines
+for batch jobs and are used to chain jobs together in production, and MAX_TASKS_PER_NODE
+which set the maximum number of tasks allowed on each hardware node.
+</para></listitem>
+
+<listitem><para>
+Copy an env_machopts file to env_machopts.wilycoyote.  Start with the dublin_intel
+file.
+<screen>
+> cd ccsm4/scripts/ccsm_utils/Machines
+> cp env_machopts.dublin_intel env_machopts.wilycoyote
+</screen>
+Edit env_machopts.wilycoyote to change the environment setup, paths, modules, and
+environment variables to be consistent with wilycoyote.
+</para></listitem>
+
+<listitem><para>
+Copy a Macros file to Macros.wilycoyote.  Start with the dublin_intel file.
+<screen>
+> cd ccsm4/scripts/ccsm_utils/Machines
+> cp Macros.dublin_intel Macros.wilycoyote
+</screen>
+Then review and edit the Macros.wilycoyote file as needed.  Pay particular
+attention to the compiler name, and the netcdf and mpi paths.  While the compiler
+options for a given compiler are pretty consistent across machines, invoking the
+compiler and the local paths for libraries are not.
+While CCSM supports use of pnetcdf in pio, it's generally best to ignore that feature during
+initial porting.  pio works well with standard netcdf.
+</para></listitem>
+
+<listitem><para>
+Copy a mkbatch file to mkbatch.wilycoyote file.  Start with the dublin_intel file.
+<screen>
+> cd ccsm4/scripts/ccsm_utils/Machines
+> cp mkbatch.dublin_intel mkbatch.wilycoyote
+</screen>
+Then edit the mkbatch.wilycoyote to be consistent with wilycoyote.  In particular,
+the batch commands and the job launching will probably need to be changed.
+The batch commands and setup are the first section of the script.  The job
+launching can be found by searching for the string "CSM EXECUTION".
+</para></listitem>
+
+<listitem><para>
+After an initial pass is made to setup the new machine files, try creating a 
+case, building and running.  Getting this to work will be an iterative process.  Changes will
+probably be made in both the machine files in ccsm4/scripts/ccsm_utils/Machines
+for wilycoyote and in the case as testing proceeds.  Whenever the machine files
+are updated, a new case should be setup.  Whenever something is changed in the
+case scripts to fix a problem, that change should be migrated back to the wilycoyote
+machine files.  In general, it's probably easiest to modify the machine files and
+create new cases until the case configures successfully.  Once the case is configuring, 
+it's often easiest to edit the case scripts to fix problems in the build and run.
+Once a case is running, those changes in the case need to be backed out into
+the wilycoyote machine files and then those machine files can be
+tested with a new case.
+
+<screen>
+> cd ccsm4/scripts
+> create_newcase -case test_wily1 \
+                 -res f19_g16 \
+                 -compset X \
+                 -mach wilycoyote 
+> cd test_wily1
+> configure -case
+> ./test_wily1.wilycoyote.build
+> qsub test_wily1.wilycoyote.run
+</screen>
+Eventually, the machine files should work for any user and any configuration
+for wilycoyote.
+</para></listitem>
+
+</itemizedlist>
+
+
+</sect2>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="port_process">
+<title>Port Validation</title>
+
+<para>The following port validation is recommended for any new machine.
+Carrying out these steps does not guarantee the model is running properly
+in all cases nor that the model is scientifically valid on the new machine.
+In addition to these tests, detailed validation should be carried out for
+any new production run.  That means verifying that model restarts are
+bit-for-bit identical with a baseline run, that the model is bit-for-bit
+reproducible when identical cases are run for several months, and that 
+production cases are monitored very carefully as they integrate forward
+to identify any potential problems as early as possible.  These are 
+recommended steps for validating a port and are largely functional tests.
+Users are responsible for their own validation process, especially with
+respect to science validation.
+</para>
+
+<orderedlist>
+<listitem>
+<para>Verify functionality by performing these <link linkend="create_test">functionality tests.</link> 
+</para>
+<screen>
+ERS_D.f19_g16.X
+ERS_D.T31_g37.A
+ERS_D.f19_g16.B1850CN
+ERI.f19_g16.X
+ERI.T31_g37.A
+ERI.f19_g16.B1850CN
+ERS.f19_f19.F
+ERS.f19_g16.I
+ERS.T62_g16.C
+ERS.T62_g16.D
+ERT.f19_g16.B1850CN
+</screen>
+</listitem>
+
+<listitem>
+<para> Verify performance and scaling analysis.</para> 
+<orderedlist>
+
+<listitem><para> 
+Create one or two <link
+linkend="running_ccsm_loadbalance">load-balanced</link> configurations
+to check into <filename>Machines/config_pes.xml</filename> for the new
+machine.  </para></listitem>
+
+<listitem><para>
+Verify that performance and scaling are reasonable.</para></listitem> 
+
+<listitem><para> 
+Review timing summaries in $&CASEROOT; for load balance and throughput.
+</para></listitem> 
+
+<listitem><para> Review coupler "daily" timing output for timing
+inconsistencies.  As has been mentioned in the section on <link
+linkend="running_ccsm_loadbalance"> load balancing a case </link>,
+useful timing information is contained in cpl.log.$date file that is
+produced for every run. The cpl.log file contains the run time for
+each model day during the model run. This diagnostic is output as the
+model runs. You can search for tStamp in this file to see this
+information. This timing information is useful for tracking down
+temporal variability in model cost either due to inherent model
+variability cost (I/O, spin-up, seasonal, etc) or possibly due to
+variability due to hardware. The model daily cost is generally
+pretty constant unless I/O is written intermittently such as at the
+end of the month.
+
+</para></listitem>
+
+</orderedlist>
+</listitem>
+
+<listitem>
+<para> Perform validation (both functional and scientific):</para>
+<orderedlist>
+
+<listitem><para>
+Perform a <ulink url="http://www.cesm.ucar.edu/models/atm-cam/port/">CAM error growth test</ulink>.
+</para></listitem>
+
+<listitem><para>Perform a CLM perturbation error growth test (as described in 
+the <ulink url="http://www.cesm.ucar.edu/models/cesm1.0/clm/models/lnd/clm/doc/UsersGuide/book1.html">CLM User's Guide</ulink>).
+</para></listitem>
+
+<listitem><para>
+Follow the <ulink url="http://www.cesm.ucar.edu/models/cesm1.0/cice/validation/index.html">CCSM4.0 CICE port-validation procedure.</ulink>
+</para></listitem>
+
+<listitem><para>
+Follow the <ulink url="http://www.cesm.ucar.edu/models/cesm1.0/pop2/validation/index.html">CCSM4.0 POP2 port-validation procedure.</ulink>
+</para></listitem>
+
+</orderedlist>
+</listitem>
+
+<listitem>
+<para>Perform two, one-year runs (using the expected load-balanced
+configuration) as separate job submissions and verify that
+atmosphere history files are bfb for the last month. Do this after
+some performance testing is complete; you may also combine this with
+the production test by running the first year as a single run and the
+second year as a multi-submission production run. This will test
+reproducibility, exact restart over the one-year timescale, and
+production capability all in one test.</para>
+</listitem>
+
+<listitem>
+<para>Carry out a 20-30 year 1.9x2.5_gx1v6 resolution, B_1850_CN
+compset simulation and compare the results with the diagnostics plots
+for the 1.9x2.5_gx1v6 Pre-Industrial Control (see the <ulink
+url="http://www.cesm.ucar.edu/experiments/cesm1.0/diagnostics/">
+CCSM4.0 diagnostics </ulink>).  Model output data for these runs will
+be available on the <ulink
+url="http://www.cesm.ucar.edu/models/cesm1.0/model_esg/">Earth System
+Grid (ESG) </ulink> as well. </para>
+</listitem>
+
+</orderedlist>
+
+</sect1>
+</chapter>
+

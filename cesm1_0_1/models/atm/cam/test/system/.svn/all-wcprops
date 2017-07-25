@@ -1,0 +1,185 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system
+END
+CAM_compare.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/CAM_compare.sh
+END
+tests_posttag_bluefire
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/tests_posttag_bluefire
+END
+TCB.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TCB.sh
+END
+TSM_ccsm.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TSM_ccsm.sh
+END
+tests_pretag_bluefire
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/tests_pretag_bluefire
+END
+TCB_ccsm.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TCB_ccsm.sh
+END
+gen_test_table.sh
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/gen_test_table.sh
+END
+posttag_cron_bluevista.sh
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/posttag_cron_bluevista.sh
+END
+tests_posttag_edinburgh
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/tests_posttag_edinburgh
+END
+TBL.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TBL.sh
+END
+tag_email.sh
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/tag_email.sh
+END
+tests_pretag_edinburgh
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/tests_pretag_edinburgh
+END
+tests_posttag_jaguar
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/tests_posttag_jaguar
+END
+input_tests_master
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/input_tests_master
+END
+TMC.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TMC.sh
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/README
+END
+CAM_runcmnd.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/CAM_runcmnd.sh
+END
+TBL_ccsm.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TBL_ccsm.sh
+END
+tests_posttag_jaguar_cb
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/tests_posttag_jaguar_cb
+END
+CAM_decomp.sh
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/CAM_decomp.sh
+END
+TBR.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TBR.sh
+END
+TEQ.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TEQ.sh
+END
+TSC.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TSC.sh
+END
+TPF.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TPF.sh
+END
+test_driver.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/test_driver.sh
+END
+TER.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TER.sh
+END
+posttag_cron_bangkok.sh
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/posttag_cron_bangkok.sh
+END
+TEQ_ccsm.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TEQ_ccsm.sh
+END
+TER_ccsm.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TER_ccsm.sh
+END
+TSM.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/test/system/TSM.sh
+END

@@ -1,0 +1,516 @@
+<chapter id="building_ccsm">
+<title>Building a Case</title>
+
+<para> After configuring a case, the model executable can be built by
+running <command>$CASE.$MACH.build</command> which will: </para>
+
+<orderedlist>
+<listitem><para> create the component namelists in
+$<envar>RUNDIR</envar> ($<envar>EXEROOT/run</envar>) by calling the
+<filename> Buildconf/</filename> scripts
+<filename>$component.buildnml.csh</filename>.  </para></listitem>
+
+<listitem><para> check for the <link
+linkend="env_run_inputdata">required input data sets</link> and download missing data automatically on local
+disk, and if successful proceed to the following steps.
+</para></listitem>
+
+<listitem><para> create the necessary utility libraries by calling the
+<filename> Buildconf/</filename> scripts
+<filename>mct.buildlib</filename>, <filename>pio.buildlib</filename>
+and <filename>csm_share.buildlib</filename>. </para></listitem>
+
+<listitem><para> create the necessary component libraries by calling
+the <filename> Buildconf/</filename> scripts
+<filename>$component.buildexe.csh</filename>.  </para></listitem>
+
+<listitem><para> create the model executable by calling the <filename>
+Buildconf/</filename> scripts <filename>ccsm.buildexe.csh</filename>.
+</para></listitem>
+</orderedlist>
+
+<note><para> <filename>$CASEROOT/Tools/Makefile</filename> and 
+<filename>$CASEROOT/Macros.$MACH</filename> are used to generate all
+necessary utility and component libraries and the model
+executable.</para></note>
+
+<para> A user does not need to change the default build settings to
+create the executable. However, the &cesm; scripts provide the user
+with a great deal of flexibility in customizing various aspects of the
+build process. It is therefore useful for a user to become familiar with
+these in order to make optimal use of the system. </para>
+
+<!-- ======================================================================= -->
+<sect1 id="env_run_inputdata">
+<title>Input data</title>
+
+<para> All active and data components use input datasets. A local disk needs 
+to be populated with input data in order to run &cesm;with these 
+components. For all machines, input data is provided as part of the 
+release via data from a subversion input data server. However, on 
+supported machines (and some non-supported machines), data already 
+exists in the default local-disk input data area (as specified by 
+$<envar>DIN_LOC_ROOT_CSMDATA</envar> (see below).</para> 
+
+
+<para> Input data is handled by the build process as follows:</para>
+
+<itemizedlist>
+<listitem><para> &configure; and buildnml scripts create listings of required component
+input datasets in the
+<filename>Buildconf/$component.input_data_list</filename> files.
+</para></listitem> 
+<listitem><para>
+<filename>&$CASE.$MACH.build;</filename> in the prestage step checks for the
+presence of the required input data files in the root directory
+$&DIN_LOC_ROOT_CSMDATA;. If all required data sets are found on local
+disk, then the build can proceed.
+</para></listitem> 
+<listitem><para>
+If any of the required input data sets are not found, the build script
+will abort and the files that are missing will be listed. At this
+point, you must obtain the required data from the
+<link linkend="input_data_server">input data server</link>
+using &check_input_data; with the -export option.
+</para></listitem> 
+</itemizedlist>
+
+<para> The following variables in <link
+linkend="env_run_vars">&env_run.xml;</link> determine where you
+should expect input data to reside on local disk and how this input
+data will be handled during the run. </para>
+
+<variablelist>
+<varlistentry><term> DIN_LOC_ROOT_CSMDATA</term>
+<listitem>
+<para>The root directory of &cesm; input data for the selected machine.
+Usually a shared disk area. </para> 
+</listitem>
+</varlistentry>
+
+<varlistentry><term> DIN_LOC_ROOT</term>
+<listitem>
+<para> 
+The inputdata area used for the current case.  Normally, this is 
+set to DIN_LOC_ROOT_CSMDATA but the system provides flexibility for a 
+user to specify a distinct directory.  This might be needed on certain 
+machines if the user needs to have the input data reside in a special 
+disk area associated with the executable directory or the batch nodes, 
+rather than in the default local disk directory.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term> DIN_LOC_ROOT_CLMQIAN </term>
+<listitem>
+<para>
+CLM-specific root directory for CLM QIAN type input forcing data.
+This directory will only be used for I (CLM/DATM) compsets.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term> PRESTAGE_DATA </term> 
+<listitem>
+<para>
+Allows the case input data root directory
+(<envar>DIN_LOC_ROOT</envar>) to differ from the machine's root input
+data directory (<envar>DIN_LOC_ROOT_CSMDATA</envar>). </para> <para>If
+<envar>PRESTAGE_DATA</envar> is FALSE (the default) then
+<envar>DIN_LOC_ROOT</envar> will be set to
+<envar>DIN_LOC_ROOT_CSMDATA</envar>. </para> <para>If PRESTAGE_DATA is
+TRUE, then <envar>DIN_LOC_ROOT</envar> will be set to
+<filename>EXEROOT/inputdata</filename>. In addition, data will be
+copied from <envar>DIN_LOC_ROOT_CSMDATA</envar> to
+<envar>DIN_LOC_ROOT</envar> before the model builds. The input data in
+<filename>EXEROOT/inputdata</filename> will then be used for the model
+run.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<!-- ======================================================================= -->
+<sect2 id="user_input_data">
+<title>User-created input data </title>
+
+<para>
+If you want to use new user-created dataset(s), give these dataset(s)
+names that are different than the names in $&DIN_LOC_ROOT;. The best
+way to access these user-specified datasets is to use the script
+<filename>$CCSMROOT/scripts/link_dirtree</filename>.  &link_dirtree;
+creates a virtual copy of the input data directory by linking one
+directory tree to another.  The full directory structure of the
+original directory is duplicated and the files are linked. Invoke the
+following for usage:
+</para>
+<screen>
+> cd $CCSMROOT/scripts
+> link_dirtree -h
+</screen>
+<para>
+&link_dirtree; can be conveniently used to generate the equivalent of
+a local copy of $&DIN_LOC_ROOT_CSMDATA; which can then be
+populated with user-specified input datasets.  For example, you can
+first generate a virtual copy of $&DIN_LOC_ROOT_CSMDATA;
+in /user/home/newdata with the following command:
+</para>
+
+<screen>
+> link_dirtree $DIN_LOC_ROOT_CSMDATA /user/home/newdata
+</screen>
+
+<para>
+then incorporate the new dataset(s) directly into the appropriate
+directory in /user/home/newdata. 
+</para>
+
+<note><title>Important:</title><para>
+If you place a new dataset for $component in
+<filename>/user/home/newdata</filename>, then
+<filename>Buildconf/$component.buildnml.csh</filename> and
+<filename>Buildconf/$component.input_data_list</filename>
+must be modified to point to this new dataset.
+</para></note>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="input_data_server">
+<title>Using the input data server </title>
+
+<para>
+The script <filename>$CASEROOT/check_input_data</filename> determines
+if the required data files for the case exist on local disk in the
+appropriate subdirectory of $&DIN_LOC_ROOT_CSMDATA;. If any of the
+required datasets do not exist locally,
+<filename>check_input_data</filename> provides the capability for
+downloading them to the $&DIN_LOC_ROOT_CSMDATA; directory hierarchy
+via interaction with the input data server. You can independently
+verify that the required data is present locally by using the following
+commands:
+</para>
+
+<screen>
+> cd $CASEROOT
+> check_input_data -help
+> check_input_data -inputdata $DIN_LOC_ROOT_CSMDATA -check
+</screen>
+
+<para>
+If input data sets are missing, you must obtain the datasets from
+the input data server:
+</para>
+
+<screen>
+> cd $CASEROOT
+> check_input_data -inputdata $DIN_LOC_ROOT_CSMDATA -export
+</screen>
+
+<para>
+Required data files not on local disk will be downloaded through
+interaction with the Subversion input data server.  These will be
+placed in the appropriate subdirectory of $&DIN_LOC_ROOT_CSMDATA;.
+For what to expect when interacting with a Subversion repository, see
+<link linkend="download_ccsm_inputdata">downloading input data</link>.
+</para>
+
+</sect2>
+
+</sect1>
+
+<!--
+=======================================================================
+-->
+<sect1 id="building_ccsm_custom_env">
+<title>Build-time variables </title>
+
+<para>
+The <link linkend="env_build_vars">&env_build.xml; file</link> sets
+variables that control various aspects of building the model
+executable. Most of the variables should not be modified by users.
+The variables that you can modify are discussed in more detail below.
+</para>
+
+<variablelist>
+<varlistentry><term>EXEROOT</term>
+<listitem>
+<para>
+The &cesm; executable root directory. This is where the model builds
+its executable and by default runs the executable.  Note that
+$&EXEROOT; needs to have enough disk space for the experimental
+configuration requirements. As an example, &cesm; can produce more
+than a terabyte of data during a 100-year run, so you should set
+$&EXEROOT; to scratch or tmp space and frequently back up the data
+to a mass storage device.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term>RUNDIR</term>
+<listitem>
+<para>
+The directory where the executable will be run. By default this is set
+to $<envar>EXEROOT/run</envar>. RUNDIR allows you to keep the run
+directory separate from the build directory.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term>BUILD_THREADED</term>
+<listitem>
+<para>
+Valid values are TRUE and FALSE. The default is FALSE. </para>
+<para>If FALSE, the component libraries are built with OpenMP
+capability only if the NTHREADS_ setting for that component is
+greater than 1 in &env_mach_pes.xml;. </para> <para> If TRUE, the
+component libraries are always built with OpenMP capability.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term>DEBUG</term>
+<listitem>
+<para>
+Flag to turn on debugging for run time and compile time. Valid values
+are TRUE, FALSE. The default is FALSE.</para>
+<para>If TRUE, compile-time debugging flags are activated that you can
+use to verify software robustness, such as bounds checking.</para>
+
+<note><title>Important:</title>
+<para> On IBM machines, floating point trapping is not activated for
+production runs (i.e., non-DEBUG), due to performance penalties
+associated with turning on these flags.
+</para></note>
+</listitem>
+</varlistentry>
+
+<varlistentry><term>GMAKE_J</term>
+<listitem>
+<para>
+Number of processors for gmake (integer). 0 < GMAKE_J < [number of
+processors/node]. $&GMAKE_J; allows a faster build on multi-processor
+machines. If the build fails in different places without other
+changes, setting this to 1 may help.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term>OCN_TRACER_MODULES</term>
+<listitem>
+<para>
+A POP2-specific setting for turning on different ocean tracer
+modules. Valid values are any combination of: iage, cfc, ecosys.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="building_ccsm_custom_compiler_settings">
+<title>Compiler settings </title>
+
+<para>
+Compiler settings are located in the two files &env_mach_specific;  
+and <filename>Macros.$MACH</filename>. The
+<filename>env_mach_specific</filename> file is a shell script that sets 
+various machine specific configure options such as modules and MPI or 
+system environment variables.  This script is run as part of every build 
+or run step, and accounts for settings not included in the CESM xml env 
+files.  
+The <filename>Macros.$MACH</filename> file contains the machine specific build options 
+used in the CESM Makefile.  Both of these files are usually involved in 
+defining build options, and the env_mach_specific file might also 
+contain critical settings for the run phase.
+</para>
+<para>
+If you are running at NCAR, env_mach_specific also contains variables to 
+set up mass storage archiving. You need to modify these if you activate 
+long-term archiving on the mass store.
+</para> 
+
+<para>
+You need to modify these files for user-defined machines during
+the process of porting &cesm; to your machine.
+</para>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="building_ccsm_custom_srcmods">
+<title>User-modified source code </title>
+
+<para>
+Each model component ($component) has an associated directory,
+<filename>$CASEROOT/SourceMods/src.$component</filename>, where you
+can place modified source code before building the executable. Any
+source code from $component that is placed in
+<filename>$CASEROOT/SourceMods/src.$component/</filename> will
+automatically be compiled when the model is built and will overwrite
+the default source code. For example, placing user-modifed cam source
+code in <filename>$CASEROOT/SourceMods/src.cam</filename> will cause
+the user-modified routines to be used instead of the routines in
+<filename>$CCSMROOT/models/atm/cam</filename>.
+</para>
+
+<para> If you want to modify numerous cam namelist values, you can use
+place a file, <filename>user_nl</filename>, containing modified cam
+namelist settings in <filename>SourceMods/src.cam</filename> and this
+file will be used by the &configure -case; command to generate the
+appropriate namelist for CAM.
+</para>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="build_executable">
+<title>Building the executable</title>
+
+<para>
+After <link linkend="building_ccsm_custom_env">customizing your build
+options,</link> 
+and adding any <link
+linkend="building_ccsm_custom_srcmods">user-modified source code</link>,
+you are ready to build the case executable.
+</para>
+
+<screen>
+> cd $CASEROOT
+> $CASE.$MACH.build
+</screen>
+
+<para>
+Diagnostic comments will appear as the build proceeds.
+</para>
+
+<para>
+The following line indicates that the component namelists have
+been generated successfully:
+</para>
+
+<screen>
+....
+CCSM BUILDNML SCRIPT HAS FINISHED SUCCESSFULLY
+....
+</screen>
+
+<para>When the required case input data in $&DIN_LOC_ROOT; has been
+successfully checked, you will see:
+</para>
+
+<screen>
+CCSM PRESTAGE SCRIPT STARTING
+...
+...
+CCSM PRESTAGE SCRIPT HAS FINISHED SUCCESSFULLY
+</screen>
+
+<para>
+Finally, the build script generates the utility and component
+libraries and the model executable. There should be a line for the mct
+and pio libraries, as well as each of the components. Each is date
+stamped, and a pointer to the build log file for that library or
+component is created. Successful completion is indicated by:
+</para>
+
+<screen>
+CCSM BUILDEXE SCRIPT HAS FINISHED SUCCESSFULLY
+</screen>
+
+<para>
+The build log files have names of the form $model.bldlog.$datestamp
+and are located in $&RUNDIR;. If they are compressed (indicated by
+a .gz file extension), then the build ran successfully.
+</para>
+
+<para>
+Invoking <command>$CASE.$MACH.build</command> creates the following
+directory structure in $&EXEROOT;:
+</para>
+
+<screen>
+$EXEROOT/atm
+$EXEROOT/ccsm
+$EXEROOT/cpl
+$EXEROOT/csm_share
+$EXEROOT/glc
+$EXEROOT/ice
+$EXEROOT/lib
+$EXEROOT/lnd
+$EXEROOT/mct
+$EXEROOT/ocn
+$EXEROOT/pio
+$EXEROOT/run
+</screen>
+
+<para>
+The atm/, ccsm/, cpl/, glc/, ice/, lnd/, and ocn/ subdirectories each
+contain an 'obj/' directory where the compiled object files for the
+model component is placed.  These object files are collected into
+libraries that are placed in 'lib/' along with the mct/mpeu, pio, and
+csm_share libraries. Special include modules are also placed in
+lib/include. The model executable 'ccsm.exe' is placed in
+$<filename>EXEROOT/run</filename> along with component
+namelists. During the model run, component logs, output datasets, and
+restart files are also placed in this directory.
+</para>
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="rebuild_executable">
+<title>Rebuilding the executable</title>
+
+<para>
+The model should be rebuilt under the following circumstances:
+</para>
+
+<para> If &env_conf.xml;, &env_build.xml; or 
+<filename>$Macros.$MACH</filename> has been modified, and/or if code is
+added to <filename>SourceMods/src.*</filename>, then it's safest to
+clean the build and rebuild from scratch as follows,
+</para>
+
+<screen>
+> cd $CASEROOT
+> $CASE.$MACH.clean_build
+> $CASE.$MACH.build
+</screen>
+
+<para> If ONLY the PE layout has been modified in &env_mach_pes.xml;
+(see <link linkend="case_conf_setting_pes">setting the PE layout</link>) 
+then it's possible that a clean is not required.</para>
+<screen>
+> cd $CASEROOT
+> $CASE.$MACH.build
+</screen>
+<para>
+But if the threading has been turned on or off in any component relative
+to the previous build, then the build script should error as follows</para>
+
+<screen>
+  ERROR SMP STATUS HAS CHANGED
+    SMP_BUILD = a0l0i0o0g0c0
+    SMP_VALUE = a1l0i0o0g0c0
+    A manual clean of your obj directories is strongly recommendend
+    You should execute the following:
+      ./b39pA1.bluefire.clean_build
+    Then rerun the build script interactively
+    ---- OR ----
+    You can override this error message at your own risk by executing
+      ./xmlchange -file env_build.xml -id SMP_BUILD -val 0 
+    Then rerun the build script interactively
+</screen>
+<para>
+and suggest that the model be rebuilt from scratch.
+</para>
+
+<note><para>
+The user is responsible for manually rebuilding the model when needed. If there is
+any doubt, you should rebuild.
+</para></note>
+</sect1>
+
+
+</chapter>
+

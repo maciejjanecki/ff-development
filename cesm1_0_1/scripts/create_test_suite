@@ -1,0 +1,373 @@
+#!/bin/csh -f
+
+#===================================================================
+# Create test suite
+#===================================================================
+
+if ($#argv < 1) then
+  echo "invoke create_test_suite -help for usage."
+  exit -1;
+endif
+
+# defaults
+set testroot = `pwd`
+set commandpath = $0
+if ($commandpath =~ */*) then
+  set scriptsroot = $commandpath:h
+else
+  set scriptsroot = "."
+endif
+set ccsmroot = $scriptsroot/..
+set testlid = `date +%H%M%S`
+set baseline_name = "cs_baselines"
+
+# print help messages
+set helpheader = 0
+set i = `echo $argv[1]|cut -c2-`
+if( $i == "help" || $i == "h") then
+  set helpheader = 1
+endif
+
+#===================================================================
+
+if ( $helpheader ) then
+cat <<EOF
+
+NAME
+
+   create_test_suite - runs test suite based on input list
+
+SYNOPSIS
+
+   <pathname>/create_test_suite -input_list input 
+     [-testroot testroot] 
+     [-testid testid]
+     [-baselineroot baselineroot] 
+     [-generate baseline_name] 
+     [-compare baseline_name] 
+     [-account account_name]
+     [-queue queue_name]
+     [-clean on|off]
+     [-help]
+
+   or 
+ 
+   <pathname>/create_test_suite -input_list input 
+     [-testroot testroot] 
+     [-testid testid]
+     [-baselineroot baselineroot] 
+     [-gen_bl ccsm_bl_root] 
+     [-account account_name]
+     [-queue queue_name]
+     [-clean on|off]
+     [-help]
+
+
+   Note that <pathname> could be <.>
+
+   Several variables can be set either in the environment or
+   on the command line.  Command line arguments always override
+   variables set in the environment.  Many options are like
+   the create_test options and are passed right to create_test.
+
+   The input_list is a filename and is the onlyl required argument.
+   The list of tests can take a few forms depending on the arguments 
+   to create_test_suite. In general, it's a list of CCSM tests, one per line,
+   with no blank lines.  See below for examples.
+
+EXAMPLES
+
+   First, examples of create_test_suite input files
+
+   create_test_suite.list contains:
+   ERS.T31_gx3v5.A.bluefire
+   ERS.T31_gx3v5.B.bluefire
+
+   create_test_suite -help
+
+   create_test_suite -testroot ~/testroot -input_list create_test_suite.list
+
+   create_test_suite -generate ccsm4_0_beta38 -compare ccsm4_0_beta37 \
+     -input_list create_test_suite.list -baselineroot /fs/cgd/csm/ccsm_baselines \
+     -testroot ~/testroot 
+
+   create_test_suite -gen_bl /fs/gd/csm/collection/ccsm4_0_beta38 \
+     -input_list create_test_suite.list -baselineroot /fs/cgd/csm/ccsm_baselines \
+     -testroot ~/testroot 
+
+EOF
+exit
+endif
+
+while ( 1 )
+  if ( $#argv < 1 ) break;
+  set i = $argv[1];
+### check the error of the input argument.
+      shift argv
+      if($#argv <1 ) then
+          echo "ERROR in ${0}: Please input the content for $i."
+          exit -1
+      endif
+      set ywtmp = "-"
+      if( $argv[1] =~ $ywtmp* ) then
+          echo "ERROR in ${0}: wrong argument for $i.";
+          exit -1
+      endif
+### end of check the error for the input argument
+  switch ( $i )
+    case "-testroot"
+      set testroot = $argv[1]
+      breaksw
+    case "-compsetdir"
+      set compsetdir = $argv[1]
+      breaksw
+    case "-testid"
+      set testID = $argv[1]
+      echo "testID is $testID"
+      breaksw
+    case "-input_list"
+      set input_list = $argv[1]
+      breaksw
+    case "-clean"
+      set clean = $argv[1]
+      breaksw
+    case "-generate"
+      set baseline_name_gen = $argv[1]
+      breaksw
+    case "-compare"
+      set baseline_name_cmp = $argv[1]
+      breaksw
+    case "-baselineroot"
+      set baselineroot = $argv[1]
+      breaksw
+    case "-gen_bl"
+      set gen_bl = TRUE
+      if ($argv[1] != "TRUE") then
+         set ccsm_bl_root = $argv[1]
+      endif
+      breaksw
+    case "-account"
+      setenv ACCOUNT $argv[1]
+      breaksw
+    case "-queue"
+      setenv QUEUE $argv[1]
+      echo QUEUE is $QUEUE
+      breaksw
+    default:
+      echo "unknown input, invoke create_test_suite with no arguments for usage"
+      exit -1
+      breaksw
+  endsw
+  shift argv
+end
+
+#---------------------------
+# get env and set defaults
+#---------------------------
+
+if ( ! $?clean ) then
+  set clean = on
+endif
+if ( ! $?testID ) then
+  set testID = $testlid
+endif
+if ( ! $?testID_bl ) then
+  set testID_bl = ${testID}_bl
+endif
+if ( $testID_bl == $testID ) then
+  set testID_bl = ${testID}_bl
+endif
+
+setenv CSENV_TESTID $testID
+
+#---------------------------
+# check env settings
+#---------------------------
+
+if ( ! $?ccsmroot ) then
+  echo "ERROR: ccsmroot not set"
+  exit
+endif
+if (! -e $ccsmroot) then
+  echo "ERROR: ccsmroot $ccsmroot does not exist"
+  exit
+endif
+if (! -e $ccsmroot/scripts/create_test) then
+  echo "ERROR: ccsmroot create_test $ccsmroot does not exist"
+  exit
+endif
+if ( ! $?testroot ) then
+  echo "ERROR: testroot not set"
+  exit
+endif
+if (! -e $testroot) then
+  echo "ERROR: testroot $testroot does not exist"
+  exit
+endif
+
+if ($?gen_bl) then
+if ($gen_bl == "TRUE") then
+  if ( ! $?ccsm_bl_root ) then
+    echo "ERROR: ccsm_bl_root not set"
+    exit
+  endif
+  if (! -e $ccsm_bl_root) then
+    echo "ERROR: ccsm_bl_root $ccsm_bl_root does not exist"
+    exit
+  endif
+  if (! -e $ccsm_bl_root/scripts/create_test) then
+    echo "ERROR: ccsm_bl_root create_test $ccsm_bl_root does not exist"
+    exit
+  endif  
+  if ( ! $?baselineroot ) then
+    echo "ERROR: baselineroot not set"
+    exit
+  endif
+  if (! -e $baselineroot) then
+    echo "ERROR: baselineroot $baselineroot does not exist"
+    exit
+  endif
+endif
+endif
+
+if (! -e $input_list) then
+  if (-e $ccsmroot/scripts/ccsm_utils/Testlists/$input_list) then
+     set input_list = $ccsmroot/scripts/ccsm_utils/Testlists/$input_list
+  else
+    echo "ERROR: input_list $input_list not found"
+    exit
+  endif
+endif
+
+#============================================================================
+set tmprunfile = "$testroot/create_test_suite_run_script_tmp"
+rm -f $tmprunfile
+
+cat >! $tmprunfile << EOF
+#!/bin/csh
+
+set cs_input_list = "$input_list"
+set cs_ccsmroot   = "$ccsmroot"
+set cs_testroot   = "$testroot"
+set cs_testID     = "$testID"
+set cs_testID_bl  = "$testID_bl"
+set cs_clean      = "$clean"
+set cs_baseline_name = "$baseline_name"
+EOF
+
+if ($?gen_bl) then
+  echo "set cs_gen_bl = $gen_bl" >> $tmprunfile
+endif
+if ($?ccsm_bl_root) then
+  echo "set cs_ccsm_bl_root = $ccsm_bl_root" >> $tmprunfile
+endif
+if ($?baselineroot) then
+  echo "set cs_baselineroot = $baselineroot" >> $tmprunfile
+endif
+if ($?baseline_name_gen) then
+  echo "set cs_baseline_name_gen = $baseline_name_gen" >> $tmprunfile
+endif
+if ($?baseline_name_cmp) then
+  echo "set cs_baseline_name_cmp = $baseline_name_cmp" >> $tmprunfile
+endif
+
+if ($?baseline_name_gen) then
+   set cs_gen = "-generate $baseline_name_gen"
+else
+   set cs_gen = ' '
+endif 
+if ($?baseline_name_cmp) then
+   set cs_cmp = "-compare $baseline_name_cmp"
+else
+   set cs_cmp = ' '
+endif 
+if ($?baselineroot) then
+   set cs_blroot = "-baselineroot $baselineroot"
+else
+   set cs_blroot = ' '
+endif 
+
+if ($?gen_bl) then
+  if ($gen_bl == "TRUE") then
+     if ("$cs_cmp" != ' ' || "$cs_gen" != ' ') then
+        echo "when gen_bl is an argument, cannot also specify generate or compare as arguments"
+        exit
+     endif
+  endif
+endif
+
+cat >> $tmprunfile << EOF
+
+#---------------------------
+# generate tests : 2 scenarios
+# 1. gen_bl TRUE, use BL and force generate/compare
+# 2. create list of tests which may be generate/compare
+#---------------------------
+
+set cs_test = \$<
+while (\$cs_test != "")
+
+  echo "------------------------------------------------------------------"
+  echo "create_test_suite generating \$cs_test"
+  set cs_generated = FALSE
+
+  if (\$?cs_gen_bl) then
+    if (\$cs_gen_bl == "TRUE") then
+      set cs_generated = TRUE
+      \$cs_ccsm_bl_root/scripts/create_test \
+         -testname \$cs_test \
+         -testroot \$cs_testroot \
+         -generate \$cs_baseline_name \
+         -baselineroot \$cs_baselineroot \
+         -clean \$cs_clean \
+         -testid \$cs_testID_bl
+      \$cs_ccsmroot/scripts/create_test \
+         -testname \$cs_test \
+         -testroot \$cs_testroot \
+         -compare \$cs_baseline_name \
+         -baselineroot \$cs_baselineroot \
+         -clean \$cs_clean \
+         -testid \$cs_testID
+    endif
+  endif
+
+  if ( \$cs_generated != "TRUE" ) then
+    set cs_generated = TRUE
+    \$cs_ccsmroot/scripts/create_test \
+       -testname \$cs_test \
+       -testroot \$cs_testroot \
+       -clean \$cs_clean \
+       -testid \$cs_testID \
+       $cs_cmp $cs_gen $cs_blroot        
+    endif
+  endif
+
+  set cs_test = \$<
+
+end
+
+EOF
+
+#============================================================================
+chmod +x $tmprunfile
+$tmprunfile < $input_list
+
+rm $tmprunfile
+
+#============================================================================
+
+if ($input_list =~ *.pretag || $input_list =~ *.posttag) then
+  cd ${testroot}
+  set smach = `echo $input_list:t | cut -d "." -f 1`
+  if (-e cs.submit.$CSENV_TESTID.$smach) then
+     echo " "
+     echo "running cs.submit.$CSENV_TESTID.$smach script automatically"
+     ./cs.submit.$CSENV_TESTID.$smach
+     echo " "
+     echo "cs.submit script complete"
+  endif
+endif
+
+unsetenv CSENV_TESTID 
+echo "create_test_suite done"
+

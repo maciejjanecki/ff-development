@@ -1,0 +1,17 @@
+<appendix id="env_mach_pes_vars">
+<title>env_mach_pes.xml variables</title>
+
+<para>
+The following table lists all the environment variables set in the &env_mach_pes.xml; file.
+Default values, where appropriate, are given in parentheses.
+</para>
+
+&env_mach_pes_list;
+
+</appendix>
+
+
+
+
+
+

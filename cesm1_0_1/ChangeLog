@@ -1,0 +1,70 @@
+================================================================================
+SVN $URL: https://svn-ccsm-release.cgd.ucar.edu/model_versions/cesm1_0_1 $
+================================================================================
+
+Tag name: cesm1_0_1
+Originator(s): cseg
+Date: Fri Sep 17 2010
+One-line Summary: First update to the cesm1.0 release code.
+
+#  known answer changes
+    * WACCM F compset bug fix changes answers.
+    * CAM5 update changes answers.
+    * New default processor layout on bluefire for 1 degree B compsets changes 
+	answers.
+    * FV filter change in CAM for high resolution grids (1/2 degree and finer) 
+	changes answers.
+
+# atmosphere/CAM
+    * Add namelist specifier for which history file to write heat/moisture 
+	budget terms to.
+    * Separate aerosol activation code from microphysics code. (code cleanup; 
+	introduces roundoff diffs in cam5 on some platforms)
+    * Fix FV offline driver for 2D decomp and WACCM configs; fix configure to 
+	allow chem customization w/ trop_bam and *_ghg.
+    * Rename of types for import/export states (code cleanup).
+    * Add ability to read FAA aircraft emissions w/ conservative interpolation.
+    * Fix memory leak with workaround for xlf compiler bug.
+    * FV memory optimization; repro_sum update; spmd_utils and mod_comm 
+	communication protocol updates.
+    * Change FV filter defaults for high resolution grids (1/2 degree and finer). 
+	This changes answers in high res runs.
+
+# land/CLM
+    * Updates to CLM include various small fixes for CLM single-point mode and 
+	documentation updates. Updates to documentation included how to handle 
+	your data when using link_dirtree, and additional documentation and plots 
+	for the perturbation error growth method to validate a port to CLM.
+
+# ice/CICE
+    * No changes.
+
+# ocn/POP
+    * The units reported in the pop2 tavg output files for DON_prod are now 
+	correct.
+
+# driver
+    * Refactored the driver restart implementation to use only pio for reading 
+	and writing of all variables.
+    * Minor updates to the shr_esmf code to improve performance when esmf 
+	interfaces are used.
+
+# scripts
+    * Added support for edinburgh_pgi infiniband.
+    * Added support for lynx_pgi.
+    * Added support for pleiades [svn-ccsm-models.cgd.ucar.edu].
+    * Fixed co2_ppm value for FW and F1850W compsets, known problem.
+    * Fixed F_AMIP_CAM5 and F_1850_CN_CHEM compsets, known problem.
+    * Updates to intrepid compiler flags.
+    * Archiver fixes and enhancements.
+
+================================================================================
+Tag name: cesm1_0
+Originator(s): cseg
+Date: Fri Jun 25 2010
+One-line Summary: First released version of the cesm1.0 code.
+
+This tag is the first officially released version of the cesm1.0 code.
+Release tag cesm1_0 corresponds to internal release candidate cesm1_0_rel02.
+
+================================================================================

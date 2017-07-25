@@ -1,0 +1,191 @@
+
+#======================================================================
+# Clear coupler log files for comparison tests
+#======================================================================
+unsetenv CPLLOG_INIT
+unsetenv CPLLOG_HYBR
+unsetenv CPLLOG_REST
+
+cd $CASEROOT
+
+#--- these are setting for the hybrid run
+./xmlchange -file env_run.xml   -id CONTINUE_RUN -val FALSE
+./xmlchange -file env_run.xml   -id STOP_OPTION  -val ndays 
+./xmlchange -file env_run.xml   -id STOP_N       -val 10 
+./xmlchange -file env_run.xml   -id REST_OPTION  -val ifdays0
+./xmlchange -file env_run.xml   -id REST_N       -val 6
+
+setenv CCSMBUILDONLY TRUE
+./$CASE.build
+unsetenv CCSMBUILDONLY
+
+#--- set ref case name, remember main case name and exeroot
+set CASER0 = ${CASEROOT}
+set CASERR = ${CASEROOT}.ref
+set EXEROOT0 = $EXEROOT
+
+#======================================================================
+# do a 7 day startup ref case run
+#   by cloning the case and running there
+#======================================================================
+echo "doing a 7 day startup ref case" >>& $TESTSTATUS_LOG 
+
+source ./Tools/ccsm_getenv || exit -1
+
+set orig_date = $RUN_STARTDATE
+set start_date = $RUN_STARTDATE
+set start_year = `echo $start_date | cut -f 1 -d "-"`
+set start_date = $start_year-12-27
+
+@ start_yearp1 = $start_year + 1
+if ($start_yearp1 < 10) then
+   set start_yearp1 = "000$start_yearp1"
+else if ($start_yearp1 < 100) then
+   set start_yearp1 = "00$start_yearp1"
+else if ($start_yearp1 < 1000) then
+   set start_yearp1 = "0$start_yearp1"
+endif
+
+@ start_yearp2 = $start_year + 2
+if ($start_yearp2 < 10) then
+   set start_yearp2 = "000$start_yearp2"
+else if ($start_yearp2 < 100) then
+   set start_yearp2 = "00$start_yearp2"
+else if ($start_yearp2 < 1000) then
+   set start_yearp2 = "0$start_yearp2"
+endif
+
+#--- clone the main case to create ref case
+cd $CCSMROOT/scripts
+./create_clone -case ${CASERR} -clone ${CASER0} 
+cd ${CASERR}
+
+#--- setup ref case env_* and configure
+./xmlchange -file env_conf.xml -id RUN_TYPE      -val startup
+./xmlchange -file env_conf.xml -id RUN_STARTDATE -val $start_date
+
+./xmlchange -file env_run.xml -id CONTINUE_RUN  -val FALSE
+./xmlchange -file env_run.xml -id STOP_OPTION   -val ndays 
+./xmlchange -file env_run.xml -id STOP_N        -val 7 
+./xmlchange -file env_run.xml -id REST_OPTION   -val ndays
+./xmlchange -file env_run.xml -id REST_N        -val 5
+
+./configure -cleanall
+./configure -case4test 
+
+#--- go into ref case "space", copy binaries to avoid extra build
+source ./Tools/ccsm_getenv
+cp -r -p $EXEROOT0 $EXEROOT >& /dev/null
+./xmlchange -file env_build.xml -id BUILD_COMPLETE -val TRUE
+
+#--- run ref case
+./$CASE.run
+
+gunzip $DOUT_S_ROOT/cpl/logs/cpl.log*.gz
+set CplLogFile = `ls -1t $DOUT_S_ROOT/cpl/logs/cpl.log* | head -1`
+setenv CPLLOG_INIT $CplLogFile
+
+setenv DOUTSR $DOUT_S_ROOT
+
+#--- go back to main case "space"
+cd $CASER0
+source ./Tools/ccsm_getenv
+
+cd ${RUNDIR}
+cp ${DOUTSR}/rest/*${start_yearp1}-01-01-00000/* .
+
+#======================================================================
+# do a 10 day hybrid run from day 6 of startup year 0002 in hybrid mode, 0003-01-01
+o#======================================================================
+cd $CASEROOT
+echo "doing a 10 day hybrid test" >>& $TESTSTATUS_LOG 
+
+./xmlchange -file env_conf.xml -id RUN_STARTDATE -val $start_yearp2-01-01
+./xmlchange -file env_conf.xml -id RUN_REFDATE   -val $start_yearp1-01-01
+
+./configure -cleanall
+./configure -case4test 
+./xmlchange -file env_build.xml -id BUILD_COMPLETE -val TRUE
+
+./$CASE.run
+
+gunzip $DOUT_S_ROOT/cpl/logs/cpl.log*.gz
+set CplLogFile = `ls -1t $DOUT_S_ROOT/cpl/logs/cpl.log* | head -1`
+setenv CPLLOG_HYBR $CplLogFile
+
+#======================================================================
+# do a 5 day restart run
+#======================================================================
+cd $CASEROOT
+echo "doing a 5 day restart test" >>& $TESTSTATUS_LOG 
+
+./xmlchange -file env_run.xml -id CONTINUE_RUN -val TRUE
+./xmlchange -file env_run.xml -id STOP_OPTION  -val ndays 
+./xmlchange -file env_run.xml -id STOP_N       -val 5 
+./xmlchange -file env_run.xml -id REST_OPTION  -val none
+
+./$CASE.run
+
+gunzip $DOUT_S_ROOT/cpl/logs/cpl.log*.gz
+set CplLogFile = `ls -1t $DOUT_S_ROOT/cpl/logs/cpl.log* | head -1`
+setenv CPLLOG_REST $CplLogFile
+
+./xmlchange -file env_conf.xml -id RUN_STARTDATE -val $orig_date
+./xmlchange -file env_run.xml   -id CONTINUE_RUN -val FALSE
+./xmlchange -file env_run.xml   -id STOP_OPTION  -val ndays 
+./xmlchange -file env_run.xml   -id STOP_N       -val 10 
+./xmlchange -file env_run.xml   -id REST_OPTION  -val ifdays0
+./xmlchange -file env_run.xml   -id REST_N       -val 6
+
+#======================================================================
+# runs complete, compare hybrid and restart output
+#======================================================================
+setenv CPLLOG_GENCMP $CPLLOG_REST 
+echo "Initial Test log is $CPLLOG_INIT" >>& $TESTSTATUS_LOG 
+echo "Hybrid  Test log is $CPLLOG_HYBR" >>& $TESTSTATUS_LOG 
+echo "Restart Test log is $CPLLOG_REST" >>& $TESTSTATUS_LOG 
+
+#======================================================================
+# Check case validation, init run completed, then hybrid/restart
+# are exact.
+#======================================================================
+
+set basestatus = "UNDEF"
+
+if ($?CPLLOG_INIT) then
+  echo "Checking successful completion of init run" >>& $TESTSTATUS_LOG
+  set pass = `grep "SUCCESSFUL TERMINATION" $CPLLOG_INIT | wc -l`
+  if ( $pass != 0 ) then
+    set basestatus = "PASS "
+  else
+    echo "ERROR in ${0}:  initial coupler log file" >>& $TESTSTATUS_LOG
+    set basestatus = "FAIL "
+  endif
+else
+  echo "ERROR in ${0}:  init coupler log file NOT set" >>& $TESTSTATUS_LOG
+  set basestatus = "ERROR"
+endif
+
+if ($basestatus == "PASS") then
+if ( $?CPLLOG_HYBR ) then
+  if ( $?CPLLOG_REST ) then
+    echo "Comparing initial log file with second log file" >>& $TESTSTATUS_LOG
+    $CASETOOLS/check_exactrestart.pl $CPLLOG_HYBR $CPLLOG_REST >>& $TESTSTATUS_LOG
+    set pass = `tail -1 $TESTSTATUS_LOG | grep PASS | wc -l`
+    if ( $pass != 0 ) then
+      set basestatus = "PASS "
+    else
+      set basestatus = "FAIL "
+    endif
+  else
+    echo "ERROR in ${0}:  restart coupler log file NOT set" >>& $TESTSTATUS_LOG
+    set basestatus = "ERROR"
+  endif
+else
+  echo "ERROR in ${0}:  hybrid coupler log file NOT set" >>& $TESTSTATUS_LOG
+  set basestatus = "ERROR"
+endif
+endif
+
+echo "$basestatus ${CASEBASEID} " >&! $TESTSTATUS_OUT
+

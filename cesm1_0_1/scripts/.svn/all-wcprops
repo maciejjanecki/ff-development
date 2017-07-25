@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/!svn/ver/25/model_versions/cesm1_0_1/scripts
+END
+create_test
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/create_test
+END
+create_clone
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/create_clone
+END
+SVN_EXTERNAL_DIRECTORIES
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/SVN_EXTERNAL_DIRECTORIES
+END
+sample_pes_file.xml
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/sample_pes_file.xml
+END
+ChangeLog
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ChangeLog
+END
+create_newcase
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/create_newcase
+END
+sample_compset_file.xml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/sample_compset_file.xml
+END
+create_test_suite
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/create_test_suite
+END
+link_dirtree
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/link_dirtree
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/README
+END

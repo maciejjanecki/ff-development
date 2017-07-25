@@ -1,0 +1,166 @@
+#! /bin/csh -f
+
+set mach = intrepid
+
+#################################################################################
+if ($PHASE == set_batch) then
+#################################################################################
+
+source ./Tools/ccsm_getenv || exit -1
+
+set max_tasks_per_node = $MAX_TASKS_PER_NODE
+set ntasks = `${UTILROOT}/Tools/taskmaker.pl -sumtasks`
+set mthrds = `${UTILROOT}/Tools/taskmaker.pl -maxthrds`
+
+if (${mthrds} > ${max_tasks_per_node}) then
+   echo "ERROR max threads greater than max tasks per node"
+   exit 1
+endif
+
+@ nodes = (${ntasks} * ${mthrds}) / ${max_tasks_per_node}
+if ((${nodes} * ${max_tasks_per_node}) < (${ntasks} * ${mthrds})) then
+  @ nodes = ${nodes} + 1
+endif
+
+@ batchpes = ${nodes} * ${max_tasks_per_node}
+./xmlchange -file env_mach_pes.xml -id BATCH_PES -val ${batchpes}
+
+cat >! $CASEROOT/${CASE}.${mach}.run << EOF1
+#! /bin/csh -f
+#==============================================================================
+#  This is a CCSM coupled model job script for $mach.  The job scheduler on
+#  this platform does not currently support batch scripts, so this script must
+#  be run by the user directly instead.  Please redirect the output from this
+#  script, if desired.
+#==============================================================================
+
+
+
+cd $CASEROOT
+source ./Tools/ccsm_getenv || exit -1
+
+# Determine tasks and threads for batch queue 
+
+set max_tasks_per_node = \$MAX_TASKS_PER_NODE
+set ntasks = \`\${UTILROOT}/Tools/taskmaker.pl -sumtasks\`
+set npes   = \`\${UTILROOT}/Tools/taskmaker.pl -sumpes\`
+set mthrds = \`\${UTILROOT}/Tools/taskmaker.pl -maxthrds\`
+
+if (\${mthrds} > \${max_tasks_per_node}) then
+   echo "ERROR max threads greater than max tasks per node"
+   exit 1
+endif
+
+@ nodes = (\${ntasks} * \${mthrds}) / \${max_tasks_per_node}
+if ((\${nodes} * \${max_tasks_per_node}) < (\${ntasks} * \${mthrds})) then
+  @ nodes = \${nodes} + 1
+endif
+
+echo "nodes  = \${nodes}"
+echo "ntasks = \${ntasks}"
+echo "mthrds = \${mthrds}"
+
+if ( \${?COBALT_JOBID} == 0 ) then
+    echo "COBALT_JOBID not set, submitting job"
+    echo "qsub -n \${nodes} -t 60 -q prod --mode script \$0 -backend"
+    qsub -n \${nodes} -t 60 -q prod --mode script \$0 -backend
+    exit 0
+else
+    echo "COBALT_JOBID detected, assuming back-end invocation"
+endif
+
+
+EOF1
+
+
+#################################################################################
+else if ($PHASE == set_exe) then
+#################################################################################
+
+
+cat >> ${CASEROOT}/${CASE}.${MACH}.run << EOF1
+
+# -------------------------------------------------------------------------
+# Set up the model.  For the single executable, this means determining the
+# total number of tasks.  determine by largest max task of any component
+# -------------------------------------------------------------------------
+
+set max_tasks_per_node = \$MAX_TASKS_PER_NODE
+set ntasks = \`\${UTILROOT}/Tools/taskmaker.pl -sumtasks\`
+set npes   = \`\${UTILROOT}/Tools/taskmaker.pl -sumpes\`
+set mthrds = \`\${UTILROOT}/Tools/taskmaker.pl -maxthrds\`
+
+if (\${mthrds} == 1) then
+  set mode = vn
+else if (\${mthrds} == 2) then
+  set mode = dual
+else if (\${mthrds} == 4) then
+  set mode = smp
+else
+  echo "ERROR illegal max thread count \${mthrds}"
+  exit 1
+endif
+
+echo "ntasks = \${ntasks}"
+echo "mthrds = \${mthrds}"
+echo "mode   = \${mode}"
+
+# -------------------------------------------------------------------------
+# Run the model
+# -------------------------------------------------------------------------
+
+cd \$RUNDIR
+echo "\`date\` -- CSM EXECUTION BEGINS HERE"
+cobalt-mpirun -np  \${ntasks} -mode \${mode} -verbose 2 -cwd \`pwd\` -env "XLSMPOPTS=stack=64000000 OMP_NUM_THREADS=\${mthrds} DCMF_COLLECTIVES=1 BG_MAPPING=TXYZ LOGNAME=\$USER" ./ccsm.exe
+echo "\`date\` -- CSM EXECUTION HAS FINISHED" 
+
+EOF1
+
+
+
+#################################################################################
+else if ($PHASE == set_larch) then
+#################################################################################
+
+# Create the archive script
+touch ${CASEROOT}/${CASE}.${mach}.l_archive
+chmod 775 ${CASEROOT}/${CASE}.${mach}.l_archive
+
+cat >! $CASEROOT/${CASE}.${mach}.l_archive << EOF1
+#! /bin/csh -f
+#===============================================================================
+#  This is a CCSM coupled model batch long term archiving script
+#===============================================================================
+
+#-----------------------------------------------------------------------
+# Determine necessary environment variables
+#-----------------------------------------------------------------------
+
+cd $CASEROOT 
+
+source ./Tools/ccsm_getenv || exit -1
+
+#----------------------------------------------
+# run the long term archiver
+#----------------------------------------------
+
+setenv LID "\`date +%y%m%d-%H%M%S\`"
+\$CASETOOLS/ccsm_l_archive.csh   >&! ccsm_la.log.\$LID
+
+EOF1
+
+
+#################################################################################
+else
+#################################################################################
+
+    echo "mkbatch.$mach"
+    echo "  PHASE setting of $PHASE is not an accepted value"
+    echo "  accepted values are set_batch, set_exe and set_larch"
+    exit 1
+
+#################################################################################
+endif
+#################################################################################
+
+

@@ -1,0 +1,110 @@
+#! /bin/csh -f
+
+set mach = edinburgh_intel
+
+#################################################################################
+if ($PHASE == set_batch) then
+#################################################################################
+
+source ./Tools/ccsm_getenv || exit -1
+
+set mppsize = `${UTILROOT}/Tools/taskmaker.pl -sumonly`
+set maxthrds = `${UTILROOT}/Tools/taskmaker.pl -maxthrds`
+@ mppnodes = $mppsize / ${MAX_TASKS_PER_NODE}
+if ( $mppsize % ${MAX_TASKS_PER_NODE} > 0) then
+  @ mppnodes = $mppnodes + 1
+  @ mppsize = $mppnodes * ${MAX_TASKS_PER_NODE}
+endif
+@ taskpernode = ${MAX_TASKS_PER_NODE} / ${maxthrds}
+
+#--- Job name is first fifteen characters of case name ---
+set jobname = `echo ${CASE} | cut -c1-15`
+
+cat >! $CASEROOT/${CASE}.${mach}.run << EOF1
+#!/bin/csh -f
+#===============================================================================
+#  This is a CCSM batch job script for $mach
+#===============================================================================
+
+#PBS -N ${jobname}
+#PBS -q medium
+#PBS -l nodes=${mppnodes}:ppn=${taskpernode}
+#PBS -r n
+#PBS -j oe
+#PBS -S /bin/csh -V
+
+EOF1
+
+#################################################################################
+else if ($PHASE == set_exe) then
+#################################################################################
+
+set maxthrds = `${UTILROOT}/Tools/taskmaker.pl -maxthrds`
+set maxtasks = `${UTILROOT}/Tools/taskmaker.pl -sumtasks`
+
+cat >> ${CASEROOT}/${CASE}.${MACH}.run << EOF1
+# -------------------------------------------------------------------------
+# Run the model
+# -------------------------------------------------------------------------
+
+sleep 25
+cd \$RUNDIR
+echo "\`date\` -- CSM EXECUTION BEGINS HERE" 
+
+setenv OMP_NUM_THREADS ${maxthrds}
+mpiexec -n ${maxtasks} ./ccsm.exe >&! ccsm.log.\$LID
+wait
+
+echo "\`date\` -- CSM EXECUTION HAS FINISHED" 
+
+EOF1
+
+
+#################################################################################
+else if ($PHASE == set_larch) then
+#################################################################################
+
+
+set jobname = `echo ${CASE} | cut -c1-12`
+set jobname = ${jobname}_la
+
+cat >! $CASEROOT/${CASE}.${mach}.l_archive << EOF1
+#! /bin/csh -f
+#===============================================================================
+#  This is a CCSM coupled model batch long term archiving script
+#===============================================================================
+
+#PBS -N ${jobname}
+#PBS -q medium
+#PBS -l nodes=1:ppn=1
+#PBS -j oe
+
+#-----------------------------------------------------------------------
+# Determine necessary environment variables
+#-----------------------------------------------------------------------
+
+cd $CASEROOT 
+
+source ./Tools/ccsm_getenv || exit -1
+
+#----------------------------------------------
+# run the long term archiver
+#----------------------------------------------
+
+\$CASETOOLS/ccsm_l_archive.csh
+
+EOF1
+
+
+#################################################################################
+else
+#################################################################################
+
+    echo "mkscripts.$mach"
+    echo "  PHASE setting of $PHASE is not an accepted value"
+    echo "  accepted values are set_batch, set_exe and set_larch"
+    exit 1
+
+#################################################################################
+endif
+#################################################################################

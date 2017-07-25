@@ -1,0 +1,38 @@
+===============================================================================
+Tag Creator: njn01
+Tag Date:    13 August 2010
+Tag Name:    pop2/branch_tags/cesm1_0_rel_tags/cesm1_0_rel04_ccsm_pop_2_1_20100614a
+Tag Summary: Apply the correction to ecosys_mod.F90 so that the units reported in the
+             pop2 tavg output files for DON_prod are now correct 
+
+===============================================================================
+Tag Creator: njn01
+Tag Date:    18 June 2010
+Tag Name:    pop2/branch_tags/cesm1_0_rel_tags/cesm1_0_rel03_ccsm_pop_2_1_20100614a
+Tag Summary: Modify ChangeLog and remove stand-alone pop references, testing dirs, and
+             old documentation
+
+===============================================================================
+Tag Creator: njn01
+Tag Date:    18 June 2010
+Tag Name:    pop2/branch_tags/cesm1_0_rel_tags/cesm1_0_rel02_ccsm_pop_2_1_20100614a
+Tag Summary: Modify ChangeLog and remove deprecated- and testing-resolution files
+
+===============================================================================
+Tag Creator: njn01
+Tag Date:    18 June 2010
+Tag Name:    pop2/branch_tags/cesm1_0_rel_tags/cesm1_0_rel01_ccsm_pop_2_1_20100614a
+Tag Summary: Direct copy onto the branch 
+
+===============================================================================
+Branch Creator: njn01
+Branch Date:    18 June 2010
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+Branch Name: $SVN/pop2/branches/cesm1_0_rel
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Tag Summary:  This branch was populated with the pop2 tag used in the creation of
+              the cesm1_0_beta05 tag
+
+
+===============================================================================
+             

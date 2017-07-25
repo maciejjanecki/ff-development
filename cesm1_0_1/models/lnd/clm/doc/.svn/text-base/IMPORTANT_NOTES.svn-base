@@ -1,0 +1,55 @@
+IMPORTANT_NOTES							Jun/08/2010
+								Erik Kluzek
+
+Configure Modes NOT scientifically validated, documented, supported or even advised to be used:
+
+   C13 		(-c13)
+       The C13 mode for bgc=cn is NOT scientifically validated or documented and NOT recommended to be used.
+
+   CASA 	(-bgc casa)
+       The bgc=casa mode is NOT scientifically validated or documented and NOT recommended to be used.
+
+   BUILDPIO  	(-pio)
+       This mode is NOT tested and not even functional and hence should NOT be used. PIO WILL be provided
+       in future versions however.
+
+   SNICAR_FRC 	(-snicar_frc)
+       This mode is tested and functional, but is NOT constantly scientifcally validated, and should be 
+       considered experimental.
+
+   PERGRO 	(-pergro)
+       This mode is tested to be functional, but NOT scientifically validated. It's purpose is in an attempt
+       to validate that a port to a new machine is reasonable, or changes that are only roundoff will NOT 
+       affect the climate. The best method for this validation is to run 100 year simulations with both and
+       make sure the climate is similar between each. We hope to validate the method using PERGRO in future
+       versions of the model.
+
+build-namelist items that are NOT recommended:
+
+-lnd_res 
+
+This is the option to turn on the fine-mesh mode of CLM, running CLM at a finer
+resolution than the atmospheric forcing. This is an experimental mode and NOT recommend
+for general use. You turn this on by 
+
+Namelist items that should NOT be exercised:
+
+  create_crop_landunit:  Functional, but experimental
+  carbon_only:           (carbon_only=.true. with -bgc cn)
+                         The Carbon only mode of CN model is known to be too productive, and requires some modifications 
+                         that will be on an update to the CESM1.0 release.
+  urban_traffic:         Not currently functional
+  pio namelist options:  hist_pioflag, ncd_lowmem2d, ncd_pio_def, ncd_pio_UseRearranger, ncd_pio_UseBoxRearr, 
+                         ncd_pio_SerialCDF, ncd_pio_DebugLevel, and ncd_pio_num_iotasks
+        These options are NOT currently tested or functional. See the pio configure mode above.
+  fine-mesh namelist options: 
+  casa namelist options: lnpp, lalloc, q10, spunup, and fcpool
+
+        As above CASA is NOT scientifically validated and hence we don't recommend using it, thus we don't
+        recommend using the casa namelist options (they are only available when running with CASA).
+
+See KnownBugs file for Known Problems:
+
+    See the KnownBugs file in this directory for the list of known problmes.
+
+

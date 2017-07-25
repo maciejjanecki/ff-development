@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Case.template
+END
+config_compsets.xml
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Case.template/config_compsets.xml
+END
+config_definition.xsl
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Case.template/config_definition.xsl
+END
+config_compsets.xsl
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Case.template/config_compsets.xsl
+END
+config_grid.xml
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Case.template/config_grid.xml
+END
+ConfigCase.pm
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Case.template/ConfigCase.pm
+END
+config_definition.xml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Case.template/config_definition.xml
+END

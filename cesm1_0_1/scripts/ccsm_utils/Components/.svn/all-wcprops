@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Components
+END
+mct.buildlib
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Components/mct.buildlib
+END
+csm_share.buildlib
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Components/csm_share.buildlib
+END
+pio.buildlib
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Components/pio.buildlib
+END

@@ -1,0 +1,160 @@
+
+#======================================================================
+# Clear coupler log files for comparison tests
+#======================================================================
+unsetenv CPLLOG_INIT
+unsetenv CPLLOG_BRCH
+unsetenv CPLLOG_REST
+
+cd $CASEROOT
+
+#--- these are settings for branch run
+
+./xmlchange -file env_run.xml -id CONTINUE_RUN -val FALSE
+./xmlchange -file env_run.xml -id STOP_OPTION  -val ndays 
+./xmlchange -file env_run.xml -id STOP_N       -val 9 
+./xmlchange -file env_run.xml -id REST_OPTION  -val ndays
+./xmlchange -file env_run.xml -id REST_N       -val 5
+
+#--- build model for use in ref and main cases
+setenv CCSMBUILDONLY TRUE
+./$CASE.build
+unsetenv CCSMBUILDONLY
+
+#--- set ref case name, remember main case name and exeroot
+set CASER0 = ${CASEROOT}
+set CASERR = ${CASEROOT}.ref
+set EXEROOT0 = $EXEROOT
+
+#======================================================================
+# do a 15 day startup ref case run
+#   by cloning the case and running there
+#======================================================================
+echo "doing a 15 day startup ref case" >>& $TESTSTATUS_LOG 
+
+source ./Tools/ccsm_getenv || exit -1
+set start_date = $RUN_STARTDATE
+set start_year = `echo $start_date | cut -f 1 -d "-"`
+set start_date = $start_year-01-01
+ 
+#--- clone the main case to create ref case
+cd $CCSMROOT/scripts
+./create_clone -case ${CASERR} -clone ${CASER0} 
+
+cd ${CASERR}
+
+#--- setup ref case env_* and configure
+./xmlchange -file env_conf.xml -id RUN_TYPE      -val startup
+./xmlchange -file env_conf.xml -id RUN_STARTDATE -val $start_date
+
+./xmlchange -file env_run.xml -id CONTINUE_RUN  -val FALSE
+./xmlchange -file env_run.xml -id STOP_OPTION   -val ndays 
+./xmlchange -file env_run.xml -id STOP_N        -val 15 
+./xmlchange -file env_run.xml -id REST_OPTION   -val ifdays0
+./xmlchange -file env_run.xml -id REST_N        -val 6
+
+./configure -cleanall
+./configure -case4test 
+
+#--- go into ref case "space", copy binaries to avoid extra build
+source ./Tools/ccsm_getenv
+cp -r -p $EXEROOT0 $EXEROOT >& /dev/null
+./xmlchange -file env_build.xml -id BUILD_COMPLETE -val TRUE
+
+#--- run ref case
+./$CASE.run
+
+gunzip ${DOUT_S_ROOT}/cpl/logs/cpl.log*.gz
+set CplLogFile = `ls -1t ${DOUT_S_ROOT}/cpl/logs/cpl.log* | head -1`
+setenv CPLLOG_INIT $CplLogFile
+
+set EXEROOTR = $EXEROOT
+set DOUTSR = ${DOUT_S_ROOT}
+
+#--- go back to main case "space"
+cd $CASER0
+source ./Tools/ccsm_getenv
+
+cd ${RUNDIR}
+cp ${DOUTSR}/rest/${start_year}-01-06-00000/* .
+
+#======================================================================
+# do a 9 day branch run from day 6 of restart
+#======================================================================
+cd $CASEROOT
+echo "doing a 9 day branch run" >>& $TESTSTATUS_LOG 
+
+./xmlchange -file env_conf.xml -id RUN_REFDATE -val $start_year-01-06
+
+./configure -cleanall
+./configure -case4test 
+./xmlchange -file env_build.xml -id BUILD_COMPLETE -val TRUE
+
+./$CASE.run
+
+gunzip ${DOUT_S_ROOT}/cpl/logs/cpl.log*.gz
+set CplLogFile = `ls -1t ${DOUT_S_ROOT}/cpl/logs/cpl.log* | head -1`
+setenv CPLLOG_BRCH $CplLogFile
+
+#======================================================================
+# do a 5 day restart run
+#======================================================================
+cd $CASEROOT
+echo "doing a 5 day restart test" >>& $TESTSTATUS_LOG 
+
+./configure -cleanall
+./configure -case4test 
+./xmlchange -file env_build.xml -id BUILD_COMPLETE -val TRUE
+
+./xmlchange -file env_run.xml -id CONTINUE_RUN -val TRUE
+./xmlchange -file env_run.xml -id STOP_OPTION  -val ndays 
+./xmlchange -file env_run.xml -id STOP_N       -val 5 
+./xmlchange -file env_run.xml -id REST_OPTION  -val none
+
+./$CASE.run
+
+gunzip ${DOUT_S_ROOT}/cpl/logs/cpl.log*.gz
+set CplLogFile = `ls -1t ${DOUT_S_ROOT}/cpl/logs/cpl.log* | head -1`
+setenv CPLLOG_REST $CplLogFile
+
+./xmlchange -file env_run.xml   -id CONTINUE_RUN -val FALSE
+./xmlchange -file env_run.xml   -id STOP_OPTION  -val ndays 
+./xmlchange -file env_run.xml   -id STOP_N       -val 9 
+./xmlchange -file env_run.xml   -id REST_OPTION  -val ndays
+./xmlchange -file env_run.xml   -id REST_N       -val 5
+
+#======================================================================
+# runs complete, compare 15 day init run and 5 day restart run
+#======================================================================
+setenv CPLLOG_GENCMP $CPLLOG_REST 
+echo "Initial Test log is $CPLLOG_INIT" >>& $TESTSTATUS_LOG 
+echo "Branch Test log is $CPLLOG_BRCH" >>& $TESTSTATUS_LOG 
+echo "Restart Test log is $CPLLOG_REST" >>& $TESTSTATUS_LOG 
+
+#======================================================================
+# Check case validation first
+#======================================================================
+
+set basestatus = "UNDEF"
+
+if ( $?CPLLOG_INIT ) then
+  if ( $?CPLLOG_REST ) then
+    echo "Comparing initial log file with second log file" >>& $TESTSTATUS_LOG
+    $CASETOOLS/check_exactrestart.pl $CPLLOG_INIT $CPLLOG_REST >>& $TESTSTATUS_LOG
+    set pass = `tail -1 $TESTSTATUS_LOG | grep PASS | wc -l`
+    if ( $pass != 0 ) then
+      set basestatus = "PASS "
+    else
+      set basestatus = "FAIL "
+    endif
+  else
+    echo "ERROR in ${0}:  restart coupler log file NOT set" >>& $TESTSTATUS_LOG
+    set basestatus = "ERROR"
+  endif
+else
+  echo "ERROR in ${0}:  initial coupler log file NOT set" >>& $TESTSTATUS_LOG
+  set basestatus = "ERROR"
+endif
+
+echo "$basestatus ${CASEBASEID} " >&! $TESTSTATUS_OUT
+

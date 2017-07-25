@@ -1,0 +1,195 @@
+#===============================================================================
+# The following always need to be set
+# USE_MPISERIAL    Whether to build and use mpiserial lib or not. [values TRUE FALSE]
+# SMP              Set to TRUE to enable building in SMP mode (uses OpenMP).  
+# USER_CPPDEFS     CPP definitions (non platform dependent)
+#
+# The following can be optionally set
+# USER_LIB_MPI       Allow user to override the default 
+# USER_LIB_NETCDF    Allow user to override the default 
+# USER_LAPACK_LIBDIR Allow user to override the default 
+# USER_ESMF_LIBDIR   Allos user to override the default
+# USER_LINKER        Allow user to override the default
+#
+# USER_INC_MPI       Allow user to override the default 
+# USER MPI_LIB_NAME  Allow user to override the default
+# USER_INC_NETCDF    Allow user to override the default 
+# USER_MOD_NETCDF    Allow user to override the default 
+# USER_FC            Allow user to override the default Fortran compiler specified in Makefile.
+# USER_CC            Allow user to override the default C compiler specified in Makefile (linux only).
+# USER_CFLAGS        Additional C compiler flags that the user wishes to set.
+# USER_FFLAGS        Additional Fortran compiler flags that the user wishes to set.
+# USER_LDLAGS        Additional load flags that the user wishes to set.
+# F_OPTIMIZATION_OVERRIDE
+#                    Use this to replace default Fortran compiler optimization.  
+#===============================================================================
+
+#===============================================================================
+# Set general compile options
+#===============================================================================
+# Makefile macros for AIX
+#
+# Notes:  (see xlf user's guide for the details)
+#  -lmass          => IBM-tuned intrinsic lib
+#  -qsmp=noauto    => enable SMP directives, but don't add any
+#  -qsmp=omp       => enable SMP directives, strict omp
+#  -qstrict        => don't turn divides into multiplies, etc
+#  -qhot           => higher-order-transformations (eg. loop padding)
+#  -qalias=noaryoverlp => assume no array overlap wrt equivalance, etc
+#  -qmaxmem=-1     => memory available to compiler during optimization
+#  -qipa=level=2   => InterProcedure Analysis (eg. inlining) => slow compiles
+#  -p -pg          => enable profiling (use in both FFLAGS and LDFLAGS)
+#  -qreport        => for smp/omp only
+#  -bmaxdata:0x80000000 => use maximum allowed data segment size
+#  -g              => always leave it on because overhead is minimal (?)
+#  -qflttrap=...   => enable default sigtrap (core dump)
+#  -C              => runtime array bounds checking (runs slow)
+#  -qinitauto=...  => initializes automatic variables
+#
+# The following macros are set by CAM's configure script.  
+# They should only be hand edited by experts.
+#
+# Use the thread-safe compilers even when disabling openMP.
+#===============================================================================
+
+# Note that CPPDEFS is set in Macros.cppdefs
+CPPDEFS += -DLINUX -DSEQ_$(FRAMEWORK) -DFORTRANUNDERSCORE -DNO_SHR_VMATH
+
+ifeq ($(strip $(DEBUG)),TRUE)
+   CPPDEFS +=
+endif
+ifeq ($(compile_threaded), true)
+   CPPDEFS += -DTHREADED_OMP
+endif
+
+cpre = $(null)-WF,-D$(null)
+FPPFLAGS := $(patsubst -D%,$(cpre)%,$(CPPDEFS)) 
+
+ifeq ($(USE_MPISERIAL),TRUE)
+  FC := mpif90
+  CC := icc
+else
+  FC := mpif90
+  CC := icc
+endif
+LD            := $(FC)
+
+# NETCDF_PATH   := /usr/local
+NETCDF_PATH   := $(NETCDFDIR)
+INC_NETCDF    := $(NETCDF_PATH)/include
+LIB_NETCDF    := $(NETCDF_PATH)/lib
+MOD_NETCDF    := $(NETCDF_PATH)/include
+
+INC_MPI       := $(MPIDIR)/include
+LIB_MPI       := 
+PNETCDF_PATH  := 
+LIB_PNETCDF   := 
+LAPACK_LIBDIR := 
+
+CFLAGS        := $(CPPDEFS) -O2
+FIXEDFLAGS    := 
+FREEFLAGS     := -FR
+FFLAGS        :=  -c -fpp $(CPPDEFS) -132 -fp-model precise -O2 -convert big_endian -assume byterecl -ftz -traceback
+FFLAGS_NOOPT  := $(FFLAGS)
+FLAGS_OPT     := 
+LDFLAGS       := 
+AR            := ar
+MOD_SUFFIX    := mod
+CONFIG_SHELL  :=
+
+#===============================================================================
+# Override with user settings
+#===============================================================================
+
+ifneq ($(strip $(USER_FC)),)
+   FC := $(USER_FC)
+endif
+ifneq ($(strip $(USER_CC)),)
+   CC := $(USER_CC)
+endif
+ifneq ($(strip $(USER_INC_NETCDF)),)
+   INC_NETCDF := $(USER_INC_NETCDF)
+endif
+ifneq ($(strip $(USER_MOD_NETCDF)),)
+   MOD_NETCDF := $(USER_MOD_NETCDF)  
+endif
+ifneq ($(strip $(USER_INC_PNETCDF)),)
+   INC_PNETCDF := $(USER_INC_PNETCDF)
+endif
+ifneq ($(strip $(USER_INC_MPI)),)
+   INC_MPI := $(USER_INC_MPI)
+endif
+
+#===============================================================================
+# Set include paths (needed after override for any model specific builds below)
+#===============================================================================
+
+INCLDIR := -I. -I/usr/include
+ifneq ($(strip $(INC_NETCDF)),)
+  INCLDIR += -I$(INC_NETCDF)
+endif
+ifneq ($(strip $(MOD_NETCDF)),)
+  INCLDIR += -I$(MOD_NETCDF)
+endif
+ifneq ($(strip $(INC_MPI)),)
+  INCLDIR += -I$(INC_MPI)
+endif 
+ifneq ($(strip $(INC_PNETCDF)),)
+  INCLDIR += -I$(INC_PNETCDF)
+endif
+
+# IBM specific update to system libraries
+ifeq ($(strip $(DEBUG)),TRUE)
+  SLIBS := 
+else
+  SLIBS := 
+endif
+
+#===============================================================================
+# Set model and other specific options
+# NOTE - all CPPDEFS options must be defined before this point
+#===============================================================================
+
+# Set flags specific to debug mode
+ifeq ($(strip $(DEBUG)),TRUE)
+   FFLAGS  += -g -check bounds -check pointers -check uninit -traceback -u -ftrapuv
+else
+   FFLAGS += $(FLAGS_OPT)
+endif
+
+ifeq ($(strip $(compile_threaded)),true)
+  FFLAGS_NOOPT += 
+
+  # -qsmp implicitly turns on -O2.  Explicitly disable this for debugging.
+  ifeq ($(DEBUG),TRUE)
+    FFLAGS   += -openmp
+    CFLAGS   += -openmp
+    LDFLAGS  += -openmp
+  else
+    FFLAGS   += -openmp
+    CFLAGS   += -openmp
+    LDFLAGS  += -openmp
+  endif
+endif
+
+CONFIG_ARGS :=
+
+ifeq ($(MODEL),mct)
+        #add arguments for mct configure here
+  CONFIG_ARGS += CC="$(CC)" FC="$(FC)" F90="$(FC)" OPT="-O2" F90FLAGS="-extend_source -g -fp-model precise" ENDIAN="-convert big_endian"
+endif
+
+ifeq ($(MODEL),pio)
+  ifneq ($(strip $(PIO_CONFIG_OPTS)),)
+    CONFIG_ARGS += $(PIO_CONFIG_OPTS)
+  endif 
+  CONFIG_ARGS += CC="$(CC)" F90="$(FC)" NETCDF_PATH="$(NETCDF_PATH)" MPI_INC="-I$(INC_MPI)"
+endif
+
+# Append user defined compiler and load flags to Makefile defaults
+CFLAGS   += $(USER_CFLAGS)
+FFLAGS   += $(USER_FFLAGS)
+LDFLAGS  += $(USER_LDFLAGS)
+
+
+

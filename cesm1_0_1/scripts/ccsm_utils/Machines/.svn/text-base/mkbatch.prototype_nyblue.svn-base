@@ -1,0 +1,84 @@
+#! /bin/csh -f
+
+set mach = prototype_nyblue
+
+#################################################################################
+if ($PHASE == set_batch) then
+#################################################################################
+
+source ./Tools/ccsm_getenv || exit -1
+
+cat >! $CASEROOT/${CASE}.${mach}.run << EOF1
+#! /bin/csh -f
+#==============================================================================
+#  This is a CCSM coupled model job script for $mach.  The job scheduler on
+#  this platform does not currently support batch scripts, so this script must
+#  be run by the user directly instead.  Please redirect the output from this
+#  script, if desired.
+#==============================================================================
+
+EOF1
+
+
+#################################################################################
+else if ($PHASE == set_exe) then
+#################################################################################
+
+
+cat >> ${CASEROOT}/${CASE}.${MACH}.run << EOF1
+
+# -------------------------------------------------------------------------
+# Set up the model.  For the single executable, this means determining the
+# total number of tasks.  determine by largest max task of any component
+# -------------------------------------------------------------------------
+
+set ntasks_tot = 0
+
+@ n = 0
+foreach model (\$MODELS)
+  @ n = \$n + 1
+  @ tot = (\$ROOTPE[\$n] + (\$NTASKS[\$n] * \$PSTRID[\$n]))
+  if (\$tot > \$ntasks_tot) then
+     set ntasks_tot = \$tot
+  endif
+end
+
+@ tasks = \$ntasks_tot
+
+# -------------------------------------------------------------------------
+# Run the model
+# -------------------------------------------------------------------------
+
+cd \$RUNDIR
+echo "`date` -- CSM EXECUTION BEGINS HERE"
+set out=\`cqsub -n \${tasks} -t 03:00:00 ccsm.exe\`
+echo \$out
+set jobid=\`echo \$out\`
+cqwait \$jobid
+echo "`date` -- CSM EXECUTION HAS FINISHED" 
+
+EOF1
+
+
+
+#################################################################################
+else if ($PHASE == set_larch) then
+#################################################################################
+
+
+  # this is a place holder for a long term archiving script
+
+
+#################################################################################
+else
+#################################################################################
+
+    echo "mkbatch.$mach"
+    echo "  PHASE setting of $PHASE is not an accepted value"
+    echo "  accepted values are set_batch, set_exe and set_larch"
+    exit 1
+
+#################################################################################
+endif
+#################################################################################
+

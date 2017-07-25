@@ -1,0 +1,239 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools
+END
+testcase_begin
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/testcase_begin
+END
+ccsm_msread
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_msread
+END
+configure
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/configure
+END
+ccsm_buildexe.csh
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_buildexe.csh
+END
+check_input_data
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/check_input_data
+END
+ccsm_check_lockedfiles
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_check_lockedfiles
+END
+ccsm_postrun.csh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_postrun.csh
+END
+ccsm_mswrite
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_mswrite
+END
+testcase_env.csh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/testcase_env.csh
+END
+st_archive.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/st_archive.sh
+END
+clean_build
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/clean_build
+END
+ccsm_cpdata
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_cpdata
+END
+check_case
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/check_case
+END
+generate_resolved.csh
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/generate_resolved.csh
+END
+check_exactrestart.pl
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/check_exactrestart.pl
+END
+ccsm_sedfile
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_sedfile
+END
+xmltestentry
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/xmltestentry
+END
+listfilesin_streams
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/listfilesin_streams
+END
+ccsm_msls
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_msls
+END
+ccsm_getfile
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_getfile
+END
+create_production_test_readme
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/create_production_test_readme
+END
+ccsm_buildnml.csh
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_buildnml.csh
+END
+ccsm_auto.csh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_auto.csh
+END
+hist_compare.csh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/hist_compare.csh
+END
+ccsm_prestage.csh
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_prestage.csh
+END
+xml2env
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/xml2env
+END
+concat_daily_hist.csh
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/concat_daily_hist.csh
+END
+taskmaker.pl
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/taskmaker.pl
+END
+ccsm_getenv
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_getenv
+END
+build_streams
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/build_streams
+END
+testcase_end
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/testcase_end
+END
+ccsm_getinput
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_getinput
+END
+xmlchange
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/xmlchange
+END
+generate_batch.csh
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/generate_batch.csh
+END
+testcase_setup.csh
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/testcase_setup.csh
+END
+create_production_test
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/create_production_test
+END
+ccsm_splitdf
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_splitdf
+END
+ccsm_msmkdir
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_msmkdir
+END
+ccsm_l_archive.csh
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/ccsm_l_archive.csh
+END

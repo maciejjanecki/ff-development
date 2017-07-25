@@ -1,0 +1,1006 @@
+<chapter id="running_ccsm">
+<title>Running a case</title>
+
+<para> To run a case, the user must submit the batch script
+<filename>$CASE.$MACH.run</filename>. In addition, the user needs to
+also modify &env_run.xml; for their particular needs. </para>
+
+<para> &env_run.xml; contains variables which may be modified during
+the course of a model run. These variables comprise coupler namelist
+settings for the model stop time, model restart frequency, coupler
+history frequency and a flag to determine if the run should be flagged
+as a continuation run. In general, the user needs to only set the
+variables $<envar>STOP_OPTION</envar> and $<envar>STOP_N</envar>. The
+other coupler settings will then be given consistent and reasonable
+default values. These default settings guarantee that restart files
+are produced at the end of the model run. </para>
+
+
+<!-- ======================================================================= -->
+<sect1 id="running_ccsm_runtime">
+<title>Customizing runtime settings</title>
+
+<para>
+As mentioned above, variables that control runtime settings are found in
+&env_run.xml;. In the following, we focus on the handling of run control
+(e.g. length of run, continuing a run) and output
+data. We also give a more detailed description of &cesm; restarts.
+</para>
+
+<!-- ======================================================================= -->
+<sect2 id="running_ccsm_env_job">
+<title>Setting run control variables</title>
+
+<para>
+Before a job is submitted to the batch system, the user needs first
+check that the batch submission lines in
+<filename>$CASE.$MACH.run</filename> are appropriate. These lines
+should be checked and modified accordingly for appropriate account
+numbers, time limits, and stdout/stderr file names.  The user should
+then modify &env_run.xml; to determine the key run-time settings, as
+outlined below:
+</para>
+
+<variablelist>
+
+<varlistentry><term><option>CONTINUE_RUN </option></term>
+<listitem>
+<para>
+Determines if the run is a restart run.   
+Set to FALSE when initializing a startup, branch or hybrid case.
+Set to TRUE when continuing a run. (logical)
+</para>
+<para>
+When you first begin a branch, hybrid or startup run, CONTINUE_RUN
+must be set to FALSE. When you successfully run and get a restart
+file, you will need to change CONTINUE_RUN to TRUE for the remainder
+of your run. Details of <link linkend="running_ccsm_restarts">
+performing model restarts </link> are provided below.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>RESUBMIT</option></term>
+<listitem>
+<para>
+Enables the model to automatically resubmit a new run.  To get
+multiple runs, set RESUBMIT greater than 0, then RESUBMIT will be
+decremented and the case will be resubmitted.  The case will stop automatically
+resubmitting when the RESUBMIT value reaches 0. 
+</para>
+<para>
+Long &cesm; runs can easily outstrip supercomputer queue time limits. For
+this reason, a case is usually run as a series of jobs, each
+restarting where the previous finished.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>STOP_OPTION</option></term>
+<listitem>
+<para>
+Ending simulation time. 
+</para>
+<para>
+Valid values are: [none, never, nsteps, nstep, nseconds, nsecond,
+nminutes, nminute, nhours, nhour, ndays, nday, nmonths, nmonth,
+nyears, nyear, date, ifdays0, end] (char)
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>STOP_N</option></term>
+<listitem>
+<para>
+Provides a numerical count for $STOP_OPTION. (integer)
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>STOP_DATE </option></term>
+<listitem>
+<para>
+Alternative yyyymmdd date option, negative value implies off. (integer)
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>REST_OPTION </option></term>
+<listitem>
+<para>
+Restart write interval. 
+</para>
+<para>
+Valid values are: [none, never, nsteps, nstep, nseconds, nsecond,
+nminutes, nminute, nhours, nhour, ndays, nday, nmonths, nmonth,
+nyears, nyear, date, ifdays0, end] (char)
+</para>
+<para>
+Alternative yyyymmdd date option, negative value implies off. (integer)
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>REST_N</option></term>
+<listitem>
+<para>
+Number of intervals to write a restart. (integer)
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>REST_DATE </option></term>
+<listitem>
+<para>
+Model date to write restart, yyyymmdd
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>STOP_DATE </option></term>
+<listitem>
+<para>
+Alternative yyyymmdd date option, negative value implies off. (integer)
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>
+By default,
+<screen>
+STOP_OPTION = ndays
+STOP_N = 5
+STOP_DATE = -999
+</screen>
+</para>
+
+<para>
+The default setting is only appropriate for initial testing. Before a 
+longer run is started, update the stop times based on the case 
+throughput and batch queue limits.  For  example, if the model runs 5 
+model years/day, set <envar>RESUBMIT</envar>=30, <envar>STOP_OPTION</envar>= nyears,
+and <envar>STOP_N</envar>= 5. 
+The model will then run in five year increments, and stop after 30 
+submissions.
+</para>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="running_ccsm_env_output">
+<title>Output data</title>
+
+<para>
+Each &cesm; component produces its own output datasets consisting of
+history, restart and output log files. Component history files are in
+netCDF format whereas component restart files may be in netCDF or
+binary format and are used to either exactly restart the model or to
+serve as initial conditions for other model cases.
+</para>
+
+<para>
+Archiving is a phase of a &cesm; model run where the generated output
+data is moved from $RUNDIR (normally $EXEROOT/run) to a local disk area (short-term archiving)
+and subsequently to a long-term storage system (long-term
+archiving). It has no impact on the production run except to clean up
+disk space and help manage user quotas.  Short and long-term archiving
+environment variables are set in the &env_mach_specific;
+file. Although short-term and long-term archiving are implemented
+independently in the scripts, there is a dependence between the two
+since the short-term archiver must be turned on in order for the
+long-term archiver to be activated.  In &env_run.xml;, several
+variables control the behavior of short and long-term
+archiving. These are described below.
+</para>
+
+<variablelist>
+
+<varlistentry><term><option>LOGDIR</option></term>
+<listitem>
+<para>
+Extra copies of the component log files will be saved here.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>DOUT_S</option></term>
+<listitem>
+<para>
+If TRUE, short term archiving will be turned on. 
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>DOUT_S_ROOT </option></term>
+<listitem>
+<para>
+Root directory for short term archiving. This directory must be
+visible to compute nodes. 
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>DOUT_S_SAVE_INT_REST_FILES </option></term>
+<listitem>
+<para>
+If TRUE, perform short term archiving on all interim restart files,
+not just those at the end of the run. By default, this value is FALSE.
+This is for expert users ONLY and requires expert knowledge. We will
+not document this further in this guide.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>DOUT_L_MS</option></term>
+<listitem>
+<para>
+If TRUE, perform long-term archiving on the output data. 
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>DOUT_L_MSROOT</option></term>
+<listitem>
+<para>
+Root directory on mass store system for long-term data archives.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>DOUT_L_HTAR</option></term>
+<listitem>
+<para>
+If true, DOUT_L_HTAR the long-term archiver will store history data in annual tar files.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>DOUT_L_RCP</option></term>
+<listitem>
+<para>
+If TRUE, long-term archiving is done via the rcp command
+(this is not currently supported).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>DOUT_L_RCP_ROOT</option></term>
+<listitem>
+<para>
+Root directory for long-term archiving on rcp remote machine.
+(this is not currently supported).
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>
+Several important points need to be made about archiving:
+</para>
+
+<itemizedlist>
+<listitem><para>
+By default, short-term archiving is enabled and long-term archiving is
+disabled.
+</para></listitem>
+<listitem><para>
+All output data is initially written to $RUNDIR.
+</para></listitem>
+<listitem><para>
+Unless a user explicitly turns off short-term archiving, files will be
+moved to $DOUT_S_ROOT at the end of a successful model run.
+</para></listitem>
+
+<listitem><para> If long-term archiving is enabled, files will be
+moved to $<envar>DOUT_L_MSROOT</envar> by
+<filename>$CASE.$MACH.l_archive</filename>, which is run as a
+separate batch job after the successful completion of a model run.
+</para></listitem>
+
+<listitem><para>
+Users should generally turn off short term-archiving when developing
+new &cesm; code.
+</para></listitem>
+
+<listitem><para>
+If long-term archiving is not enabled, users must monitor quotas and
+usage in the $DOUT_S_ROOT/ directory and should manually clean up
+these areas on a frequent basis.
+</para></listitem>
+
+</itemizedlist>
+
+<para>
+Standard output generated from each &cesm; component is saved in a "log
+file" for each component in $<envar>RUNDIR</envar>. 
+Each time the model is run, a
+single coordinated datestamp is incorporated in the filenames of all
+output log files associated with that run. This common datestamp is
+generated by the run script and is of the form YYMMDD-hhmmss, where
+YYMMDD are the Year, Month, Day and hhmmss are the hour, minute and
+second that the run began (e.g. ocn.log.040526-082714). Log files are
+also copied to a user specified directory using the variable $LOGDIR
+in &env_run.xml;. The default is a 'logs' subdirectory beneath the
+case directory.
+</para>
+
+<para>
+By default, each component also periodically writes history files
+(usually monthly) in netCDF format and also writes netCDF or binary
+restart files in the $RUNDIR directory. The history and log files are
+controlled independently by each component. History output control
+(i.e. output fields and frequency) is set in the
+<filename>Buildconf/$component.buildnml.csh</filename> files.
+</para>
+
+<para>
+The raw history data does not lend itself well to easy time-series
+analysis. For example, CAM writes one or more large netCDF history
+file(s) at each requested output period.  While this behavior is
+optimal for model execution, it makes it difficult to analyze time
+series of individual variables without having to access the entire
+data volume. Thus, the raw data from major model integrations is
+usually postprocessed into more user-friendly configurations, such as
+single files containing long time-series of each output fields, and
+made available to the community.
+</para>
+
+<para>
+As an example, for the  following example settings
+</para>
+
+<screen>
+DOUT_S = TRUE
+DOUT_S_ROOT = /ptmp/$user/archive
+DOUT_L_MS = TRUE
+DOUT_L_MSROOT /USER/csm/b40.B2000
+</screen>
+
+<para>
+the run will automatically submit the
+<filename>$CASE.$MACH.l_archive</filename> to the queue upon its completion to archive the
+data.  The system is not bulletproof, and the user will want to verify at regular intervals that
+the archived data is complete, particularly during long running jobs.
+</para>
+
+</sect2>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="running_ccsm_loadbalance">
+<title>Load balancing a case</title>
+
+<para>
+Load balancing refers to the optimization of the processor layout for
+a given model configuration (compset, grid, etc) such that the cost
+and throughput will be optimal. Optimal is a somewhat subjective
+thing. For a fixed total number of processors, it means achieving the
+maximum throughput. For a given configuration across varied processor
+counts, it means finding several "sweet spots" where the model is
+minimally idle, the cost is relatively low, and the throughput is
+relatively high. As with most models, increasing total processors
+normally results in both increased throughput and increased cost. If
+models scaled linearly, the cost would remain constant across
+different processor counts, but generally, models don't scale linearly
+and cost increases with increasing processor count. This is certainly
+true for CCSM4. It is strongly recommended that a user perform a
+load-balancing exercise on their proposed model run before undertaking
+a long production run.
+</para>
+
+<para>
+CCSM4 has significant flexibility with respect to the layout of
+components across different hardware processors. In general, there are
+six unique models (atm, lnd, ocn, ice, glc, cpl) that are managed
+independently in CCSM4, each with a unique MPI communicator. In
+addition, the driver runs on the union of all processors and controls
+the sequencing and hardware partitioning.  
+</para>
+
+<para>
+Please see the section on <link linkend="case_conf_setting_pes">
+setting the case PE layout </link> for a detailed discussion of how to
+set processor layouts and the example on <link linkend="use_case_pelayout">
+changing the PE layout </link>.
+</para>
+
+<!-- ======================================================================= -->
+<sect2 id="timing_info">
+<title>Model timing data </title>
+
+<para>
+In order to perform a load balancing exercise, the user must first be
+aware of the different types of timing information produced by every
+&cesm; run. How this information is used is described in detail in 
+<link linkend="using_timing_info"> using model timing data. </link>
+</para>
+
+<para>
+A summary timing output file is produced after every &cesm; run. This
+file is placed in
+<filename>$CASEROOT/timing/ccsm_timing.$CASE.$date</filename>, where
+$date is a datestamp set by &cesm; at runtime, and contains a summary of
+various information. The following provides a description of the most
+important parts of a timing file.
+</para>
+
+<para>
+The first section in the timing output, CCSM TIMING PROFILE,
+summarizes general timing information for the run. The total run time
+and cost is given in several metrics including pe-hrs per simulated
+year (cost), simulated years per wall day (thoughput), seconds, and
+seconds per model day. This provides general summary information
+quickly in several units for analysis and comparison with other
+runs. The total run time for each component is also provided, as is the
+time for initialization of the model. These times are the aggregate
+over the total run and do not take into account any temporal or
+processor load imbalances.
+</para>
+
+<para>
+The second section in the timing output, "DRIVER TIMING FLOWCHART",
+provides timing information for the driver in sequential order and
+indicates which processors are involved in the cost. Finally, the 
+timings for the coupler are broken out at the bottom of the timing
+output file.
+</para>
+
+<para>
+Separately, there is another file in the timing directory,
+ccsm_timing_summary.$CASE.$date that accompanies the above timing
+summary. This second file provides a summary of the minimum and
+maximum of all the model timers.
+</para>
+
+<para>
+There is one other stream of useful timing information in the
+cpl.log.$date file that is produced for every run. The cpl.log file
+contains the run time for each model day during the model run. This
+diagnostic is output as the model runs. You can search for tStamp in
+the cpl.log file to see this information. This timing information is
+useful for tracking down temporal variability in model cost either due
+to inherent model variability cost (I/O, spin-up, seasonal, etc) or
+possibly due to variability due to hardware. The model daily
+cost is generally pretty constant unless I/O is written intermittently
+such as at the end of the month.  
+</para>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="using_timing_info">
+<title>Using model timing data </title>
+
+<para>
+In practice, load-balancing requires a number of considerations
+such as which components are run, their absolute and relative
+resolution; cost, scaling and processor count sweet-spots for each
+component; and internal load imbalance within a component. It is often
+best to load balance the system with all significant run-time I/O
+turned off because this occurs very infrequently (typically one
+timestep per month), is best treated as a separate cost, and
+can bias interpretation of the overall model load balance. Also, the
+use of OpenMP threading in some or all of the components is dependent
+on the hardware/OS support as well as whether the system supports
+running all MPI and mixed MPI/OpenMP on overlapping processors for
+different components. A final point is deciding whether components
+should run sequentially, concurrently, or some combination of the two
+with each other. Typically, a series of short test runs is done with
+the desired production configuration to establish a reasonable load
+balance setup for the production job. The timing output can be
+used to compare test runs to help determine the optimal load balance.
+</para>
+
+<para>
+In general, we normally carry out 20-day model runs with restarts
+and history turned off in order to find the layout that has the best
+load balance for the targeted number of processors.  This provides a
+reasonable performance estimate for the production run for most of the
+runtime. The end of month history and end of run restart I/O is
+treated as a separate cost from the load balance perspective. To setup
+this test configuration, create your production case, and then edit
+env_run.xml and set STOP_OPTION to ndays, STOP_N to 20, and
+RESTART_OPTION to never. Seasonal variation and spin-up costs can
+change performance over time, so even after a production run has
+started, its worth occasionally reviewing the timing output to see
+whether any changes might be made to the layout to improve throughput
+or decrease cost.
+</para>
+
+<para>
+In determining an optimal load balance for a specific 
+configuration, two pieces of information are useful. 
+</para>
+
+<itemizedlist> 
+<listitem><para>
+Determine which component or components are most expensive. 
+</para></listitem>
+
+<listitem><para> Understand the scaling of the individual components,
+whether they run faster with all MPI or mixed MPI/OpenMP decomposition
+strategies, and their optimal decompositions at each processor
+count. If the cost and scaling of the components are unknown, several
+short tests can be carried with arbitrary component pe counts just to
+establish component scaling and sweet spots.  </para></listitem>
+</itemizedlist>
+
+<para>
+One method for determining an optimal load balance is as follows
+</para>
+
+<itemizedlist>
+<listitem><para>
+start with the most expensive component and a fixed optimal
+processor count and decomposition for that component 
+</para></listitem>
+
+<listitem><para>
+test the systems, varying the sequencing/concurrency of
+the components and the pe counts of the other components
+</para></listitem>
+
+<listitem><para>
+identify a few best potential load balance configurations and
+then run each a few times to establish run-to-run variability and to
+try to statistically establish the faster layout
+</para></listitem>
+</itemizedlist>
+
+<para>
+In all cases, the component run times in the timing output file can be
+reviewed for both overall throughput and independent component
+timings. Using the timing output, idle processors can be identified by
+considering the component concurrency in conjunction with the
+component timing.
+</para>
+
+<para>
+In general, there are only a few reasonable concurrency options for CCSM4:
+</para>
+
+<itemizedlist>
+<listitem><para>fully sequential </para></listitem>
+
+<listitem><para>fully sequential except the ocean running concurrently </para></listitem>
+
+<listitem><para>fully sequential except the ice and land running concurrently
+with each other </para></listitem>
+
+<listitem><para>atmosphere running sequentially with the land and ice which
+are running concurrently and then the ocean running concurrently with
+everything </para></listitem>
+
+<listitem><para>finally, it makes best sense for the coupler to run on a
+subset of the atmosphere processors and that can be sequentially or
+concurrently with the land and ice </para></listitem>
+</itemizedlist>
+
+<para>
+The concurrency is limited in part by the hardwired sequencing in the
+driver. This sequencing is set by scientific constraints, although
+there may be some addition flexibility with respect to concurrency
+when running with mixed active and data models.
+</para>
+
+<para>
+There are some general rules for finding optimal configurations:
+</para>
+
+<itemizedlist>
+<listitem><para>
+ Make sure you have set a processor layout where each hardwire
+ processor is assigned to at least one component. There is rarely a
+ reason to have completely idle processors in your layout.
+</para></listitem>
+
+<listitem><para>
+Make sure your cheapest components keep up with your most expensive
+components. In other words, a component that runs on 1024 processors
+should not be waiting on a component running on 16 processors.
+</para></listitem>
+
+<listitem><para>
+Before running the job, make sure the batch queue settings in the
+<filename>$CASE.$MACH.run</filename> script are set correctly for the specific run being 
+targetted.  The account numbers, queue names, time limits should be 
+reviewed.  The ideal time limit, queues, and run length are all
+dependent on each other and on the current model throughput.
+</para></listitem>
+
+<listitem><para>
+Make sure you are taking full advantage of the hardware resources. If
+you are charged by the 32-way node, you might as well target a total
+processor count that is a multiple of 32.
+</para></listitem>
+
+<listitem><para>
+If possible, keep a single component on a single node. That usually
+minimizes internal component communication cost. That's obviously not
+possible if running on more processors than the size of a node.
+</para></listitem>
+
+<listitem><para>
+And always assume the hardware performance could have variations due
+to contention on the interconnect, file systems, or other areas. If
+unsure, run cases multiple times.
+</para></listitem>
+
+</itemizedlist>
+
+</sect2>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="running_ccsm_running">
+<title>The Run</title>
+
+<!-- ======================================================================= -->
+<sect2 id="running_ccsm_running_timelimit">
+<title>Setting the time limits</title>
+
+<para>
+Before you can run the job, you need to make sure the batch queue
+variables are set correctly for the specific run being targeted. This
+is done currently by manually editing
+<filename>$CASE.$MACH.run</filename>. The user should carefully check
+the batch queue submission lines and make sure that you have
+appropriate account numbers, time limits, and stdout file names. In
+looking at the ccsm_timing.$CASE.$datestamp files for "Model
+Throughput", output like the following will be found:
+</para>
+
+<screen>
+Overall Metrics:
+Model Cost: 327.14 pe-hrs/simulated_year (scale= 0.50)
+Model Throughput: 4.70 simulated_years/day
+</screen>
+
+<para>
+The model throughput is the estimated number of model years that you
+can run in a wallclock day. Based on this, the user can maximize
+$CASE.$MACH.run queue limit and change $STOP_OPTION and $STOP_N in
+&env_run.xml;. For example, say a model's throughput is 4.7
+simulated_years/day.  On bluefire, the maximum runtime limit is 6
+hours. 4.7 model years/24 hours * 6 hours = 1.17 years. On the
+massively parallel computers, there is always some variability in how
+long it will take a job to run. On some machines, you may need to
+leave as much as 20% buffer time in your run to guarantee that jobs
+finish reliably before the time limit. For that reason we will set our
+model to run only one model year/job. Continuing to assume that the run is
+on bluefire, in <filename>$CASE.bluefire.run</filename> set
+</para>
+
+<screen>
+#BSUB -W 6:00
+</screen>
+
+<para>
+and <filename>xmlchange</filename> should be invoked as follows in $CASEROOT:
+</para>
+
+<screen>
+./xmlchange -file env_run.xml -id STOP_OPTION   -val nyears
+./xmlchange -file env_run.xml -id STOP_N        -val 1 
+./xmlchange -file env_run.xml -id REST_OPTION   -val nyears
+./xmlchange -file env_run.xml -id REST_N        -val 1 
+</screen>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="running_ccsm_running_submit">
+<title>Submitting the run</title>
+
+<para>
+Once you have configured and built the model, submit
+<filename>$CASE.$MACH.run</filename> to your machine's batch queue
+system. For example on NCAR's IBM, bluefire,
+</para>
+
+<screen>
+> # for BLUEFIRE
+> bsub < $CASE.bluefire.run
+> # for CRAY
+> qsub $CASE.jaguar.run
+</screen>
+
+<para>
+You can see a complete example of how to run a case in <link
+linkend="use_case_basic">the basic example</link>.
+</para>
+
+<para>
+When executed, the run script, <filename>$CASE.$MACH.run</filename>,
+will:
+</para>
+
+<itemizedlist>
+
+<listitem>
+<para> Check to verify that the env files are consistent with the
+configure and build scripts
+</para>
+</listitem>
+
+<listitem>
+<para> Verify that required input data is present on local disk (in
+$<envar>DIN_LOC_ROOT_CSMDATA</envar>) and run the buildnml script for
+each component
+</para>
+</listitem>
+
+<listitem>
+<para> Run the &cesm; model. Put timing information in
+<filename>$LOGDIR/timing</filename>.  If $<envar>LOGDIR</envar> is
+set, copy log files back to $<envar>LOGDIR</envar>
+</para>
+</listitem>
+
+<listitem>
+<para> If $<envar>DOUT_S</envar> is TRUE, component history, log,
+diagnostic, and restart files will be moved from
+$<envar>RUNDIR</envar> to the short-term archive directory,
+$<envar>DOUT_S_ROOT</envar>.
+</para>
+</listitem>
+
+<listitem>
+<para> If $<envar>DOUT_L_MS</envar> is TRUE, the long-term archiver,
+<filename>$CASE.$MACH.l_archive</filename>, will be submitted to the batch queue upon
+successful completion of the run.
+</para>
+</listitem>
+
+<listitem>
+<para> 
+If $<envar>RESUBMIT</envar> >0, resubmit <filename>$CASE.$MACH.run</filename>
+</para>
+</listitem>
+
+</itemizedlist>
+
+<para>
+NOTE: This script does NOT execute the build script,
+<filename>$CASE.$MACH.build</filename>. Building &cesm; is now done
+only via an interactive call to the build script.
+</para>
+
+<para>
+If the job runs to completion, you should have "SUCCESSFUL TERMINATION
+OF CPL7-CCSM" near the end of your STDOUT file. New data should be in
+the subdirectories under $DOUT_S_ROOT, or if you have long-term
+archiving turned on, it should be automatically moved to
+subdirectories under $DOUT_L_MSROOT.
+</para>
+
+<para>
+If the job failed, there are several places where you should look for
+information. Start with the STDOUT and STDERR file(s) in $CASEROOT. If
+you don't find an obvious error message there, the
+$RUNDIR/$model.log.$datestamp files will probably give you a
+hint. First check cpl.log.$datestamp, because it will often tell you
+when the model failed. Then check the rest of the component log
+files. Please see <link
+linkend="troubleshooting_run_time">troubleshooting runtime
+errors</link> for more information.
+</para>
+
+<para>
+REMINDER: Once you have a successful first run, you must set
+CONTINUE_RUN to TRUE in env_run.xml before resubmitting, otherwise the
+job will not progress. You may also need to modify the RESUBMIT,
+STOP_OPTION, STOP_N, STOP_DATE, REST_OPTION, REST_N and/or REST_DATE
+variables in env_run.xml before resubmitting.
+</para>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="running_ccsm_restarts">
+<title>Restarting a run</title>
+
+<para>
+Restart files are written by each active component (and some data
+components) at intervals dictated by the driver via the setting of the
+&env_run.xml; variables, $<envar>REST_OPTION</envar> and
+$<envar>REST_N</envar>. Restart files allow the model to stop and then
+start again with bit-for-bit exact capability (i.e. the model output
+is exactly the same as if it had never been stopped). The driver
+coordinates the writing of restart files as well as the time evolution
+of the model.  All components receive restart and stop information
+from the driver and write restarts or stop as specified by the driver.
+</para>
+
+<para>
+It is important to note that runs that are initialized as branch or
+hybrid runs, will require restart/initial files from previous model
+runs (as specified by the &env_conf.xml; variables,
+$<envar>RUN_REFCASE</envar> and $<envar>RUN_REFDATE</envar>).  These
+required files must be prestaged <emphasis>by the user</emphasis> to
+the case $<envar>RUNDIR</envar> (normally
+<filename>$EXEROOT/run</filename>) before the model run starts. This
+is normally done by just copying the contents of the relevant
+<filename>$RUN_REFCASE/rest/$RUN_REFDATE.00000</filename> directory.
+</para>
+
+<para>
+Whenever a component writes a restart file, it also writes a restart
+pointer file of the form, <filename>rpointer.$component</filename>.
+The restart pointer file contains the restart filename that was just
+written by the component.  Upon a restart, each component reads its
+restart pointer file to determine the filename(s) to read in order to
+continue the model run. As examples, the following pointer files will
+be created for a component set using full active model components.
+</para>
+
+<itemizedlist>
+<listitem><para>rpointer.atm </para></listitem>
+<listitem><para>rpointer.drv </para></listitem>
+<listitem><para>rpointer.ice </para></listitem>
+<listitem><para>rpointer.lnd </para></listitem>
+<listitem><para>rpointer.ocn.ovf </para></listitem>
+<listitem><para>rpointer.ocn.restart </para></listitem>
+</itemizedlist>
+
+
+<para>
+If short-term archiving is turned on, then the model archives the
+component restart datasets and pointer files into
+<filename>$DOUT_S_ROOT/rest/yyyy-mm-dd-sssss</filename>, where
+yyyy-mm-dd-sssss is the model date at the time of the restart (<link 
+linkend="running_ccsm_starch">see below for more details</link>). 
+If long-term archiving these restart then
+archived in
+<filename>$DOUT_L_MSROOT/rest</filename>. <envar>DOUT_S_ROOT</envar>
+and <envar>DOUT_L_MSROOT</envar> are set in &env_run.xml;, and can be
+changed at any time during the run.
+</para>
+
+<sect3 id="running_ccsm_restart_back">
+<title>Backing up to a previous restart</title>
+
+<para> If a run encounters problems and crashes, the user will normally have
+to back up to a previous restart.  Assuming that short-term archiving
+is enabled, the user needs to find the latest
+<filename>$DOUT_S_ROOT/rest/yyyy-mm-dd-ssss/</filename> directory that
+was create and copy the contents of that directory into their run
+directory ($<envar>RUNDIR</envar>). The user can then continue the run
+and these restarts will be used.  It is important to make sure the new
+rpointer.* files overwrite the rpointer.* files that were in
+$<envar>RUNDIR</envar>, or the job may not restart in the correct
+place. </para> 
+
+<para> Occasionally, when a run has problems restarting, it is
+because the rpointer files are out of sync with the restart files. The
+rpointer files are text files and can easily be edited to match the
+correct dates of the restart and history files. All the restart files
+should have the same date. </para>
+
+</sect3>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="running_ccsm_data_flow">
+<title>Data flow during a model run</title>
+
+<para> All component log files are copied to the directory specified
+by the &env_run.xml; variable $<envar>LOGDIR</envar> which by default
+is set to <filename>$CASEROOT/logs</filename>. This location is
+where log files are copied when the job completes successfully.  If the 
+job aborts, the log files will NOT be copied out of the <filename>$RUNDIR</filename> directory. 
+</para>
+
+<para> Once a model run has completed successfully, the output data
+flow will depend on whether or not short-term archiving is enabled (as
+set by the &env_run.xml; variable, $<envar>DOUT_S</envar>). By
+default, short-term archiving will be done.</para>
+
+<sect3 id="running_ccsm_noarch">
+<title>No archiving</title>
+
+<para> If no short-term archiving is performed, then all model output
+data will remain in the run directory, as specified by the
+&env_run.xml; variable, $<envar>RUNDIR</envar>. Furthermore, if
+short-term archiving is disabled, then long-term archiving will not be
+allowed. </para>
+
+</sect3>
+
+<sect3 id="running_ccsm_starch">
+<title>Short-term archiving</title>
+
+<para> If short-term archiving is enabled, the component output files will be
+moved to the short term archiving area on local disk, as specified by
+$<envar>DOUT_S_ROOT</envar>.  The directory DOUT_S_ROOT is normally  
+set to <envar>$EXEROOT/../archive/$CASE</envar>. 
+and will
+contain the following directory structure: </para>
+
+<screen>
+atm/
+    hist/ logs/
+cpl/ 
+    hist/ logs/
+glc/ 
+    logs/
+ice/ 
+    hist/ logs/
+lnd/ 
+    hist/ logs/
+ocn/ 
+    hist/ logs/
+rest/ 
+    yyyy-mm-dd-sssss/
+    ....
+    yyyy-mm-dd-sssss/
+</screen>
+
+<para><filename>hist/</filename> contains component history output for
+the run.</para>
+
+<para><filename>logs/</filename> contains component log files
+created during the run. In addition to $<envar>LOGDIR</envar>, log
+files are also copied to the short-term archiving directory and
+therefore are available for long-term archiving.</para>
+
+<para>
+<filename>rest/</filename> contains a subset of directories that each
+contain a <emphasis>consistent</emphasis> set of restart files,
+initial files and rpointer files. Each sub-directory has a unique name
+corresponding to the model year, month, day and seconds into the day
+where the files were created
+(e.g. <filename>1852-01-01-00000/</filename>). The contents of any
+restart directory can be used to <link linkend="use_case_branch">create a
+branch run or a hybrid run</link> or back up to a previous restart
+date.
+</para>
+
+</sect3>
+
+<sect3 id="running_ccsm_ltarch">
+<title>Long-term archiving</title>
+
+<para> For long production runs that generate many giga-bytes of data,
+the user normally wants to move the output data from local disk to a
+long-term archival location. 
+Long-term archiving can be activated by setting $<envar>DOUT_L_MS</envar>  
+to TRUE in <filename>env_run.xml</filename>. By default, the value of this variable is
+FALSE, and long-term archiving is disabled. If the value is set to
+TRUE, then the following additional variables are:
+$<envar>DOUT_L_MSROOT</envar>, $<envar>DOUT_S_ROOT</envar> <envar>DOUT_S</envar> (see <link
+linkend="running_ccsm_env_output"> variables for output data
+management</link> ). </para>
+
+<para> As was mentioned above, if long-term archiving is enabled,
+files will be moved out of $<envar>DOUT_S_ROOT</envar> to
+$<envar>DOUT_L_ROOT</envar> by
+<filename>$CASE.$MACH.l_archive</filename>,, which is run as a
+separate batch job after the successful completion of a model run.</para>
+
+</sect3>
+
+</sect2>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="running_ccsm_testing">
+<title>Testing a case</title>
+
+<para>
+After the case has built and has demonstrated the ability to run via a
+short test, it is important to formally test exact
+restart capability before a production run is started.
+See <xref linkend="create_production_test"/> for
+more information about how to use create_production_test.</para>
+
+</sect1>
+
+</chapter>

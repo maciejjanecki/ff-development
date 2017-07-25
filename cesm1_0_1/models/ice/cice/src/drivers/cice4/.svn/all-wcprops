@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/drivers/cice4
+END
+CICE.F90
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/drivers/cice4/CICE.F90
+END
+ice_restart.F90
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/drivers/cice4/ice_restart.F90
+END
+CICE_ComponentMod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/drivers/cice4/CICE_ComponentMod.F90
+END
+CICE_InitMod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/drivers/cice4/CICE_InitMod.F90
+END
+CICE_RunMod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/drivers/cice4/CICE_RunMod.F90
+END
+ice_history_write.F90
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/drivers/cice4/ice_history_write.F90
+END
+CICE_FinalMod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/drivers/cice4/CICE_FinalMod.F90
+END
+ice_constants.F90
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/drivers/cice4/ice_constants.F90
+END

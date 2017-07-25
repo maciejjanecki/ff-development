@@ -1,0 +1,24 @@
+#! /bin/csh -f
+
+# -------------------------------------------------------------------------
+# Columbia machine specific settings
+# -------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------
+# Modules
+# -------------------------------------------------------------------------
+
+if (-e /usr/share/modules/init/csh) then
+  source /usr/share/modules/init/csh
+
+  module purge
+  module load modules intel-comp.10.0.026 mpt.1.16.0.0 scsl.1.6.1.0 pd-netcdf.3.6.2 
+#  module list
+endif
+
+# -------------------------------------------------------------------------
+# Build and runtime environment variables - edit before the initial build
+# -------------------------------------------------------------------------
+
+setenv MPI_GROUP_MAX 64
+

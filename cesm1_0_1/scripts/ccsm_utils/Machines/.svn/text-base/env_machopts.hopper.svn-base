@@ -1,0 +1,47 @@
+#! /bin/csh -f
+
+#===============================================================================
+# Hopper machine specific settings
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+# Modules
+#-------------------------------------------------------------------------------
+
+if (-e /opt/modules/default/init/csh) then
+  source /opt/modules/default/init/csh
+  module switch pgi       pgi/9.0.4        
+  module switch xt-mpt    xt-mpt/3.5.0     
+  module switch xt-libsci xt-libsci/10.4.0 
+  module load netcdf/3.6.2
+  module load pnetcdf
+# module load subversion
+# module list
+endif
+
+#-------------------------------------------------------------------------------
+# Runtime environment variables
+#-------------------------------------------------------------------------------
+
+setenv MPICH_MAX_SHORT_MSG_SIZE  8000 # default is 128000 bytes
+setenv MPICH_PTL_UNEX_EVENTS    960000 # default is  90000 (unexpected recv queue size)
+#etenv MPICH_UNEX_BUFFER_SIZE    1000M # default is    60M (unexpected short msgs buff size)
+setenv MPICH_MSGS_PER_PROC      160000 # default is  32768
+setenv MPICH_PTL_SEND_CREDITS       -1
+
+setenv MPICH_ENV_DISPLAY 1
+setenv MPICH_VERSION_DISPLAY 1
+
+# These environment variables were suggested by Helen He to help get around compiler issues
+# with pgi9
+setenv MALLOC_MMAP_MAX_ 0
+setenv MALLOC_TRIM_THRESHOLD_ 536870912
+
+# The environment variables below produce corefiles and maybe (?) should be
+# moved to DEBUG mode at some point
+setenv MPICH_DBMASK 0x200
+limit coredumpsize unlimited
+
+# The environment variable below increase the stack size, which is necessary for
+# CICE to run threaded on this machine.  
+setenv MPSTKZ 64M

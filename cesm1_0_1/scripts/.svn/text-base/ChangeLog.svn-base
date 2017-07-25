@@ -1,0 +1,62 @@
+================================================================================
+SVN $Id: ChangeLog 24747 2010-09-14 21:41:33Z fischer $
+SVN $URL: https://svn-ccsm-models.cgd.ucar.edu/scripts/branch_tags/cesm1_0_rel_tags/cesm1_0_rel07_scripts4_100809a/ChangeLog $
+================================================================================
+This file describes what tags were created and why
+================================================================================
+Originator: fischer
+Date: Fri Sept 14 2010
+Model: scripts
+Version: cesm1_0_rel07_scripts4_100809a
+One-line: update xt-mpt for franklin to 5.0.0, bfb
+
+M      ccsm_utils/Machines/env_machopts.franklin
+================================================================================
+Originator: fischer
+Date: Fri Sept 10 2010
+Model: scripts
+Version: cesm1_0_rel06_scripts4_100809a
+One-line: fixed rel tagging
+
+================================================================================
+Originator: fischer
+Date: Fri Aug 13 2010
+Model: scripts
+Version: cesm1_0_rel05_scripts4_100809a
+One-line: sync with scripts4_100809a and rm compsets/grids
+
+================================================================================
+Originator: kauff
+Date: Wed Jun 23 2010
+Model: scripts
+Version: cesm1_0_rel04_scripts4_100617
+One-line: rm rcp compsets
+	
+================================================================================
+Originator: kauff
+Date: Mon Jun 21 2010
+Model: scripts
+Version: cesm1_0_rel03_scripts4_100617
+One-line: sync with trunk tag scripts4_100617
+	
+================================================================================
+Originator: mvertens
+Date: Sun Jun 6 2010
+Model: scripts
+Version: cesm1_0_rel01_scripts4_100607
+One-line: sync with 100606 on trunk
+	
+================================================================================
+Originator: kauff
+Date: Wed Apr 14 2010
+Model: scripts
+Version: cesm1_0_rel_01_scripts4_100406a
+One-line: sync with 100406a on trunk, fix sample_compset_file.xml, fix -help info
+
+M      create_newcase
+M      create_test
+M      create_test_suite
+M      ccsm_utils/Case.template/config_compsets.xml
+M      README
+
+================================================================================

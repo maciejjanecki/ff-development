@@ -1,0 +1,1783 @@
+<chapter id="case_conf">
+<title>Configuring a Case </title>
+
+<sect1 id="conf_overview">
+<title>Configure Overview</title>
+
+<para>
+Configure generates buildnml and buildexe scripts for each component
+in the Buildconf directory.  It also generates build, run, l_archive,
+and clean_build scripts in the CASEROOT directory.  These scripts
+generate namelist for components and build and run the CESM1
+model.
+</para>
+
+<para>
+&configure; (invoked with the -case option) uses variables in env xml
+files to generate a new
+<filename>Buildconf/</filename> directory and several new files in
+$&CASEROOT;.</para>
+
+<note><para>Any user modifications to &env_conf.xml; and
+&env_mach_pes.xml; must be done <emphasis>before</emphasis>
+&configure; is invoked. In the simplest case, &configure; can be run
+<emphasis>without</emphasis> modifying either of these files and
+default settings will be then be used.</para></note>
+
+<para> Before exploring the details of &configure;, it is important to
+understand the concept of locked env files. The env files are "locked" 
+after the variables have been used by other parts of the system and
+cannot be changed.
+The scripts do this by "locking" a file and not permitting the user to
+modify that file.  More information on locking files can be found
+in <xref linkend="faq_lockedfiles"/>
+</para>
+
+<para>
+The configure command must be run in the $&CASEROOT;
+directory and must be invoked with one of the following options:
+</para>
+
+<screen>
+configure [-help] [-case] \
+          [-cleanmach] [-cleannamelist] [-cleanall] 
+</screen>
+
+<variablelist>
+<varlistentry><term><option>-case </option></term>
+<listitem>
+
+<para>
+sets up the case for build and run phases.
+It creates <filename>Buildconf/</filename>,
+<filename>$CASE.$MACH.run</filename>,
+<filename>$CASE.$MACH.build</filename>,
+<filename>$CASE.$MACH.clean_build</filename>,
+<filename>$CASE.$MACH.l_archive</filename>,
+directories and files in $&CASEROOT;.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-cleanmach</option></term>
+<listitem>
+<para>
+Moves all machine-related files to a date-stamped backup directory
+under <filename>MachinesHist/</filename>. These files include:
+<filename>Macros.$MACH</filename>,
+<filename>$CASE.$MACH.build</filename>,
+<filename>$CASE.$MACH.clean_build</filename>,
+<filename>$CASE.$MACH.l_archive</filename>, and
+<filename>$CASE.$MACH.run</filename>. It also unlocks
+&env_mach_pes.xml;, <filename>Macros.$MACH</filename>, and
+&env_build.xml;, so users can reset machine tasks and threads
+and rerun configure.
+Reconfiguring with -cleanmach results in the
+loss of any local modifications to the local build and run scripts.
+But the <filename>Buildconf/</filename> directory will 
+<emphasis>not</emphasis> be updated in this process. As a result,
+local changes to namelists will be preserved.
+</para>
+<para>
+If you only modify &env_mach_pes.xml; after running
+&configure;, do the following:
+</para>
+<screen>
+> configure -cleanmach
+> # Make changes to env_mach_pes.xml
+> configure -case
+</screen>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-cleannamelist</option></term>
+<listitem>
+<para>
+Moves <filename>Buildconf/</filename> to a date-stamped backup
+directory under <filename>MachinesHist/</filename> and unlocks
+&env_conf.xml;. 
+Reconfiguring with -cleannamelist results in the
+loss of any local modifications to the Buildconf buildnml and
+buildexe files.  But the local build and run scripts will be
+preserved.
+</para><para>
+If you only want to modify &env_conf.xml; after running
+&configure;, do the following: 
+</para>
+<screen>
+> configure -cleannamelist
+> # Make changes to env_conf.xml here
+> configure -case
+</screen>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-cleanall</option></term>
+<listitem>
+<para>
+This performs the functions of both the -cleanmach and -cleannamelist
+options. All files associated with the previous invocation of
+&configure; are moved to a time-stamped directory in
+<filename>MachinesHist</filename>. The $&CASEROOT; directory will now
+appear as if &create_newcase; had just been run with the exception
+that local modifications to the <filename>env_*.xml</filename> files
+are preserved. After further modifications are made to &env_conf.xml;
+and &env_mach_pes.xml;, you must run <command>configure -case</command>
+before you can build and run the model.  Reconfiguring results in the
+loss of all local modifications to the component buildnml or  buildexe
+files in Buildconf as well as the loss of all local modifications to 
+the local build and run scripts.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-help</option></term>
+<listitem>
+<para>
+Lists all options with short descriptions.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>
+Configure generates buildnml and buildexe scripts for each component
+in the Buildconf directory.  It also generates build, run, l_archive,
+and clean_build scripts in the CASEROOT directory.  These scripts are
+now sufficient to <link linkend="building_ccsm">build</link> and 
+<link linkend="running_ccsm">run</link> the model.
+</para>
+
+<table><title> Result of invoking &configure; </title>
+<tgroup cols="2">
+<thead>
+<row>
+<entry>File or Directory</entry>
+<entry>Description</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry>Buildconf/</entry>
+<entry>Contains scripts that generate component libraries and utility
+libraries (e.g., PIO, MCT) and scripts that generate component
+namelists.
+</entry>
+</row>
+<row>
+<entry>$<filename>CASE.$MACH.build</filename> </entry> 
+<entry>Creates the component and utility libraries and model executable
+(see <link linkend="building_ccsm">building &cesm;</link>).
+</entry>
+</row>
+<row>
+<entry>$<filename>CASE.$MACH.run</filename></entry> <entry>Runs the
+&cesm; model and performs short-term archiving of output data (see
+<link linkend="running_ccsm">running &cesm;</link>).  Contains the
+necessary batch directives to run the model on the required machine
+for the requested PE layout.
+</entry>
+</row>
+<row>
+<entry>$<filename>CASE.$MACH.l_archive</filename></entry>
+<entry>Performs long-term archiving of output data (see <link
+linkend="running_ccsm_env_output">long-term archiving</link>).  This
+script will only be created if long-term archiving is available on the
+target machine.</entry>
+</row>
+<row>
+<entry>$<filename>CASE.$MACH.clean_build</filename></entry> 
+<entry> Removes all object files and libraries and unlocks
+<filename>Macros.$MACH</filename> and
+<filename>env_build.xml</filename>. This step is required before a
+clean build of the system.
+</entry>
+</row>
+<row>
+<entry>env_derived</entry>
+<entry>Contains environmental variables derived from other settings.
+Should <emphasis>not</emphasis> be modified by the user.</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="case_conf_env">
+<title>Customizing the configuration </title>
+
+<para>
+Before calling &configure;, first customize the
+default configuration. To customize the default configuration,
+modify &env_conf.xml; and &env_mach_pes.xml;
+<emphasis>before</emphasis> invoking &configure;. The &env_build.xml;
+and &env_run.xml; files can also be changed at this step.</para>
+
+<para> &env_mach_pes.xml; contains variables that determine the layout
+of the components across the hardware processors.  Those variables
+specify the number of processors for each component and determine
+the layout of components across the processors used.
+See <link linkend="env_mach_pes_vars">&env_mach_pes.xml; variables </link> for a
+summary of all &env_mach_pes.xml; variables.</para>
+
+<para> &env_conf.xml; contains several different kinds of variables including
+variables for <link linkend="runtype_env">case initialization</link>, variables
+that specify the regridding
+files, and variables that set <link linkend="customizing_components"> 
+component-specific namelists and component-specific CPP variables</link>. 
+See <link linkend="env_conf_vars">&env_conf.xml; variables </link> for a
+summary of all &env_conf.xml; variables.</para>
+
+<!-- ======================================================================= -->
+<sect2 id="case_conf_setting_pes">
+<title>Setting the case PE layout</title>
+
+<para> Optimizing the throughput or efficiency of a &cesm;
+experiment often involves customizing the processor (PE) layout for
+<link linkend="running_ccsm_loadbalance">load balancing</link>.
+The component PE layout is set in &env_mach_pes.xml;. </para>
+
+<para>CESM1 has significant flexibility with respect to the layout of
+components across different hardware processors. In general, its
+&cesm; components -- atm, lnd, ocn, ice, glc, and cpl -- can run on
+overlapping or mutually unique processors. Each component is
+associated with a unique MPI communicator. In addition, the driver runs
+on the union of all processors and controls the sequencing and
+hardware partitioning. The processor layout for each component is
+specified in the &env_mach_pes.xml; file via three settings: the
+number of MPI tasks, the number of OpenMP threads per task, and the
+root MPI processor number from the global set.</para>
+
+<para>For example, these settings in &env_mach_pes.xml;:</para>
+
+<screen>
+&lt;entry id="NTASKS_OCN" value="128" /&gt;
+&lt;entry id="NTHRDS_OCN" value="1" /&gt;
+&lt;entry id="ROOTPE_OCN" value="0" /&gt;
+</screen>
+
+<para>
+cause the ocean component to run on
+128 hardware processors with 128 MPI tasks using one
+thread per task starting from global MPI task 0 (zero).
+</para>
+
+<para>In this next example: </para>
+
+<screen>
+&lt;entry id="NTASKS_ATM" value="16" /&gt;
+&lt;entry id="NTHRDS_ATM" value="4"  /&gt;
+&lt;entry id="ROOTPE_ATM" value="32" /&gt;
+</screen>
+
+<para>
+the atmosphere component will run on 64 hardware processors using 16
+MPI tasks and 4 threads per task starting at global MPI task 32.
+There are NTASKS, NTHRDS, and ROOTPE input variables for every
+component in &env_mach_pes.xml;.  There are some important things
+to note.</para>
+
+<itemizedlist>
+<listitem><para>
+NTASKS must be greater or equal to 1 (one) even for inactive (stub) components.
+</para></listitem>
+
+<listitem><para>
+NTHRDS must be greater or equal to 1 (one).  If NTHRDS is set to 1, this
+generally means threading parallelization will be off for that component.
+NTHRDS should never be set to zero.
+</para></listitem>
+
+<listitem><para>
+The total number of hardware processors allocated to a component is
+NTASKS * NTHRDS.
+</para></listitem>
+
+<listitem><para>
+The coupler processor inputs specify the pes used by coupler 
+computation such as mapping, merging, diagnostics, and flux
+calculation.  This is distinct from the driver which always 
+automatically runs on the union
+of all processors to manage model concurrency and sequencing.
+</para></listitem>
+
+<listitem><para>
+The root processor is set relative to the MPI global communicator, not the
+hardware processors counts.  An example of this is below.
+</para></listitem>
+
+<listitem><para>
+The layout of components on processors has no impact on the science.
+The scientific sequencing is hardwired into the driver.  Changing 
+processor layouts does not change intrinsic coupling lags or coupling
+sequencing.  ONE IMPORTANT POINT is that for a fully 
+active configuration, the atmosphere component is hardwired in the driver to 
+never run concurrently with the land or ice component.  Performance 
+improvements associated with processor layout concurrency is therefore
+constrained in this case such that there is never a performance reason
+not to overlap the atmosphere component with the land and ice components.
+Beyond that constraint, the land, ice, coupler and ocean models can
+run concurrently, and the ocean model can also run concurrently with the 
+atmosphere model.  
+</para></listitem>
+
+<listitem><para>
+If all components have identical NTASKS, NTHRDS, and ROOTPE
+set, all components will run sequentially on the same hardware
+processors.
+</para></listitem>
+
+</itemizedlist>
+
+<para>The root processor is set relative to the MPI global
+communicator, not the hardware processor counts.
+For instance, in the following example:</para>
+
+<screen>
+&lt;entry id="NTASKS_ATM" value="16" /&gt;
+&lt;entry id="NTHRDS_ATM" value="4"  /&gt;
+&lt;entry id="ROOTPE_ATM" value="0"  /&gt;
+&lt;entry id="NTASKS_OCN" value="64" /&gt;
+&lt;entry id="NTHRDS_OCN" value="1"  /&gt;
+&lt;entry id="ROOTPE_OCN" value="16" /&gt;
+</screen>
+
+<para>
+the atmosphere and ocean are running concurrently, each on 64
+processors with the atmosphere running on MPI tasks 0-15 and the ocean
+running on MPI tasks 16-79. The first 16 tasks are each threaded 4
+ways for the atmosphere. The batch submission script ($CASE.$MACH.run)
+should automatically request 128 hardware processors, and the first 16
+MPI tasks will be laid out on the first 64 hardware processors with a
+stride of 4. The next 64 MPI tasks will be laid out on the second set
+of 64 hardware processors.
+</para>
+
+<para>
+If you set ROOTPE_OCN=64 in the preceding example, then a total of
+176 processors would have been requested and the atmosphere would
+have been laid out on the first 64 hardware processors in 16x4
+fashion, and the ocean model would have been laid out
+on hardware processors 113-176. Hardware processors 65-112 would
+have been allocated but completely idle.  
+</para>
+
+<note><para>&env_mach_pes.xml; <emphasis>cannot</emphasis> be modified
+after "configure -case" has been invoked without first invoking
+"configure -cleanmach". For an example of changing pes, see <xref
+linkend="use_case_pelayout"/>  </para></note>
+
+</sect2>
+
+<!-- ======================================================================= -->
+
+<sect2 id="runtype_env">
+<title>Setting the case initialization type</title>
+
+<para> The case initialization type is set in &env_conf.xml;. A &cesm;
+run can be initialized in one of three ways; startup, branch, or
+hybrid. The variable $<envar>RUN_TYPE</envar> determines the
+initialization type and is set to "startup" by default when
+&create_newcase; is invoked.  This setting is only important for
+the initial run of a production run when the $<envar>CONTINUE_RUN</envar>
+variable is set to FALSE.  After the initial run, the $<envar>CONTINUE_RUN</envar> 
+variable is set to TRUE, and the model restarts exactly using input
+files in a case, date, and bit-for-bit continuous fashion.
+</para>
+
+<variablelist>
+<varlistentry><term>RUN_TYPE</term>
+<listitem> 
+<para>
+Run initialization type. Valid values: startup, hybrid,
+branch. Default: startup.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term>RUN_STARTDATE</term>
+<listitem> 
+<para>
+Start date for the run in yyyy-mm-dd format.
+This is only used for startup or hybrid runs.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term>RUN_REFCASE</term>
+<listitem> 
+<para>
+Reference case for hybrid or branch runs.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term>RUN_REFDATE</term>
+<listitem> 
+<para>
+Reference date in yyyy-mm-dd format for hybrid or branch runs.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para> This is a detailed description of the different ways that
+&cesm; initialization runs. </para>
+
+<variablelist>
+<varlistentry><term>startup</term>
+<listitem> <para> In a startup run (the default), all components are
+initialized using baseline states. These baseline states are set
+independently by each component and can include the use of restart
+files, initial files, external observed data files, or internal
+initialization (i.e., a "cold start"). In a startup run, the coupler
+sends the start date to the components at initialization. In addition,
+the coupler does not need an input data file.  In a startup initialization, the
+ocean model does not start until the second ocean coupling (normally
+the second day).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term>branch</term>
+<listitem>
+<para> In a branch run, all components are initialized using a
+consistent set of restart files from a previous run (determined by 
+the $<envar>RUN_REFCASE</envar> and $<envar>RUN_REFDATE</envar> variables in env_conf.xml).
+The case name is generally changed for a branch run, although it does
+not have to be. In a branch run, setting $<envar>RUN_STARTDATE</envar>
+in &env_conf.xml; is ignored because the model components obtain the
+start date from their restart datasets. Therefore, the start date
+cannot be changed for a branch run. This is the same mechanism that is
+used for performing a restart run (where $<envar>CONTINUE_RUN</envar>
+is set to TRUE in the &env_run.xml; file).</para>
+
+<para> Branch runs are typically used when sensitivity or parameter
+studies are required, or when settings for history file output streams
+need to be modified while still maintaining bit-for-bit
+reproducibility. Under this scenario, the new case is able to produce
+an exact bit-for-bit restart in the same manner as a continuation run
+<emphasis>if</emphasis> no source code or component namelist inputs
+are modified. All models use restart files to perform this type of
+run. $<envar>RUN_REFCASE</envar> and $<envar>RUN_REFDATE</envar> are
+required for branch runs.</para>
+
+<para> To set up a branch run, locate the restart tar file or restart
+directory for $<envar>RUN_REFCASE</envar> and $<envar>RUN_REFDATE</envar> 
+from a previous run, then place those
+files in the $<envar>RUNDIR</envar> directory. See <link
+linkend="use_case_branch">setting up a branch run</link> for an 
+example.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term>hybrid</term>
+<listitem>
+<para> A hybrid run indicates that &cesm; will be initialized more like
+a startup, but will use initialization datasets from a previous
+case. This is somewhat analogous to a branch run with relaxed
+restart constraints.  A hybrid run allows users to bring together
+combinations of initial/restart files from a previous case
+(specified by $<envar>RUN_REFCASE</envar>) at a given model output
+date (specified by $<envar>RUN_REFDATE</envar>). Unlike a branch
+run, the starting date of a hybrid run (specified by
+$<envar>RUN_STARTDATE</envar>) can be modified relative to the
+reference case. In a hybrid run, the model does not continue in a
+bit-for-bit fashion with respect to the reference case. The resulting
+climate, however, should be continuous provided that no model source
+code or namelists are changed in the hybrid run. 
+In a hybrid initialization, the
+ocean model does not start until the second ocean coupling (normally
+the second day), and the coupler does a "cold start" without a restart file.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="customizing_components">
+<title>Setting component-specific variables </title>
+
+<para> To understand how the component-specific variables in
+&env_conf.xml; (e.g., <envar>CAM_CONFIG_OPTS</envar>) are used to set
+compile and namelist settings for that component, you first need to
+understand how &configure; uses the variables in &env_conf.xml; to
+create the files in <filename>Buildconf/</filename>.
+</para>
+
+<para> In each $&CASEROOT; directory, the subdirectory
+<filename>$CASEROOT/Tools/Templates</filename> contains files of
+the form $component[.cpl7].template, where $component corresponds to
+each of the model components that is part of the selected component
+set. The .cpl7 appears in some templates and not in others. &configure;
+translates the <filename>$env_*.xml</filename> xml variables to csh
+environment variables, and each of the component template scripts uses
+those environment variables to create
+<filename>Buildconf/$component.buildexe.csh</filename> (which creates
+the component library) and
+<filename>Buildconf/$component.buildnml.csh</filename> (which creates
+the component namelist).</para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/$component.cpl7.template 
+     &dArr;
+  Buildconf/$component.buildexe.csh
+  Buildconf/$component.buildnml.csh
+</screen>
+
+<para> When the model <link linkend="running_ccsm_running_submit">run
+is submitted</link>, <filename>$CASE.$MACH.run</filename> will call
+<filename>Buildconf/$component.buildnml.csh</filename> to produce the
+run-time component namelists:</para>
+
+<screen>
+  $CASE.$MACH.run
+     &dArr;
+  Buildconf/$component.buildnml.csh
+     &dArr;
+  $RUNDIR/$model_in
+</screen>
+
+<para> As an example, for CAM</para>
+<screen>
+  $CASE.$MACH.run
+     &dArr;
+  Buildconf/cam.buildnml.csh
+     &dArr;
+  $RUNDIR/atm_in
+</screen>
+
+<note><title>Important:</title> <para> Component namelists should
+normally be set using &env_conf.xml; variables (see below).  If a
+namelist needs to be modified after &configure; is called, then this
+should be done in
+<filename>Buildconf/$component.buildnml.csh</filename>. Note that if
+<command>configure -cleanall</command> or <command>configure
+-cleannamelist</command> is called, then any local changes to
+<filename>Buildconf/$component.buildnml.csh</filename> will be
+lost. </para></note>
+
+<para> The discussions in the sections below assume the following: </para>
+
+<itemizedlist>
+<listitem> <para> References to
+<filename>$component.cpl7.template</filename> refer to
+<filename>Tools/Templates/$component.cpl7.template</filename></para></listitem>
+
+<listitem> <para> References to
+<filename>$component.buildexe.csh</filename> and
+<filename>$component.buildnml.csh</filename> refer to
+<filename>Buildconf/$component.buildexe.csh</filename> and
+<filename>Buildconf.$component.buildnml.csh</filename>. </para>
+</listitem>
+</itemizedlist>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_cam">
+<title>CAM variables </title>
+
+<para> The following are CAM-specific &env_conf.xml; variables</para>
+
+<para> CAM's <ulink
+url="http://www.cesm.ucar.edu/models/cesm1.0/cam/docs/users_guide/book1.html">configure
+utility</ulink> is invoked by <filename>cam.cpl7.template</filename>
+as:
+</para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/cam.cpl7.template 
+     &dArr;
+  $CCSMROOT/models/atm/cam/bld/configure \
+     -ccsm_seq -ice none -ocn none -spmd \
+     -dyn $CAM_DYCORE -res $ATM_GRID \
+     $CAM_CONFIG_OPTS \
+    ...
+     &dArr;
+   camconf/ 
+   # Do Not Modify contents of camconf/
+     &dArr;
+   Buildconf/cam.buildexe.csh
+</screen>
+
+<para> Note that $<envar>CAM_DYCORE</envar> and
+$<envar>ATM_GRID</envar> are &env_conf.xml; and &env_case.xml;
+variables, respectively.</para>
+
+<para> CAM's <ulink
+url="http://www.cesm.ucar.edu/models/cesm1.0/cam/docs/users_guide/book1.html">build-namelist
+utility</ulink> is invoked by <filename>cam.cpl7.template</filename> as:
+</para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/cam.cpl7.template 
+     &dArr;
+  $CCSMROOT/models/atm/cam/bld/build-namelist \
+     -use_case $CAM_NML_USE_CASE \
+     -namelist "$CAM_NAMELIST_OPTS /"
+     ...
+     &dArr;
+   camconf/ 
+   # Do Not Modify contents of camconf/
+     &dArr;
+   Buildconf/cam.buildnml.csh
+</screen>
+
+<para> The following &env_conf.xml; variables are used by CAM to
+invoke its configure and build-namelist utilities.</para>
+
+<variablelist>
+<varlistentry>
+<term>CAM_CONFIG_OPTS</term> <listitem> 
+<para>
+Provides option(s) for CAM's configure utility (see above).
+CAM_CONFIG_OPTS are normally set as compset variables (e.g., "-phys
+cam4 -chem waccm_mozart") and in general should not be modified
+for supported compsets. Recommendation: If you want to modify this
+value for your experiment, use your own (<link
+linkend="how_to_create_case">user-defined component sets</link>).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CAM_NML_USE_CASE</term> 
+<listitem> 
+<para> 
+Provides the use_case option for CAM's build-namelist utility (see
+above). CAM's build-namelist leverages groups of namelist options
+(use cases) that are often paired with CAM's configure options.
+These use cases are xml files located in
+<filename>$CCSMROOT/models/atm/cam/bld/namelist_files/use_cases</filename>.
+In general, this variable should not be modified for supported
+compsets. Recommendation: If you want to modify this value for
+your experiment, use your own (<link
+linkend="how_to_create_case">user-defined component sets</link>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CAM_NAMELIST_OPTS</term> <listitem> 
+
+<para> Provides options to the -namelist argument in
+CAM's build-namelist utility (see above).
+</para>
+<para>
+This serves to specify namelist settings directly on the command line
+by supplying a string containing Fortran namelist syntax. The
+resulting namelist will appear in
+<filename>cam.buildnml.csh</filename>.</para>
+
+<note><para>To insert a single quotation mark (apostrophe) when
+setting <envar>CAM_NAMELIST_OPTS</envar>, use the string
+"&amp;apos;". Also note that the "$" symbol should not be used in
+<envar>CAM_NAMELIST_OPTS</envar>.</para></note>
+
+<para>This example shows how to use &xmlchange; to set
+CAM_NAMELIST_OPTS:</para>
+<screen>
+xmlchange -id CAM_NAMELIST_OPTS\
+          -val ncdata=&amp;apos;cam_0.9x1.25.1860.nc&amp;apos;
+</screen>
+<para> If you want to modify numerous cam namelist values, you can use
+an alternate scheme: Place a file <filename>user_nl_cam</filename>
+containing modified cam namelist settings in
+$&CASEROOT;. For example,
+<filename>user_nl_cam</filename> could contain the following:
+</para>
+<screen> 
+&amp;camexp
+ solar_const = 1363.27
+ ch4vmr = 1860.0e-9
+ nhtfrq = -24
+/ 
+</screen>
+<para>and the above settings would appear in
+<filename>cam.buildnml.csh</filename>.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_clm">
+<title>CLM variables </title>
+
+<para> The following are CLM-specific &env_conf.xml; variables</para>
+
+<para> CLM's <ulink
+url="http://www.cesm.ucar.edu/models/cesm1.0/clm/models/lnd/clm/doc/UsersGuide/book1.html">
+&configure; utility </ulink> is invoked by 
+<filename>clm.cpl7.template</filename> as:
+</para>
+
+<screen>
+  &configure; -case  
+     &dArr;
+  Tools/Templates/clm.cpl7.template 
+     &dArr;
+  $CCSMROOT/models/lnd/clm/bld/configure \
+     -mode ext_ccsm_seq \
+      -comp_intf cpl_$COMP \
+      -usr_src $CASEROOT/SourceMods/src.clm \
+      $CLM_CONFIG_OPTS 
+      ...
+      &dArr;
+    clmconf/ 
+    # Do Not Modify contents of clmconf/
+      &dArr;
+    Buildconf/clm.buildexe.csh
+ </screen>
+
+<para> CLM's <ulink
+url="http://www.cesm.ucar.edu/models/cesm1.0/clm/models/lnd/clm/doc/UsersGuide/book1.html">
+build-namelist utility </ulink> is also invoked by
+<filename>clm.cpl7.template</filename> as:</para>
+
+<screen>
+  &configure; -case  
+     &dArr;
+  Tools/Templates/clm.cpl7.template 
+     &dArr;
+  $CCSMROOT/lnd/clm/bld/build-namelist 
+    -clm_usr_name $CLM_USRDAT_NAME \
+    -res $LND_GRID -mask $OCN_GRID \
+    -clm_start_type $START_TYPE 
+    -use_case $CLM_NML_USE_CASE 
+    -namelist "&amp;clm_inparm $CLM_NAMELIST_OPTS /" 
+     ...
+     &dArr;
+   clmconf/ 
+   # Do Not Modify contents of clmconf/
+     &dArr;
+   Buildconf/clm.buildnml.csh
+</screen>
+
+<note>
+<para>Confusion can arise here. CLM supports the values of default, cold,
+arb_ic, and startup for the -clm_start_type argument. A value of cold
+implies always starting with arbitrary initial conditions. A value of
+arb_ic implies starting with arbitrary initial conditions
+<emphasis>if</emphasis> initial conditions do not exist. A value of
+startup implies that initial conditions <emphasis>must</emphasis> be
+used, and the <command>configure -case</command> will abort if one isn't 
+provided (either from the CLM XML namelist database, or entered with
+<envar>CLM_NAMELIST_OPTS</envar> or <filename>user_nl_clm</filename>). If
+"default" is entered, the CLM build-namelist will determine the setting based
+on the resolution.
+</para>
+ 
+
+
+<para>$<envar>START_TYPE</envar> (above) is a derived variable in
+<filename>clm.cpl7.template</filename>. For a hybrid run,
+$<envar>START_TYPE</envar> is set to "startup", otherwise it is set to
+"default" unless $<envar>$CLM_FORCE_COLDSTART</envar> is set to "on",
+in which case is it set to "cold". It is unfortunate that the name
+"startup" is the same as the name used for initializing a &cesm;
+run, because in this case it means something very different. </para>
+</note>
+
+<variablelist>
+<varlistentry>
+<term>CLM_CONFIG_OPTS</term> <listitem> 
+<para> Provides option(s) for CLM's &configure; utility (see
+above).
+<envar>CLM_CONFIG_OPTS</envar> are normally set as
+compset variables (e.g., -bgc cn).</para>
+<para> Do not modify this variable. If you want to modify this for
+your experiment, use your own
+(<link linkend="how_to_create_case">user-defined component
+sets</link>).</para>
+<para> This is an advanced flag and should only be used by expert users.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CLM_BLDNML_OPTS</term> <listitem> 
+<para> Provides option(s) for CLM's &bldnm; utility (see
+above).</para>
+<para> Do not modify this variable. If you want to modify this for
+your experiment, use your own
+(<link linkend="how_to_create_case">user-defined component
+sets</link>).</para>
+<para> This is an advanced flag and should only be used by expert users.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CLM_NAMELIST_OPTS</term> 
+<listitem> 
+<para>
+CLM-specific namelist settings for -namelist option in CLM's
+<command>build-namelist</command> (see above). We recommend that if
+you want to change the clm namelist settings such as the initial dataset (finidat)
+or the history output defaults (hist_nhtfrq) you either include a
+<filename>user_nl_clm</filename> or you manually edit the resulting
+<filename>Buildconf/clm.buildnml.csh</filename>.
+</para>
+<para> This is an advanced flag and should only be used by expert users.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CLM_FORCE_COLDSTART</term> 
+<listitem> 
+<para>
+Flag to CLM's <command>build-namelist</command> to force CLM to do a
+cold start. Valid values are on, off. The "on" value forces the model
+to spin up from a cold-start (arbitrary initial conditions). 
+</para>
+<para> This is an advanced flag and should only be used by expert users.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CLM_USRDAT_NAME</term> 
+<listitem> 
+<para>
+Dataset name for user-created datasets. This is used as the argument
+to <command>build-namelist -clm_usr_name</command> (see above). An
+example of such a dataset would be,
+<filename>1x1pt_boulderCO_c090722</filename>. The default value is
+UNSET.
+</para>
+<para> This is an advanced flag and should only be used by expert
+users.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CLM_PT1_NAME</term> 
+<listitem> 
+<para>
+Grid name when the CLM/ATM grid is a single point. This is used in I
+compsets only. 
+</para>
+<para> This is an advanced flag and should only be used by expert users.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CLM_CO2_TYPE</term> 
+<listitem> 
+<para>
+Determines how CLM will determine where CO<subscript>2</subscript> is set.
+If <literal>constant</literal>, it will be set to <envar>CCSM_CO2_PPMV</envar>,
+if set otherwise, the atmosphere model <emphasis>MUST</emphasis> send it to CLM.
+<envar>CLM_CO2_TYPE</envar> is normally set by the specific compset, since it
+<emphasis>HAS</emphasis> to be coordinated with settings for the atmospheric model.
+</para>
+<para> Do not modify this variable. If you want to modify for
+your experiment, use your own
+(<link linkend="how_to_create_case">user-defined component
+sets</link>).</para>
+<para> This is an advanced flag and should only be used by expert users.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CLM_NML_USE_CASE</term> 
+<listitem> 
+<para>
+Determines the use-case that will be sent to the CLM
+<command>build-namelist</command>.
+<envar>CLM_CO2_TYPE</envar> is normally set by the specific compset.
+</para>
+<para> This is an advanced flag and should only be used by expert users.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_cice">
+<title>CICE variables </title>
+
+<para> The following are CICE-specific &env_conf.xml; variables</para>
+
+<para> CICE's 
+<ulink url="http://www.cesm.ucar.edu/models/cesm1.0/cice/doc/index.html">
+configure utility</ulink> is invoked by <filename>cice.cpl7.template</filename> as:
+</para>
+
+<screen>
+  configure -case  
+     &dArr;
+  Tools/Templates/cice.cpl7.template 
+     &dArr;
+  $CCSMROOT/models/ice/cice/bld/configure \
+     -hgrid $ICE_GRID  \
+     -mode $CICE_MODE  \
+     $CICE_CONFIG_OPTS \
+     ...
+     &dArr;
+   ciceconf/ 
+   # Do Not Modify contents of ciceconf/
+     &dArr;
+  Buildconf/cice.buildexe.csh
+</screen>
+
+<para> CICE's 
+<ulink url="http://www.cesm.ucar.edu/models/cesm1.0/cice/doc/index.html">
+build-namelist utility</ulink> is invoked by <filename>cice.cpl7.template</filename> as:
+</para>
+
+<screen>
+  configure -case  
+     &dArr;
+  Tools/Templates/cice.cpl7.template 
+     &dArr;
+  $CCSMROOT/ice/cice/bld/build-namelist 
+     -namelist "&amp;cice_inparm $CICE_NAMELIST_OPTS /" 
+     ... 
+     &dArr;
+   ciceconf/ 
+   # Do Not Modify contents of ciceconf/
+     &dArr;
+  Buildconf/cice.buildnml.csh
+</screen>
+
+<variablelist>
+<varlistentry>
+<term>CICE_MODE</term> 
+<listitem> 
+<para>
+Option to CICE's configure utility for the -mode argument (see above).
+Valid values are prognostic, prescribed, thermo_only. The default
+is prognostic.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CICE_CONFIG_OPTS</term> 
+<listitem> 
+<para>
+Provides option(s) for CICE's configure utility (see above). Default
+value is "-ntr_aero 3".
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CICE_NAMELIST_OPTS</term> 
+<listitem> 
+<para>
+CICE-specific namelist settings for -namelist option (see above).
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<para> In addition, $<filename>CASEROOT/configure</filename> also
+generates the CICE's block decomposition in
+<filename>env_build.xml</filename> as follows (also see <link
+linkend="env_build_vars"> env_build.xml variables </link>):</para>
+
+<screen>
+  configure -case  
+     &dArr;
+  $NTASKS_ICE and $NTHRDS_ICE
+     &dArr;
+  Tools/Templates/generate_cice_decomp.xml
+     &dArr;  
+  Tools/Templates/cice_decomp.xml
+     &dArr;
+  sets env_build.xml CICE_BLCKX
+  sets env_build.xml CICE_BLCKY
+  sets env_build.xml CICE_MXBLCKS
+  sets env_build.xml CICE_DECOMPTYPE
+     &dArr;
+  CPP variables in cice.buildexe.csh
+</screen>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_pop">
+<title>POP2 variables </title>
+
+<para> The following are POP2-specific &env_conf.xml; variables</para>
+
+<para> POP2's 
+<ulink url="http://www.cesm.ucar.edu/models/cesm1.0/pop/doc/users/">
+namelist construction utility</ulink> is invoked by <filename>pop2.cpl7.template</filename> 
+in the following sequence:
+</para>
+
+<screen>
+  configure -case  
+     &dArr;
+  Tools/Templates/pop2.cpl7.template 
+     &dArr;
+  $CCSMROOT/models/ocn/pop2/input_templates/pop2_in_build.csh 
+  $CCSMROOT/models/ocn/pop2/input_templates/ocn.*.setup.csh
+     &dArr;
+  Buildconf/pop2.buildnml.csh
+</screen>
+
+<para> POP2's script to generate the ocn binary library
+is created directly from pop2.cpl7.template:
+</para>
+
+<screen>
+  configure -case  
+     &dArr;
+  Tools/Templates/pop2.cpl7.template 
+     &dArr;
+  Buildconf/pop2.buildexe.csh
+</screen>
+
+<para> In addition, <filename>configure</filename> also generates
+POP2's block decomposition in <filename>env_build.xml</filename> as
+follows (also see <link linkend="env_build_vars"> env_build.xml
+variables </link>):</para>
+
+<screen>
+  configure -case  
+     &dArr;
+  $NTASKS_OCN and $NTHRDS_OCN
+     &dArr;
+  Tools/Templates/generate_pop_decomp.xml
+     &dArr;
+  Tools/Templates/pop_decomp.xml
+     &dArr;
+  sets env_build.xml POP_BLCKX
+  sets env_build.xml POP_BLCKY
+  sets env_build.xml POP_MXBLCKS
+  sets env_build.xml POP_DECOMPTYPE
+     &dArr;
+  CPP variables in pop2.buildexe.csh
+</screen>
+
+<para> The following variables are used by the POP2 scripts to generate the
+      settings used in your $CASE. 
+</para>
+
+<variablelist>
+<varlistentry>
+<term>OCN_CHL_TYPE</term> 
+<listitem> 
+<para>
+Determine provenance of surface Chl for radiative penetration
+computations. Valid values are diagnostic, prognostic. The default is
+diagnostic. This option is used in the POP2 ecosystem model, which will be available
+in the CESM1.0 release. 
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>OCN_CO2_TYPE</term> 
+<listitem> 
+<para>
+Determine provenance of atmospheric CO2 for gas flux computation.
+Valid values are constant, prognostic. The default is constant.
+This option is used in the POP2 ecosystem model, which will be available
+in the CESM1.0 release.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>OCN_COUPLING</term> 
+<listitem> 
+<para>
+Determine surface freshwater and heat forcing settings. Valid values
+are full, partial. The full option yields settings that are appropriate
+for coupling to an active atmospheric model (e.g., a B-type compset).
+The partial option yields settings that are appropriate for coupling to a
+data atmospheric model (e.g., a C or G-type compset). The create_newcase
+command selects the appropriate setting for this variable based on the
+specified compset. Users should not change this setting.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>OCN_ICE_FORCING</term> 
+<listitem> 
+<para>
+Determine under-ice forcing settings. Valid values are active,
+inactive. The active option yields settings that are appropriate
+for coupling to an active ice model (e.g., a B or G-type compset).
+The inactive option yields settings that are appropriate for coupling
+to a data ice model (e.g., a C-type compset). The create_newcase command
+selects the appropriate setting for this variable based on the specified
+compset. Users should not change this setting.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>OCN_TRANSIENT</term> 
+<listitem> 
+<para>
+Determine settings for transient forcing datasets (e.g., atmospheric pCFC
+concentrations). Valid values are unset, 1850-2000. The create_newcase
+command selects the appropriate setting for this variable based on the
+specified compset. Users should not change this setting. This option is used in the 
+POP2 ecosystem model, which will be available in the CESM1.0 release. 
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_cism">
+<title>CISM variables </title>
+
+<para> CISM creates a script to generate the glc binary library
+directly from <filename>cism.cpl7.template</filename>:
+</para>
+
+<screen>
+  configure -case  
+     &dArr;
+  Tools/Templates/cism.cpl7.template 
+     &dArr;
+  Buildconf/cism.buildexe.csh
+</screen>
+
+<para> The file <filename>cism.cpl7.template</filename> is also
+used to generate CISM's script to build its namelist:
+</para>
+
+<screen>
+  configure -case  
+     &dArr;
+  Tools/Templates/cism.cpl7.template 
+     &dArr;
+  Buildconf/cism.buildnml.csh
+</screen>
+
+
+<para> The following are CISM-specific &env_conf.xml; variables</para>
+
+<variablelist>
+<varlistentry>
+<term>GLC_GRID</term> 
+<listitem> 
+<para>
+Determines the specific local GLC grid CISM will use for internal calculations.
+Current valid values are gland20, gland10, and gland5  The default is gland20.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_datm">
+<title>DATM variables </title>
+
+<para> The following are DATM-specific &env_conf.xml; variables</para>
+
+<para> DATM is discussed in detail in <ulink
+url="http://www.cesm.ucar.edu/models/cesm1.0/data8/book1.html">Data
+Model's User's Guide</ulink>. DATM is normally used to provide
+observational forcing data (or forcing data produced by a previous run
+using active components) to drive CLM (I compset), POP2 (C compset), and
+POP2/CICE (G compset). As a result, DATM variable settings are specific
+to the compset that will be targeted. </para>
+
+<para> DATM uses the <filename>datm.cpl7.template</filename> as follows: </para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/datm.cpl7.template 
+     &dArr;
+  Buildconf/datm.builexe.csh
+</screen>
+
+<para> and </para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/datm.cpl7.template 
+     &dArr;
+  $CCSMROOT/scripts/ccsm_utils/build_streams 
+     &dArr;
+  Buildconf/datm.buildml.csh
+</screen>
+
+
+<para> The following are &cesm; environment variables that are used by
+<filename>datm.cpl7.template</filename>: </para>
+
+<variablelist>
+<varlistentry>
+<term>DATM_MODE</term> 
+<listitem> 
+<para>
+Mode for data atmosphere component (datm). Valid values are CORE2_NYF,
+CLM_QIAN, CLM1PT. The default is CORE2_NYF.</para> <para>CORE2_NYF
+(CORE2 normal year forcing) is the DATM mode used in C and G
+compsets.</para> <para>CLM_QIAN and CLM1PT are DATM modes using
+observational data for forcing CLM in I compsets.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>DATM_PRESAERO</term> 
+<listitem> 
+<para>
+Sets the prescribed aerosol mode for the data atmosphere model. If "none" aerosols
+will NOT be sent from the datm, otherwise the datasets corresponding to the given
+mode will be used.
+</para>
+<para>Valid values are: none, clim_1850, clim_2000, trans_1850-2000, 
+rcp2.6, rcp4.5, rcp8.5, pt1_pt1. Default value is none (although most compsets override this)</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>DATM_CLMNCEP_YR_ALIGN</term>
+<listitem>
+<para> For I compset only. Year align (simulation year corresponding to
+starting year) for CLM_QIAN mode. Default value is 1. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>DATM_CLMNCEP_YR_START</term>
+<listitem>
+<para> For I compset only. Starting year to loop data over for
+CLM_QIAN mode. Default value is 2004. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>DATM_CLMNCEP_YR_END</term>
+<listitem>
+<para> For I compset only. Ending year to loop data over for CLM_QIAN
+mode. Default value is 2004. </para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_dlnd">
+<title>DLND variables </title>
+
+<para> The following are DLND-specific &env_conf.xml; variables</para>
+
+<para> DLND is discussed in detail in <ulink
+url="http://www.cesm.ucar.edu/models/cesm1.0/data8/book1.html">Data
+Model's User's Guide</ulink>. The data land model is different from
+the other data models because it can run as a purely data-runoff
+model (reading in runoff data), or as a purely data-land model (reading
+in coupler history data for atm/land fluxes and land albedos produced
+by a previous run), or both. In general, the data land model is only
+used to provide runoff forcing data to POP2 when running C or G
+compsets. </para>
+
+<para> DLND uses the <filename>datm.cpl7.template</filename> as follows: </para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/dlnd.cpl7.template 
+     &dArr;
+  Buildconf/dlnd.builexe.csh
+</screen>
+
+<para> and </para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/dlnd.cpl7.template 
+     &dArr;
+  $CCSMROOT/scripts/ccsm_utils/build_streams 
+     &dArr;
+  Buildconf/dlnd.buildml.csh
+</screen>
+
+<para> The following are variables that are used by
+<filename>dlnd.cpl7.template</filename>. </para>
+
+<variablelist>
+<varlistentry>
+<term>DLND_MODE</term> 
+<listitem> <para> 
+DLND mode. Valid values are CPLHIST and NULL. In CPLHIST mode, land
+forcing data (produced by CLM) from a previous model run is output in
+coupler history files and read in by the data land model. In NULL
+mode, land forcing is set to zero and not utilized. The default is
+NULL. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>DLND_RUNOFF_MODE</term> 
+<listitem> <para> 
+DLND_RUNOFF mode. Valid values are CPLHIST, RX1, and NULL. In RX1 mode,
+observational 1-degree runoff data is used. In CPLHIST mode, runoff
+data from a previous model run is read in. In NULL mode, the runoff
+data is set to zero. In CPLHIST mode, land forcing data from a previous
+model run is output by the coupler and read in by the data land
+model. In NULL mode, land forcing is set to zero and not used. The
+default is RX1. </para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_dice">
+<title>DICE variables </title>
+
+<para> The following are DICE-specific &env_conf.xml; variables</para>
+
+<para> DICE is discussed in detail in <ulink
+url="http://www.cesm.ucar.edu/models/cesm1.0/data8/book1.html">Data
+Model's User's Guide</ulink>. DICE is a combination of a data model
+and a prognostic model. The data functionality reads in ice
+coverage. The prognostic functionality calculates the ice/atmosphere
+and ice/ocean fluxes. DICE receives the same atmospheric input from
+the coupler as the active CICE model (i.e., atmospheric states,
+shortwave fluxes, and ocean ice melt flux). DICE acts very similarly
+to CICE running in prescribed mode.) Currently, this component is only
+used to drive POP2 in C compsets.
+</para>
+
+<para> DICE uses the <filename>dice.cpl7.template</filename> as follows: </para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/dice.cpl7.template 
+     &dArr;
+  Buildconf/dice.builexe.csh
+</screen>
+
+<para> and </para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/dice.cpl7.template 
+     &dArr;
+  $CCSMROOT/scripts/ccsm_utils/build_streams 
+     &dArr;
+  Buildconf/dice.buildml.csh
+</screen>
+
+
+<para> The following are variables that are used by
+<filename>dice.cpl7.template</filename>. </para>
+
+<variablelist>
+
+<varlistentry>
+<term>DICE_MODE</term> 
+<listitem> <para> 
+DICE mode. Valid value is ssmi. 
+</para></listitem> 
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_docn">
+<title>DOCN variables </title>
+
+<para> The following are DOCN-specific &env_conf.xml; variables</para>
+
+<para> The following are variables that are used by
+<filename>docn.cpl7.template</filename>. </para>
+
+<para> DOCN is discussed in detail in <ulink
+url="http://www.cesm.ucar.edu/models/cesm1.0/data8/book1.html">Data
+Model's User's Guide</ulink>. </para>
+
+<para>
+The data ocean component (DOCN) always returns SSTs to the
+driver. In &cesm;, atmosphere/ocean fluxes are computed in the
+coupler. Therefore, the data ocean model does not compute fluxes like
+the data ice model. DOCN has two distinct modes of operation. It can
+run as a pure data model, reading in ocean SSTs (normally
+climatological) from input datasets, performing time/spatial
+interpolations, and passing these to the coupler. Alternatively,
+DOCN can compute updated SSTs by running as a slab ocean model where
+bottom ocean heat flux convergence and boundary layer depths are read
+in and used with the atmosphere/ocean and ice/ocean fluxes obtained
+from the driver.</para>
+
+<para>DOCN running in prescribed mode (in conjunction with
+CICE running in prescribed mode) is used in all <link
+linkend="ccsm_component_sets">F component sets</link>.</para>
+<para>DOCN running as a slab ocean model is used (in conjunction with
+CICE running in prognostic mode) in all <link
+linkend="ccsm_component_sets">E compsets</link>.
+</para>
+
+<para> For prescribed mode, default yearly climatological datasets are
+provided for various model resolutions. For multi-year runs requiring
+AMIP datasets of sst/ice_cov fields, you need to set the variables for
+<envar>DOCN_SSTDATA_FILENAME</envar>,
+<envar>DOCN_SSTDATA_YEAR_START</envar>, and
+<envar>DOCN_SSTDATA_YEAR_END</envar>. CICE in prescribed mode also
+uses these values.
+</para>
+
+<para> DOCN uses the <filename>docn.cpl7.template</filename> as follows: </para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/docn.cpl7.template 
+     &dArr;
+  Buildconf/docn.builexe.csh
+</screen>
+
+<para> and </para>
+
+<screen>
+  configure   
+     &dArr;
+  Tools/Templates/docn.cpl7.template 
+     &dArr;
+  $CCSMROOT/scripts/ccsm_utils/build_streams 
+     &dArr;
+  Buildconf/docn.buildml.csh
+</screen>
+
+
+<variablelist>
+<varlistentry>
+<term>DOCN_MODE</term> 
+<listitem>
+<para> 
+DOCN mode. Valid values are prescribed, som. Default is prescribed.
+</para>
+</listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>DOCN_SSTDATA_FILENAME</term> 
+<listitem>
+<para> 
+Sets sst/ice_cov filename for AMIP runs, only used in F compset. 
+Default is UNSET.
+</para>
+</listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>DOCN_SSTDATA_YEAR_START</term> 
+<listitem> <para> 
+Sets start year of sst/ice_cov for AMIP runs, only used in F compset.
+Default is -999.
+</para></listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>DOCN_SSTDATA_YEAR_END</term> 
+<listitem>
+<para> 
+Sets end year of sst/ice_cov for AMIP runs, only used in F compset.
+Default is -999.
+</para>
+</listitem> 
+</varlistentry>
+</variablelist>
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_cpl">
+<title>Driver/coupler variables </title>
+
+<para> The following are CPL-specific &env_conf.xml; variables</para>
+
+<variablelist>
+<varlistentry>
+<term>CPL_EPBAL</term> 
+<listitem>
+<para> 
+Provides EP balance factor for precip for POP2. A factor computed by
+POP2 is applied to precipitation so that precipitation balances
+evaporation and ocn global salinity does not drift. This is intended
+for use when coupling POP2 to a DATM. Only used for C and G compsets.
+</para>
+<para> Valid values are off, ocn. Default is off. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CPL_ALBAV</term>
+<listitem>
+<para> If false, albedos are computed with the assumption that downward
+solar radiation from the atm component has a diurnal cycle and
+zenith-angle dependence. This is normally the case when using an active
+atm component.</para>
+<para> If true, albedos are computed with the assumption that downward
+solar radiation from the atm component is a daily average quantity and
+does not have a zenith-angle dependence. This is often the case when
+using a data atm component.</para>
+<para> This is only used for C and G compsets. Valid values are true,
+false. Default is false.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CCSM_BGC</term> 
+<listitem>
+<para> 
+If the value is not "none", the coupler is compiled so that optional 
+BGC related fields are exchanged between component models.  Currently 
+only "none" and "CO2A" are supported.  CO2A will activate sending 
+diagnostic and prognostic co2 from the atm component to the lnd component.
+</para>
+<para> Valid values are: none, CO2A. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>CCSM_VOC</term> 
+<listitem>
+<para> 
+If the value is "TRUE", the coupler is compiled so that optional 
+Biogenic Volatile Organic Compunds (VOC) related fields are exchanged between 
+component models (from the lnd component to the atmosphere component).
+</para>
+<para> Valid values are: TRUE, FALSE. Default is FALSE</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>MAP_A2OF_FILE</term> 
+<listitem>
+<para> 
+atm-to-ocn mapping file for fluxes (currently first-order conservative).
+</para>
+</listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>MAP_A2OS_FILE</term> 
+<listitem>
+<para> 
+atm-to-ocn mapping file for states (currently bilinear).
+</para>
+</listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>MAP_O2AF_FILE</term> 
+<listitem> <para> 
+ocn-to-atm mapping file for fluxes (currently first-order conservative).
+</para></listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>MAP_O2AS_FILE</term> 
+<listitem> <para> 
+ocn-to-atm mapping file for states (currently bilinear).
+</para></listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>MAP_A2LF_FILE</term> 
+<listitem> <para> 
+atm-to-land mapping file for fluxes (currently first-order conservative).
+</para></listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>MAP_A2LS_FILE</term> 
+<listitem> <para> 
+atm-to-land mapping file for states (currently bilinear).
+</para></listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>MAP_R2O_FILE_R05</term> 
+<listitem> <para> 
+0.5-degree runoff-to-ocn mapping file.
+</para></listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>MAP_R2O_FILE_RX1</term> 
+<listitem> <para> 
+1-degree runoff-to-ocn mapping file.
+</para></listitem> 
+</varlistentry>
+
+<varlistentry>
+<term>MAP_R2O_FILE_R19</term> 
+<listitem> <para> 
+19-basin runoff-to-ocn mapping file.
+</para></listitem> 
+</varlistentry>
+</variablelist>
+</sect2>
+
+<!-- ======================================================================= -->
+<sect2 id="customizing_misc">
+<title>Other variables </title>
+
+<para> The following variables impact more than one component.</para>
+
+<variablelist>
+<varlistentry>
+<term>CCSM_CO2_PPMV</term> 
+<listitem>
+<para> 
+This set the namelist values of CO2 ppmv for CAM and CLM. This variables is
+introduced to coordinate this value among multiple components. 
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="reconfigure">
+<title>Reconfiguring a Case</title>
+
+<para>
+If env_conf.xml or env_mach_pes.xml variables need to be changed after 
+configure has been called, the case scripts will need to be reconfigured.
+To do this, run
+</para>
+
+<screen>
+> cd $CASEROOT
+> configure -cleanall
+> configure -case
+</screen>
+
+<para>This will update the buildnml and buildexe files in the Buildconf directory
+and the case build and run scripts in the CASEROOT directory.  If only variables
+in env_conf.xml have change, clean and reconfigure just the files in Buildconf
+by doing
+</para>
+
+<screen>
+> cd $CASEROOT
+> configure -cleannamelist
+> configure -case
+</screen>
+
+<para>If only variables in env_mach_pes.xml have changed, clean and reconfigure
+the build and run scripts by doing
+</para>
+
+<screen>
+> cd $CASEROOT
+> configure -cleanmach
+> configure -case
+</screen>
+
+<para>Note that the -cleanall option does a combination of the -cleannamelist and -cleanmach
+options.  Reconfiguring with -cleanall results in the
+loss of all local modifications to the component buildnml or  buildexe
+files in Buildconf as well as the loss of all local modifications to 
+the local build and run scripts.
+</para>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="case_stuff">
+<title>Summary of Files in the Case Directory</title>
+
+<para>
+This table summarizes the directories and files that are created by configure.
+For more complete information about the files in the case directory, see
+<xref linkend="faq_casestuff"/>
+</para>
+
+<table><title> Result of invoking &configure; </title>
+<tgroup cols="2">
+<thead>
+<row>
+<entry>File or Directory</entry>
+<entry>Description</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry>Buildconf/</entry>
+<entry>Contains scripts that generate component libraries and utility
+libraries (e.g., PIO, MCT) and scripts that generate component
+namelists.
+</entry>
+</row>
+<row>
+<entry>$<filename>CASE.$MACH.build</filename> </entry> 
+<entry>Creates the component and utility libraries and model executable
+(see <link linkend="building_ccsm">building &cesm;</link>).
+</entry>
+</row>
+<row>
+<entry>$<filename>CASE.$MACH.run</filename></entry> <entry>Runs the
+&cesm; model and performs short-term archiving of output data (see
+<link linkend="running_ccsm">running &cesm;</link>).  Contains the
+necessary batch directives to run the model on the required machine
+for the requested PE layout.
+</entry>
+</row>
+<row>
+<entry>$<filename>CASE.$MACH.l_archive</filename></entry>
+<entry>Performs long-term archiving of output data (see <link
+linkend="running_ccsm_env_output">long-term archiving</link>).  This
+script will only be created if long-term archiving is available on the
+target machine.</entry>
+</row>
+<row>
+<entry>$<filename>CASE.$MACH.clean_build</filename></entry> 
+<entry> Removes all object files and libraries and unlocks
+<filename>Macros.$MACH</filename> and
+<filename>env_build.xml</filename>. This step is required before a
+clean build of the system.
+</entry>
+</row>
+<row>
+<entry>env_derived</entry>
+<entry>Contains environmental variables derived from other settings.
+Should <emphasis>not</emphasis> be modified by the user.</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+
+</sect1>
+
+<!-- ======================================================================= -->
+</chapter>
+

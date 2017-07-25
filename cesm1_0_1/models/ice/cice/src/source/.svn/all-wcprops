@@ -1,0 +1,233 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source
+END
+ice_init.F90
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_init.F90
+END
+ice_dyn_evp.F90
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_dyn_evp.F90
+END
+ice_domain.F90
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_domain.F90
+END
+ice_transport_driver.F90
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_transport_driver.F90
+END
+ice_calendar.F90
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_calendar.F90
+END
+ice_restoring.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_restoring.F90
+END
+ice_blocks.F90
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_blocks.F90
+END
+ice_transport_remap.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_transport_remap.F90
+END
+ice_itd.F90
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_itd.F90
+END
+ice_meltpond.F90
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_meltpond.F90
+END
+ice_shortwave.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_shortwave.F90
+END
+ice_ocean.F90
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_ocean.F90
+END
+ice_age.F90
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_age.F90
+END
+ice_lvl.F90
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_lvl.F90
+END
+ice_fileunits.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_fileunits.F90
+END
+ice_aerosol.F90
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_aerosol.F90
+END
+ice_diagnostics.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_diagnostics.F90
+END
+ice_kinds_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_kinds_mod.F90
+END
+ice_mechred.F90
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_mechred.F90
+END
+ice_therm_vertical.F90
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_therm_vertical.F90
+END
+ice_step_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_step_mod.F90
+END
+ice_flux.F90
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_flux.F90
+END
+ice_FY.F90
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_FY.F90
+END
+ice_therm_itd.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_therm_itd.F90
+END
+ice_distribution.F90
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_distribution.F90
+END
+ice_state.F90
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_state.F90
+END
+ice_probability.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_probability.F90
+END
+ice_work.F90
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_work.F90
+END
+ice_grid.F90
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_grid.F90
+END
+ice_read_write.F90
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_read_write.F90
+END
+ice_history_fields.F90
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_history_fields.F90
+END
+ice_forcing.F90
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_forcing.F90
+END
+ice_orbital.F90
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_orbital.F90
+END
+ice_atmo.F90
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_atmo.F90
+END
+ice_spacecurve.F90
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_spacecurve.F90
+END
+ice_probability_tools.F90
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_probability_tools.F90
+END
+ice_domain_size.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_domain_size.F90
+END
+ice_history.F90
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/source/ice_history.F90
+END

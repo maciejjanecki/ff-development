@@ -1,0 +1,22 @@
+#! /bin/csh -f
+
+# -------------------------------------------------------------------------
+# Build and runtime environment variables - edit before the initial build 
+# -------------------------------------------------------------------------
+
+#ulimit -d unlimited;  #ulimit -s unlimited
+
+ limit datasize  unlimited    
+ setenv OBJECT_MODE 32
+ setenv OMP_DYNAMIC FALSE     
+ setenv AIXTHREAD_SCOPE S
+ setenv MALLOCMULTIHEAP TRUE  
+#setenv SPINLOOPTIME 100000
+#setenv YIELDLOOPTIME 40000
+if (${OBJECT_MODE} == 64) then
+  setenv XLSMPOPTS "stack=256000000"
+else
+  setenv XLSMPOPTS "stack=86000000"
+endif
+ setenv MPI_TYPE_MAX 100000 
+

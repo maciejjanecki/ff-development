@@ -1,0 +1,148 @@
+#! /bin/tcsh -f
+
+set mach = prototype_columbia
+set group_id = s0819
+
+#################################################################################
+if ($PHASE == set_batch) then
+#################################################################################
+
+source ./Tools/ccsm_getenv || exit -1
+
+# Determine tasks and threads for batch queue
+
+set maxthrds = 0
+@ n = 0
+foreach model ($MODELS)
+  @ n = $n + 1
+  if ($NTHRDS[$n] > $MAX_TASKS_PER_NODE ) then
+     echo "ERROR, NTHRDS maximum is $MAX_TASKS_PER_NODE"
+     echo "you have set NTHRDS = ( $NTHRDS[$n] ) - must reset"
+     exit 1
+  endif   
+  if ($NTHRDS[$n] > $maxthrds) then
+     set maxthrds = $NTHRDS[$n]
+  endif
+end
+
+set ntasks_tot = `${UTILROOT}/Tools/taskmaker.pl -sumonly`
+
+@ nodes = $ntasks_tot / $MAX_TASKS_PER_NODE
+@ tmpValue = $nodes * $MAX_TASKS_PER_NODE
+if( $tmpValue < $ntasks_tot ) then
+  @ nodes = $nodes + 1
+endif
+
+# On jaguarcnl, must request tasks equivalent to full nodes
+@ mpp = $nodes * $MAX_TASKS_PER_NODE
+
+# Job name is first fifteen characters of case name
+set jobname = `echo ${CASE} | cut -c1-15`
+# showproj is not in the path by default, so for now use the absolute path
+#set account_name = `/apps/common/showproj | tail -1`
+if (-e ~/.ccsm_proj) then
+   set account_name = `head -1 ~/.ccsm_proj`
+endif
+
+cat >! $CASEROOT/${CASE}.${mach}.run << EOF1
+#!/bin/csh -f
+##============================================================================
+## This is a CCSM batch job script for $mach
+##============================================================================
+#PBS -S /bin/csh -V
+#PBS -W group_list=${group_id}
+#PBS -N ${jobname}
+#PBS -q normal
+#PBS -l ncpus=$mpp
+#PBS -l walltime=08:00:00
+#PBS -l mem=100GB
+#PBS -j oe
+
+EOF1
+
+#################################################################################
+else if ($PHASE == set_exe) then
+#################################################################################
+
+
+cat >> ${CASEROOT}/${CASE}.${MACH}.run << EOF1
+
+setenv MPI_GROUP_MAX 1024
+setenv MPI_DSM_DISTRIBUTE
+
+limit stacksize unlimited
+limit datasize unlimited
+limit
+
+# -------------------------------------------------------------------------
+# Run the model
+# -------------------------------------------------------------------------
+
+sleep 25
+cd \$RUNDIR
+echo "\`date\` -- CSM EXECUTION BEGINS HERE" 
+
+set mpp = \`\${UTILROOT}/Tools/taskmaker.pl -sumonly\`
+
+mpirun -v -np \${mpp} ./ccsm.exe >&! ccsm.log.\$LID
+wait
+
+echo "\`date\` -- CSM EXECUTION HAS FINISHED" 
+
+EOF1
+
+#################################################################################
+else if ($PHASE == set_larch) then
+#################################################################################
+
+set jobname = `echo ${CASE} | cut -c1-12`
+#set jobname = ${jobname}_la
+#set account_name = `showproj | tail -1`
+#if (-e ~/.ccsm_proj) then
+#   set account_name = `head -1 ~/.ccsm_proj`
+#endif
+
+cat >! $CASEROOT/${CASE}.${mach}.l_archive << EOF1
+#! /bin/csh -f
+#===============================================================================
+#  This is a CCSM coupled model batch long term archiving script
+#===============================================================================
+
+#PBS -W group_list=${group_id}
+#PBS -N ${jobname}
+#PBS -q normal
+#PBS -l walltime=04:00:00
+#PBS -l ncpus=1
+#PBS -j oe
+#PBS -S /bin/csh -V
+
+#-----------------------------------------------------------------------
+# Determine necessary environment variables
+#-----------------------------------------------------------------------
+
+cd $CASEROOT 
+
+source ./Tools/ccsm_getenv || exit -1
+
+#----------------------------------------------
+# run the long term archiver
+#----------------------------------------------
+
+\$CASETOOLS/ccsm_l_archive.csh
+
+EOF1
+
+#################################################################################
+else
+#################################################################################
+
+    echo "mkscripts.$mach"
+    echo "  PHASE setting of $PHASE is not an accepted value"
+    echo "  accepted values are set_batch, set_exe and set_larch"
+    exit 1
+
+#################################################################################
+endif
+#################################################################################
+ 
+

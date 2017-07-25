@@ -1,0 +1,43 @@
+#!/bin/csh -f
+
+./Tools/xml2env
+if ($status != 0) then
+   echo "ccsm_getenv error "
+   exit -1
+endif
+
+foreach i (env_case.xml  env_run.xml env_conf.xml env_build.xml env_mach_pes.xml)
+  source $i:r || exit -1
+  if ($status != 0) then
+     echo "ccsm_getenv error: problem sourcing $i:r" 
+     exit -2
+  endif 
+  rm $i:r    
+  if ($status != 0) then
+     echo "ccsm_getenv error: problem removing $i:r" 
+     exit -3
+  endif
+end
+
+if (-f env_mach_specific ) source env_mach_specific
+
+set fname = env_derived
+
+cat >! ${fname} << EOF
+#!/bin/csh -f
+
+# This file should NOT be modified by users
+
+set MODELS     = (         cpl         atm         lnd         ice         ocn         glc)
+set COMPONENTS = (   \$COMP_CPL   \$COMP_ATM   \$COMP_LND   \$COMP_ICE   \$COMP_OCN   \$COMP_GLC)
+set NTASKS     = ( \$NTASKS_CPL \$NTASKS_ATM \$NTASKS_LND \$NTASKS_ICE \$NTASKS_OCN \$NTASKS_GLC)
+set NTHRDS     = ( \$NTHRDS_CPL \$NTHRDS_ATM \$NTHRDS_LND \$NTHRDS_ICE \$NTHRDS_OCN \$NTHRDS_GLC)
+set ROOTPE     = ( \$ROOTPE_CPL \$ROOTPE_ATM \$ROOTPE_LND \$ROOTPE_ICE \$ROOTPE_OCN \$ROOTPE_GLC)
+set PSTRID     = ( \$PSTRID_CPL \$PSTRID_ATM \$PSTRID_LND \$PSTRID_ICE \$PSTRID_OCN \$PSTRID_GLC)
+ 
+EOF
+
+source ${fname}
+cp -f ${fname} LockedFiles/${fname}.locked
+
+

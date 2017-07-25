@@ -1,0 +1,107 @@
+#!/bin/csh -f
+
+#---------------------------
+# print help messages
+#---------------------------
+      
+set helpheader = 0
+if ($#argv == 1) set helpheader = 1
+      
+if ( $helpheader ) then
+cat <<EOF
+
+NAME
+
+  create_production_test
+
+  Running this command will create a production restart test for the current case and
+  current machine. The test case will be created in a parallel directory called
+  "current_case_ERU.current_machine".
+
+  We use the following example to document running this script.
+  If the current case is in
+      /ptmp/user/current_case on bluefire
+  the production restart test will be created in
+      /ptmp/user/current_case_ERU.bluefire.
+  In order to run the test, you will need to
+    - cd to /ptmp/user/current_case_ERU.bluefire.
+    - run the build script interactively (current_case_ERU.bluefire.build)
+    - submit the test script(current_case_ERU.bluefire.test).
+      Note that submitting the run script (current_case_ERU.bluefire.run)
+      will cause a failure.
+    - The result of the test will be in documented in
+     /ptmp/user/current_case_ERU.bluefire/TestStatus
+
+
+SYNOPSIS
+
+   create_production_test -help
+
+   create_production_test 
+
+EOF
+exit
+endif
+
+cat <<EOF
+************************************************************************
+ Creating a production restart test for current and current machine.
+ Will clone the current case and generate a testcase based on it.
+ The testcase will be created in a parallel directory.
+ Users must submit that test manually and check the file TestStatus 
+ when the test is complete.
+************************************************************************
+ 
+EOF
+      
+#===================================================================
+# get clone name and execute directory
+#===================================================================
+
+./Tools/ccsm_check_lockedfiles 
+if ($status != 0) then
+  echo "configure error: ccsm_checking LockedFiles" 
+  exit -1
+endif
+
+source ./Tools/ccsm_getenv
+if ($status != 0) then
+  echo "create_production_test error1: ccsm_getenv" 
+  exit -1
+endif
+
+set caseroot  = $CASEROOT
+set casename  = $CASE
+set testcase  =  ERU
+set testroot  = $CASEROOT/..
+set mach      = $MACH
+set testname  = ${casename}_${testcase}.${mach}
+
+echo ""
+echo "Creating test testcase $testcase"
+ 
+#=======================================================================
+# create clone case
+#=======================================================================
+ 
+$SCRIPTSROOT/create_clone -case $testroot/$testname -clone $caseroot -testname $testcase || exit -1
+
+cd $testroot/$testname
+
+source ./Tools/ccsm_getenv || exit -1
+if ($status != 0) then
+  echo "create_production_test error1: ccsm_getenv" 
+  exit -1
+endif
+env TESTCASE=$testcase $SCRIPTSROOT/ccsm_utils/Tools/testcase_setup.csh || exit -1
+
+echo ""
+echo "*************************************************************"
+echo "$testcase test created" 
+echo "cd to ../$testname"
+echo "Run $testname.build interactively and"
+echo "Submit $testname.test"
+echo "*************************************************************"
+echo ""
+
+

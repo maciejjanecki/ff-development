@@ -1,0 +1,87 @@
+#! /bin/csh -f
+
+set mach = generic_xt
+
+#################################################################################
+if ($PHASE == set_batch) then
+#################################################################################
+
+source ./Tools/ccsm_getenv || exit -1
+
+set mppsize = `${UTILROOT}/Tools/taskmaker.pl -sumonly`
+if ( $mppsize % ${MAX_TASKS_PER_NODE} > 0) then
+  @ mppnodes = $mppsize / ${MAX_TASKS_PER_NODE}
+  @ mppnodes = $mppnodes + 1
+  @ mppsize = $mppnodes * ${MAX_TASKS_PER_NODE}
+endif
+
+#--- Job name is first fifteen characters of case name ---
+set jobname = `echo ${CASE} | cut -c1-15`
+
+cat >! $CASEROOT/${CASE}.${mach}.run << EOF1
+#!/bin/csh -f
+#===============================================================================
+# GENERIC_USER
+# This is where the batch submission is set.  The above code computes
+# the total number of tasks, nodes, and other things that can be useful
+# here.  Use PBS, BSUB, or whatever the local environment supports.
+#===============================================================================
+
+###PBS -A USER_FILL_THIS_IN
+#PBS -N ${jobname}
+#PBS -q premium
+#PBS -l mppwidth=$mppsize
+#PBS -l walltime=00:59:00
+#PBS -j oe
+#PBS -S /bin/csh -V
+
+EOF1
+
+#################################################################################
+else if ($PHASE == set_exe) then
+#################################################################################
+
+set maxthrds = `${UTILROOT}/Tools/taskmaker.pl -maxthrds`
+set myaprun = `${UTILROOT}/Tools/taskmaker.pl -aprun`
+
+cat >> ${CASEROOT}/${CASE}.${MACH}.run << EOF1
+# -------------------------------------------------------------------------
+# Run the model
+# -------------------------------------------------------------------------
+
+sleep 25
+cd \$RUNDIR
+echo "\`date\` -- CSM EXECUTION BEGINS HERE" 
+
+#===============================================================================
+# GENERIC_USER
+# Launch the job here.
+#===============================================================================
+
+setenv OMP_NUM_THREADS ${maxthrds}
+aprun ${myaprun} >&! ccsm.log.\$LID
+
+wait
+echo "\`date\` -- CSM EXECUTION HAS FINISHED" 
+
+EOF1
+
+
+#################################################################################
+else if ($PHASE == set_larch) then
+#################################################################################
+
+   #This is a place holder for a long-term archiving script
+
+#################################################################################
+else
+#################################################################################
+
+    echo "mkscripts.$mach"
+    echo "  PHASE setting of $PHASE is not an accepted value"
+    echo "  accepted values are set_batch, set_exe and set_larch"
+    exit 1
+
+#################################################################################
+endif
+#################################################################################

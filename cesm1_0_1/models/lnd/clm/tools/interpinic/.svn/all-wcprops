@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic
+END
+interpinic.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/interpinic.F90
+END
+interpinic.runoptions
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/interpinic.runoptions
+END
+addglobal.F90
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/addglobal.F90
+END
+fmain.F90
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/fmain.F90
+END
+wrap_nf.F90
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/wrap_nf.F90
+END
+Srcfiles
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/Srcfiles
+END
+clmi.IQ.1953-01-01_10x15_USGS_simyr2000_c081202.nc
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/clmi.IQ.1953-01-01_10x15_USGS_simyr2000_c081202.nc
+END
+runinit_ibm.csh
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/runinit_ibm.csh
+END
+Filepath
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/Filepath
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/Makefile
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/tools/interpinic/README
+END

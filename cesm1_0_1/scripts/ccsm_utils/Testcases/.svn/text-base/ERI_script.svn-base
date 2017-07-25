@@ -1,0 +1,289 @@
+
+#======================================================================
+# Clear coupler log files for comparison tests
+#======================================================================
+unsetenv CPLLOG_INIT
+unsetenv CPLLOG_HYBR
+unsetenv CPLLOG_BRCH
+unsetenv CPLLOG_REST
+
+#--- clone the main case to create ref1 and ref2 case
+set CASER0 = ${CASEROOT}
+set EXEROOT0 = $EXEROOT
+set CASE0 = ${CASE}
+
+set CASERR1 = ${CASEROOT}.ref1
+cd $CCSMROOT/scripts
+rm -r -f ${CASERR1}
+./create_clone -case ${CASERR1} -clone ${CASER0} 
+
+set CASERR2 = ${CASEROOT}.ref2
+cd $CCSMROOT/scripts
+rm -r -f ${CASERR2}
+./create_clone -case ${CASERR2} -clone ${CASER0} 
+
+#--- build model for use in ref and main cases
+cd $CASEROOT
+setenv CCSMBUILDONLY TRUE
+./$CASE.build
+unsetenv CCSMBUILDONLY
+
+
+#======================================================================
+# do a 5 day initial ref1 case run
+#   by cloning the case and running there
+#======================================================================
+
+source ./Tools/ccsm_getenv || exit -1
+set orig_date  = $RUN_STARTDATE
+set start_date = $RUN_STARTDATE
+set start_year = `echo $start_date | cut -f 1 -d "-"`
+set start_date = $start_year-12-27
+
+@ yearp1 = $start_year + 1
+if ($yearp1 < 10) then
+   set yearp1 = "000$yearp1"
+else if ($yearp1 < 100) then
+   set yearp1 = "00$yearp1"
+else if ($yearp1 < 1000) then
+   set yearp1 = "0$yearp1"
+endif
+ 
+cd ${CASERR1}
+echo "ref1: doing a 7 day initial startup from $start_date" >>& $TESTSTATUS_LOG 
+
+#--- setup ref1 case env_* and configure
+
+./xmlchange -file env_conf.xml -id RUN_STARTDATE -val $start_date
+./xmlchange -file env_run.xml -id CONTINUE_RUN -val FALSE
+./xmlchange -file env_run.xml -id STOP_OPTION  -val ndays
+./xmlchange -file env_run.xml -id STOP_N       -val 7
+./xmlchange -file env_run.xml -id REST_OPTION  -val ndays
+./xmlchange -file env_run.xml -id REST_N       -val 5
+
+./configure -cleanall
+./configure -case4test 
+
+#--- go into ref1 case "space", copy binaries to avoid extra build
+source ./Tools/ccsm_getenv
+cp -r -p $EXEROOT0 $EXEROOT >& /dev/null
+./xmlchange -file env_build.xml -id BUILD_COMPLETE -val TRUE
+
+#--- run ref1 case
+./$CASE.run
+
+gunzip ${DOUT_S_ROOT}/cpl/logs/cpl.log*.gz
+set CplLogFile = `ls -1t ${DOUT_S_ROOT}/cpl/logs/cpl.log* | head -1`
+setenv CPLLOG_INIT $CplLogFile
+
+set EXEROOTR1 = $EXEROOT
+set DOUTSR1 = ${DOUT_S_ROOT}
+
+set basestatus = "FAIL "
+if ( $?CPLLOG_INIT ) then
+  echo "Checking successful completion of init cpl log file" >>& $TESTSTATUS_LOG
+  set pass = `grep "SUCCESSFUL TERM" $CPLLOG_INIT | wc -l`
+  if ( $pass != 0 ) then
+    set basestatus = "PASS "
+    echo "$basestatus ${CASEBASEID}.1 " >>& $TESTSTATUS_LOG
+  else
+    set basestatus = "FAIL "
+    echo "$basestatus ${CASEBASEID}.1 " >>& $TESTSTATUS_LOG
+    echo "$basestatus ${CASEBASEID} " >&! $TESTSTATUS_OUT
+    exit -5
+  endif
+endif
+
+#======================================================================
+# do a 15 day hybrid ref2 case run
+#   by cloning the case and running there with ref1 restarts
+#======================================================================
+
+source ./Tools/ccsm_getenv || exit -1
+set start_date = $start_year-01-01
+set ref_date  = $yearp1-01-01
+ 
+cd ${CASERR2}
+echo "ref2: doing a 15 day hybrid startup from $start_date using ref1 $ref_date" >>& $TESTSTATUS_LOG 
+
+#--- setup ref2 case env_* and configure
+./xmlchange -file env_conf.xml -id RUN_TYPE      -val hybrid
+./xmlchange -file env_conf.xml -id RUN_STARTDATE -val $start_date
+./xmlchange -file env_conf.xml -id RUN_REFCASE   -val $CASE0.ref1
+./xmlchange -file env_conf.xml -id RUN_REFDATE   -val $ref_date
+./xmlchange -file env_conf.xml -id GET_REFCASE   -val FALSE
+
+./xmlchange -file env_run.xml -id CONTINUE_RUN  -val FALSE
+./xmlchange -file env_run.xml -id STOP_OPTION   -val ndays 
+./xmlchange -file env_run.xml -id STOP_N        -val 15 
+./xmlchange -file env_run.xml -id REST_OPTION   -val ifdays0
+./xmlchange -file env_run.xml -id REST_N        -val 6
+
+./configure -cleanall
+./configure -case4test 
+
+#--- go into ref2 case "space", copy binaries to avoid extra build
+source ./Tools/ccsm_getenv
+cp -r -p $EXEROOT0 $EXEROOT >& /dev/null
+./xmlchange -file env_build.xml -id BUILD_COMPLETE -val TRUE
+
+cd ${RUNDIR}
+cp ${DOUTSR1}/rest/${ref_date}-00000/* .
+
+cd $CASEROOT
+
+#--- run ref case
+./$CASE.run
+
+gunzip ${DOUT_S_ROOT}/cpl/logs/cpl.log*.gz
+set CplLogFile = `ls -1t ${DOUT_S_ROOT}/cpl/logs/cpl.log* | head -1`
+setenv CPLLOG_HYBR $CplLogFile
+
+set EXEROOTR2 = $EXEROOT
+set DOUTSR2 = ${DOUT_S_ROOT}
+
+set basestatus = "FAIL "
+if ( $?CPLLOG_HYBR ) then
+  echo "Checking successful completion of hybr cpl log file" >>& $TESTSTATUS_LOG
+  set pass = `grep "SUCCESSFUL TERM" $CPLLOG_HYBR | wc -l`
+  if ( $pass != 0 ) then
+    set basestatus = "PASS "
+    echo "$basestatus ${CASEBASEID}.2 " >>& $TESTSTATUS_LOG
+  else
+    set basestatus = "FAIL "
+    echo "$basestatus ${CASEBASEID}.2 " >>& $TESTSTATUS_LOG
+    echo "$basestatus ${CASEBASEID} " >&! $TESTSTATUS_OUT
+    exit -5
+  endif
+endif
+
+#======================================================================
+# do a 9 day branch run from day 6 of restart
+#======================================================================
+#--- go back to main case "space"
+cd $CASER0
+source ./Tools/ccsm_getenv
+set ref_date  = $start_year-01-06
+# save the original settings
+cp -f env_conf.xml env_conf.xml.base
+cp -f env_run.xml env_run.xml.base
+
+cd ${RUNDIR}
+cp ${DOUTSR2}/rest/${ref_date}-00000/* .
+
+cd $CASEROOT
+echo "doing a 9 day branch startup from ref2 $ref_date" >>& $TESTSTATUS_LOG 
+
+./xmlchange -file env_conf.xml -id RUN_TYPE      -val branch
+./xmlchange -file env_conf.xml -id RUN_REFCASE   -val $CASE0.ref2
+./xmlchange -file env_conf.xml -id RUN_REFDATE   -val $ref_date
+./xmlchange -file env_conf.xml -id GET_REFCASE   -val FALSE
+
+./xmlchange -file env_run.xml -id CONTINUE_RUN  -val FALSE
+./xmlchange -file env_run.xml -id STOP_OPTION   -val ndays 
+./xmlchange -file env_run.xml -id STOP_N        -val 9 
+./xmlchange -file env_run.xml -id REST_OPTION   -val ndays
+./xmlchange -file env_run.xml -id REST_N        -val 5
+
+./configure -cleanall
+./configure -case4test 
+./xmlchange -file env_build.xml -id BUILD_COMPLETE -val TRUE
+
+./$CASE.run
+
+gunzip ${DOUT_S_ROOT}/cpl/logs/cpl.log*.gz
+set CplLogFile = `ls -1t ${DOUT_S_ROOT}/cpl/logs/cpl.log* | head -1`
+setenv CPLLOG_BRCH $CplLogFile
+
+set basestatus = "FAIL "
+if ( $?CPLLOG_BRCH ) then
+  echo "Checking successful completion of brch cpl log file" >>& $TESTSTATUS_LOG
+  set pass = `grep "SUCCESSFUL TERM" $CPLLOG_BRCH | wc -l`
+  if ( $pass != 0 ) then
+    set basestatus = "PASS "
+    echo "$basestatus ${CASEBASEID}.3 " >>& $TESTSTATUS_LOG
+  else
+    set basestatus = "FAIL "
+    echo "$basestatus ${CASEBASEID}.3 " >>& $TESTSTATUS_LOG
+    echo "$basestatus ${CASEBASEID} " >&! $TESTSTATUS_OUT
+  endif
+endif
+
+#======================================================================
+# do a 5 day restart run
+#======================================================================
+set ref_date  = $start_year-01-11
+cd $CASEROOT
+echo "doing a 5 day continue restart test from $ref_date" >>& $TESTSTATUS_LOG 
+
+./xmlchange -file env_run.xml -id CONTINUE_RUN -val TRUE
+./xmlchange -file env_run.xml -id STOP_OPTION  -val ndays 
+./xmlchange -file env_run.xml -id STOP_N       -val 5 
+./xmlchange -file env_run.xml -id REST_OPTION  -val none
+
+./$CASE.run
+
+gunzip ${DOUT_S_ROOT}/cpl/logs/cpl.log*.gz
+set CplLogFile = `ls -1t ${DOUT_S_ROOT}/cpl/logs/cpl.log* | head -1`
+setenv CPLLOG_REST $CplLogFile
+
+# restore to original settings
+cp -f env_conf.xml env_conf.xml.run
+cp -f env_run.xml env_run.xml.run
+cp -f env_conf.xml.base env_conf.xml
+cp -f env_run.xml.base env_run.xml
+
+./configure -cleanall
+./configure -case4test 
+./xmlchange -file env_build.xml -id BUILD_COMPLETE -val TRUE
+
+#======================================================================
+# runs complete, compare 15 day init run and 5 day restart run
+#======================================================================
+setenv CPLLOG_GENCMP $CPLLOG_REST 
+echo "Initial Test log is $CPLLOG_INIT" >>& $TESTSTATUS_LOG 
+echo "Hybrid  Test log is $CPLLOG_HYBR" >>& $TESTSTATUS_LOG 
+echo "Branch  Test log is $CPLLOG_BRCH" >>& $TESTSTATUS_LOG 
+echo "Restart Test log is $CPLLOG_REST" >>& $TESTSTATUS_LOG 
+
+#======================================================================
+# Check case validation first
+#======================================================================
+
+set basestatus = "UNDEF"
+
+if ( $?CPLLOG_INIT ) then
+  echo "Checking successful completion in init cpl log file" >>& $TESTSTATUS_LOG
+  set pass = `grep "SUCCESSFUL TERM" $CPLLOG_INIT | wc -l`
+  if ( $pass != 0 ) then
+    set basestatus = "PASS "
+  else
+    set basestatus = "FAIL "
+  endif
+
+  if ( $?CPLLOG_HYBR ) then
+    if ( $?CPLLOG_REST ) then
+      echo "Comparing initial log file with second log file" >>& $TESTSTATUS_LOG
+      $CASETOOLS/check_exactrestart.pl $CPLLOG_HYBR $CPLLOG_REST >>& $TESTSTATUS_LOG
+      set pass = `tail -1 $TESTSTATUS_LOG | grep PASS | wc -l`
+      if ( $pass != 0 ) then
+        set basestatus = "PASS "
+      else
+        set basestatus = "FAIL "
+      endif
+    else
+      echo "ERROR in ${0}:  restart coupler log file NOT set" >>& $TESTSTATUS_LOG
+      set basestatus = "ERROR"
+    endif
+  else
+    echo "ERROR in ${0}:  hybrid coupler log file NOT set" >>& $TESTSTATUS_LOG
+    set basestatus = "ERROR"
+  endif
+
+else
+  echo "ERROR in ${0}:  initial coupler log file NOT set" >>& $TESTSTATUS_LOG
+  set basestatus = "ERROR"
+endif
+
+echo "$basestatus ${CASEBASEID} " >&! $TESTSTATUS_OUT
+

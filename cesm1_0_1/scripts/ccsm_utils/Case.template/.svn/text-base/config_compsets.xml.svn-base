@@ -1,0 +1,1058 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet type="text/xsl" href="config_compsets.xsl" ?>
+
+<config_compset>
+
+<compset NAME="A_PRESENT_DAY" SHORTNAME="A"
+         DESC="All data model"
+         CCSM_CCOST="-3"
+         COMP_ATM="datm" COMP_LND="dlnd" COMP_ICE="dice" COMP_OCN="docn" COMP_GLC="sglc" />
+
+<compset NAME="A_GLC" SHORTNAME="AG"
+         DESC="All data model plus glc (glacier model)"
+         CCSM_CCOST="-3"
+         GLC_NEC="10"
+         COMP_ATM="datm" COMP_LND="dlnd" COMP_ICE="dice" COMP_OCN="docn" COMP_GLC="cism" />
+         
+<compset NAME="B_2000" SHORTNAME="B"
+         DESC="All active components, present day"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CLM_NML_USE_CASE="2000_control" 
+         CLM_CO2_TYPE="diagnostic"
+         BUDGETS="TRUE" /> 
+
+<compset NAME="B_2000_CN" SHORTNAME="BCN"
+         DESC="all active components, present day, with CN (Carbon Nitrogen) in clm"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_NML_USE_CASE="2000_control" 
+         CLM_CO2_TYPE="diagnostic"
+         BUDGETS="TRUE" /> 
+
+<compset NAME="B_1850_CAM5" SHORTNAME="B1850C5"
+         DESC="All active components, pre-industrial, cam5 physics"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="1"
+         CCSM_CO2_PPMV="284.7"
+         CCSM_BGC="CO2A"
+         CAM_NML_USE_CASE="1850_cam5"
+         CAM_CONFIG_OPTS="-phys cam5"
+         CLM_NML_USE_CASE="1850_control" 
+         CLM_CO2_TYPE="diagnostic"
+         CICE_NAMELIST_OPTS="cam5=.true."
+         BUDGETS="TRUE" /> 
+
+<compset NAME="B_1850_CAM5" SHORTNAME="B1850C5" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40_1850_b53c_73f"
+         RUN_REFDATE="0057-01-01"
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850" SHORTNAME="B1850"
+         DESC="All active components, pre-industrial"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_BGC="CO2A"
+         CCSM_CO2_PPMV="284.7"
+         CLM_CO2_TYPE="diagnostic"
+         CLM_NML_USE_CASE="1850_control" 
+         CAM_NML_USE_CASE="1850_cam4"
+         CAM_CONFIG_OPTS="-phys cam4"
+         BUDGETS="TRUE" /> 
+
+<compset NAME="B_1850_CN" SHORTNAME="B1850CN"
+         DESC="all active components, pre-industrial, with CN (Carbon Nitrogen) in CLM"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="284.7"
+         CCSM_BGC="CO2A"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="diagnostic"
+         CLM_NML_USE_CASE="1850_control" 
+         CAM_NML_USE_CASE="1850_cam4"
+         CAM_CONFIG_OPTS="-phys cam4"
+         BUDGETS="TRUE" /> 
+
+<compset NAME="B_1850_CN" SHORTNAME="B1850CN" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40.1850.track1.1deg.006"
+         RUN_REFDATE="0863-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850_CN" SHORTNAME="B1850CN" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40.1850.track1.2deg.003"
+         RUN_REFDATE="0501-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_2000_CN_CHEM" SHORTNAME="B2000CNCHM"
+         DESC="All active components, pre-industrial, with CN (Carbon Nitrogen) in CLM and super_fast_llnl chem in atm"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CCSM_VOC="TRUE"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="diagnostic"
+         CLM_NML_USE_CASE="2000_control" 
+         CAM_NML_USE_CASE="2000_cam4_super_fast_llnl"
+         CAM_CONFIG_OPTS="-phys cam4 -chem super_fast_llnl -clm_vocsrc"
+         BUDGETS="TRUE" /> 
+
+<compset NAME="B_1850_CN_CHEM" SHORTNAME="B1850CNCHM"
+         DESC="All active components, pre-industrial, with CN (Carbon Nitrogen) in CLM and super_fast_llnl chem in atm"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="284.7"
+         CCSM_BGC="CO2A"
+         CCSM_VOC="TRUE"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="diagnostic"
+         CLM_NML_USE_CASE="1850_control" 
+         CAM_NML_USE_CASE="1850_cam4_super_fast_llnl"
+         CAM_CONFIG_OPTS="-phys cam4 -chem super_fast_llnl -clm_vocsrc"
+         BUDGETS="TRUE" /> 
+
+<compset NAME="B_1850_CN_CHEM" SHORTNAME="B1850CNCHM" GRID_MATCH="f09_g16"
+         DESC="All active components, pre-industrial, with CN (Carbon Nitrogen) in CLM and super_fast_llnl chem in atm"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="trk1_1deg_chm_1850_b55.01"
+         RUN_REFDATE="0086-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850_RAMPCO2_CN" SHORTNAME="B1850RMCN"
+         DESC="All active components, pre-industirial with co2 ramp, with CN (Carbon Nitrogen) in CLM"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="284.7"
+         CCSM_BGC="CO2A"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="diagnostic"
+         CLM_NML_USE_CASE="1850_control"
+         CAM_NML_USE_CASE="1850_cam4"
+         CAM_NAMELIST_OPTS="scenario_ghg=&apos;RAMP_CO2_ONLY&apos;ramp_co2_annual_rate=1"
+         CAM_CONFIG_OPTS="-phys cam4"
+         BUDGETS="TRUE" />
+
+<compset NAME="B_1850_RAMPCO2_CN" SHORTNAME="B1850RMCN" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40.1850.track1.1deg.006"
+         RUN_REFDATE="0863-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850_RAMPCO2_CN" SHORTNAME="B1850RMCN" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40.1850.track1.2deg.003"
+         RUN_REFDATE="0501-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850-2000" SHORTNAME="B20TR"
+         DESC="All active components, 1850 to 2000 transient"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="0"
+         CAM_NML_USE_CASE="1850-2005_cam4"
+         CLM_NML_USE_CASE="20thC_transient" 
+         CLM_CO2_TYPE="diagnostic"
+         CAM_CONFIG_OPTS="-phys cam4"
+         RUN_STARTDATE="1850-01-01"
+         OCN_TRANSIENT="1850-2000"
+         BUDGETS="TRUE"
+         OCN_TRACER_MODULES="iage cfc" />
+ 
+<compset NAME="B_1850-2000_CN" SHORTNAME="B20TRCN"
+         DESC="All active components, 1850 to 2000 transient, with CN (Carbon Nitrogen) in CLM"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="0"
+         CAM_NML_USE_CASE="1850-2005_cam4"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_NML_USE_CASE="20thC_transient" 
+         CLM_CO2_TYPE="diagnostic"
+         CAM_CONFIG_OPTS="-phys cam4"
+         RUN_STARTDATE="1850-01-01"
+         OCN_TRANSIENT="1850-2000"
+         BUDGETS="TRUE"
+         OCN_TRACER_MODULES="iage cfc" />
+ 
+<compset NAME="B_1850-2000_CN" SHORTNAME="B20TRCN" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="1850-01-01"
+         RUN_REFCASE="b40.1850.track1.1deg.006"
+         RUN_REFDATE="0863-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850-2000_CN" SHORTNAME="B20TRCN" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="1850-01-01"
+         RUN_REFCASE="b40.1850.track1.2deg.003"
+         RUN_REFDATE="0501-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850-2000_CN_CHEM" SHORTNAME="B20TRCNCHM"
+         DESC="All active components, 1850 to 2000 transient, with CN (Carbon Nitrogen) in CLM and super_fast_llnl chem in atm"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_BGC="CO2A"
+         CCSM_VOC="TRUE"
+         CCSM_CCOST="0"
+         CAM_CONFIG_OPTS="-phys cam4 -chem super_fast_llnl -clm_vocsrc -age_of_air_trcs"
+         CAM_NML_USE_CASE="1850-2005_cam4_super_fast_llnl"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_NML_USE_CASE="20thC_transient" 
+         CLM_CO2_TYPE="diagnostic"
+         RUN_STARTDATE="1850-01-01"
+         OCN_TRANSIENT="1850-2000"
+         BUDGETS="TRUE"
+         OCN_TRACER_MODULES="iage cfc" />
+ 
+<compset NAME="B_1850-2000_CN_CHEM" SHORTNAME="B20TRCNCHM" GRID_MATCH="f09_g16"
+         RUN_STARTDATE="1850-01-01"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="trk1_1deg_chm_1850_b55.01"
+         RUN_REFDATE="0086-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850-2000_CAM5" SHORTNAME="B20TRC5"
+         DESC="All active components, 1850 to 2000 transient, cam5 physics"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="1"
+         CCSM_BGC="CO2A"
+         CAM_NML_USE_CASE="1850-2005_cam5"
+         CAM_CONFIG_OPTS="-phys cam5"
+         CLM_NML_USE_CASE="20thC_transient"
+         CLM_CO2_TYPE="diagnostic"
+         CICE_NAMELIST_OPTS="cam5=.true."
+         OCN_TRACER_MODULES="iage cfc" 
+         OCN_TRANSIENT="1850-2000"
+         RUN_STARTDATE="1850-01-01"
+         BUDGETS="TRUE"/>
+
+<compset NAME="B_2000_GLC" SHORTNAME="BG"
+         DESC="INVALID: not supported at this resolution"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="cism"
+         GLC_NEC="10"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CLM_NML_USE_CASE="glacier_mec"
+         CLM_FORCE_COLDSTART="on"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CLM_CO2_TYPE="diagnostic"
+         BUDGETS="TRUE" /> 
+
+<compset NAME="B_2000_GLC" SHORTNAME="BG" GRID_MATCH="f09_g16"
+         DESC="all active components, with active glc" />
+
+<compset NAME="B_2000_GLC" SHORTNAME="BG" GRID_MATCH="f19_g16"
+         DESC="all active components, with active glc" />
+
+<compset NAME="B_2000_GLC" SHORTNAME="BG" GRID_MATCH="T31_g37"
+         DESC="all active components, with active glc" />
+
+<compset NAME="B_2000_TROP_MOZART" SHORTNAME="BMOZ"
+         DESC="All active components, with trop_mozart"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="1"
+         CLM_CO2_TYPE="diagnostic"
+         BUDGETS="TRUE"
+         CAM_CONFIG_OPTS="-phys cam4 -chem trop_mozart" />
+
+<compset NAME="B_1850_WACCM" SHORTNAME="B1850W"
+         DESC="all active components, pre-industrial, with waccm"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="3"
+         CCSM_BGC="CO2A"
+         CCSM_CO2_PPMV="0.000001"
+         CLM_CO2_TYPE="diagnostic"
+         CLM_NML_USE_CASE="1850_control" 
+         CAM_NML_USE_CASE="waccm_1850_cam4"
+         CAM_CONFIG_OPTS="-phys cam4 -chem waccm_mozart"
+         BUDGETS="TRUE" /> 
+
+<compset NAME="B_1850_WACCM_CN" SHORTNAME="B1850WCN"
+         DESC="INVALID: not supported at this resolution"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="3"
+         CCSM_CO2_PPMV="0.000001"
+         CCSM_BGC="CO2A"
+         CAM_NML_USE_CASE="waccm_1850_cam4"
+         CAM_CONFIG_OPTS="-phys cam4 -chem waccm_mozart"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="diagnostic"
+         CLM_NML_USE_CASE="1850_control"
+         BUDGETS="TRUE" />
+
+<compset NAME="B_1850_WACCM_CN" SHORTNAME="B1850WCN" GRID_MATCH="f19_g16"
+         DESC="all active components, pre-industrial, with waccm and CN"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40.1850.track1.2deg.wcm.007"
+         RUN_REFDATE="0156-01-01"
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850-2000_WACCM_CN" SHORTNAME="B20TRWCN"
+         DESC="INVALID: not supported at this resolution"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="0.000001"
+         CAM_NML_USE_CASE="waccm_1850-2005_cam4"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_NML_USE_CASE="20thC_transient" 
+         CLM_CO2_TYPE="diagnostic"
+         CAM_CONFIG_OPTS="-phys cam4 -chem waccm_mozart"
+         RUN_STARTDATE="1850-01-01"
+         OCN_TRANSIENT="1850-2000"
+         BUDGETS="TRUE"
+         OCN_TRACER_MODULES="iage cfc" />
+ 
+<compset NAME="B_1850-2000_WACCM_CN" SHORTNAME="B20TRWCN" GRID_MATCH="f19_g16"
+         DESC="All active components, 1850 to 2000 transient, WACCM with CN (Carbon Nitrogen) in CLM"
+         RUN_STARTDATE="1850-01-01"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40.1850.track1.2deg.wcm.007"
+         RUN_REFDATE="0156-01-01"
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850_BGC-BPRP" SHORTNAME="B1850BPRP"
+         DESC="All active components, pre-industrial, CN in CLM, ECO in POP, BGC CO2=prog, rad CO2=prog"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_BGC="CO2C"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="prognostic"
+         CLM_NML_USE_CASE="1850_control"
+         CAM_CONFIG_OPTS="-phys cam4 -co2_cycle"
+         CAM_NML_USE_CASE="1850_cam4"
+         OCN_CHL_TYPE="prognostic"
+         OCN_CO2_TYPE="prognostic"
+         OCN_TRACER_MODULES="iage ecosys"
+         BUDGETS="TRUE" />
+
+<compset NAME="B_1850_BGC-BPRP" SHORTNAME="B1850BPRP" GRID_MATCH="f09_g16"
+         OCN_CO2_FLUX_OCMIP_BUG_FIX="FALSE"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40.coup_carb.004"
+         RUN_REFDATE="0351-01-01"
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850_BGC-BDRD" SHORTNAME="B1850BDRD"
+         DESC="All active components, pre-industrial, CN in CLM, ECO in POP, BGC CO2=diag, rad CO2=diag"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_BGC="CO2C"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="diagnostic"
+         CLM_NML_USE_CASE="1850_control"
+         CAM_CONFIG_OPTS="-phys cam4 -co2_cycle"
+         CAM_NAMELIST_OPTS="co2_cycle_rad_passive=.true."
+         CAM_NML_USE_CASE="1850_cam4"
+         OCN_CHL_TYPE="prognostic"
+         OCN_CO2_TYPE="diagnostic"
+         OCN_TRACER_MODULES="iage ecosys"
+         BUDGETS="TRUE" />
+
+<compset NAME="B_1850_BGC-BDRD" SHORTNAME="B1850BDRD" GRID_MATCH="f09_g16"
+         OCN_CO2_FLUX_OCMIP_BUG_FIX="FALSE"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40.prescribed_carb.001"
+         RUN_REFDATE="0151-01-01"
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850-2000_BGC-BPRP" SHORTNAME="B20TRBPRP"
+         DESC="INVALID: not supported at this resolution"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_BGC="CO2C"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="prognostic"
+         CLM_NML_USE_CASE="20thC_transient"
+         CAM_CONFIG_OPTS="-phys cam4 -co2_cycle"
+         CAM_NML_USE_CASE="1850-2005_cam4_bgc"
+         OCN_CHL_TYPE="prognostic"
+         OCN_CO2_TYPE="prognostic"
+         OCN_TRANSIENT="1850-2000"
+         OCN_TRACER_MODULES="iage cfc ecosys"
+         RUN_STARTDATE="1850-01-01"
+         BUDGETS="TRUE" />
+
+<compset NAME="B_1850-2000_BGC-BPRP" SHORTNAME="B20TRBPRP" GRID_MATCH="f09_g16"
+         DESC="All active components, 1850 to 2000 transient, CN in CLM, ECO in POP, BGC CO2=prog, rad CO2=prog"
+         OCN_CO2_FLUX_OCMIP_BUG_FIX="FALSE"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="1850-01-01"
+         RUN_REFCASE="b40.coup_carb.004"
+         RUN_REFDATE="0351-01-01"
+         GET_REFCASE="TRUE" />
+
+<compset NAME="B_1850-2000_BGC-BDRD" SHORTNAME="B20TRBDRD"
+         DESC="INVALID: not supported at this resolution"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_BGC="CO2C"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="diagnostic"
+         CLM_NML_USE_CASE="20thC_transient"
+         CAM_CONFIG_OPTS="-phys cam4 -co2_cycle"
+         CAM_NAMELIST_OPTS="co2_cycle_rad_passive=.true."
+         CAM_NML_USE_CASE="1850-2005_cam4_bgc"
+         OCN_CHL_TYPE="prognostic"
+         OCN_CO2_TYPE="diagnostic"
+         OCN_TRANSIENT="1850-2000"
+         OCN_TRACER_MODULES="iage cfc ecosys"
+         RUN_STARTDATE="1850-01-01"
+         BUDGETS="TRUE" />
+
+<compset NAME="B_1850-2000_BGC-BDRD" SHORTNAME="B20TRBDRD" GRID_MATCH="f09_g16"
+         DESC="All active components, 1850 to 2000 transient, CN in CLM, ECO in POP, BGC CO2=diag, rad CO2=diag"
+         OCN_CO2_FLUX_OCMIP_BUG_FIX="FALSE"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="1850-01-01"
+         RUN_REFCASE="b40.prescribed_carb.001"
+         RUN_REFDATE="0151-01-01"
+         GET_REFCASE="TRUE" />
+
+
+<compset NAME="C_NORMAL_YEAR_ECOSYS" SHORTNAME="CECO"
+         DESC="Active ocean model with ecosys and with COREv2 normal year forcing"
+         COMP_ATM="datm" COMP_LND="dlnd" COMP_ICE="dice" COMP_OCN="pop2" COMP_GLC="sglc"
+         DATM_MODE="CORE2_NYF"
+         OCN_COUPLING="partial" 
+         OCN_ICE_FORCING="inactive"
+         DICE_MODE="ssmi"
+         DLND_RUNOFF_MODE="RX1" 
+         CPL_EPBAL="ocn"
+         CPL_ALBAV="true"
+         BUDGETS="TRUE"
+         CCSM_CCOST="-1"
+         CCSM_CO2_PPMV="284.7"
+         OCN_CHL_TYPE="prognostic"
+         OCN_CO2_TYPE="constant"
+         OCN_TRACER_MODULES="iage ecosys"
+         ATM_NCPL="4" />
+
+<compset NAME="C_NORMAL_YEAR" SHORTNAME="C"
+         DESC="Active ocean model with COREv2 normal year forcing"
+         COMP_ATM="datm" COMP_LND="dlnd" COMP_ICE="dice" COMP_OCN="pop2" COMP_GLC="sglc"
+         DATM_MODE="CORE2_NYF"
+         OCN_COUPLING="partial"
+         OCN_ICE_FORCING="inactive"
+         DICE_MODE="ssmi"
+         DLND_RUNOFF_MODE="RX1"
+         CCSM_CCOST="-1"
+         CPL_EPBAL="ocn"
+         CPL_ALBAV="true"
+         BUDGETS="TRUE"
+         ATM_NCPL="4" />
+
+<compset NAME="D_NORMAL_YEAR" SHORTNAME="D"
+         DESC="Active ice model with COREv2 normal year forcing"
+         COMP_ATM="datm" COMP_LND="slnd" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CCOST="-1"
+         DATM_MODE="CORE2_NYF"
+	 DATM_PRESAERO="clim_2000"
+         DOCN_MODE="som"
+         ATM_NCPL="24" 
+         OCN_NCPL="$ATM_NCPL" />
+ 
+<compset NAME="E_2000" SHORTNAME = "E"
+         DESC="Fully active cam and ice with som ocean, present day"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="0"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CICE_MODE="prognostic"
+         CLM_CO2_TYPE="diagnostic"
+         DOCN_MODE="som"
+         OCN_NCPL="$ATM_NCPL" 
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="E_2000_GLC" SHORTNAME="EG"
+         DESC="INVALID: not supported at this resolution"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="cism"
+         GLC_NEC="10"
+         CLM_NML_USE_CASE="glacier_mec"
+         CLM_FORCE_COLDSTART="on"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="0"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CICE_MODE="prognostic"
+         CLM_CO2_TYPE="diagnostic"
+         DOCN_MODE="som"
+         OCN_NCPL="$ATM_NCPL" 
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="E_2000_GLC" SHORTNAME="EG" GRID_MATCH="f09_g16"
+         DESC="Fully active cam and ice with som ocean and glc, present day" />
+
+<compset NAME="E_2000_GLC" SHORTNAME="EG" GRID_MATCH="f19_g16"
+         DESC="Fully active cam and ice with som ocean and glc, present day" />
+
+<compset NAME="E_2000_GLC" SHORTNAME="EG" GRID_MATCH="T31_g37"
+         DESC="Fully active cam and ice with som ocean and glc, present day" />
+
+<compset NAME="E_1850_CN" SHORTNAME="E1850CN"
+         DESC="Pre-industrial fully active ice and som ocean, with CN"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CO2_PPMV="284.7"  
+         CCSM_BGC="CO2A"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="diagnostic"    
+         CLM_NML_USE_CASE="1850_control" 
+         CAM_NML_USE_CASE="1850_cam4"         
+         CAM_CONFIG_OPTS="-phys cam4"       
+         CICE_MODE="prognostic"
+         DOCN_MODE="som"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE"
+         BUDGETS="TRUE" />
+
+<compset NAME="E_1850_CAM5" SHORTNAME="E1850C5"
+         DESC="Pre-industrial fully active ice and som ocean, cam5 physics "
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CO2_PPMV="284.7"  
+         CCSM_BGC="CO2A"
+         CAM_NML_USE_CASE="1850_cam5"         
+         CAM_CONFIG_OPTS="-phys cam5"       
+         CLM_NML_USE_CASE="1850_control" 
+         CLM_CO2_TYPE="diagnostic"    
+         CICE_MODE="prognostic"
+         CICE_NAMELIST_OPTS="cam5=.true."
+         DOCN_MODE="som"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE"
+         BUDGETS="TRUE" />
+
+<compset NAME="F_AMIP_CN" SHORTNAME="FAMIPCN" 
+         DESC="INVALID: AMIP runs not supported at this resolution"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="0"
+         CLM_NML_USE_CASE="20thC_transient" 
+         CLM_CO2_TYPE="diagnostic"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CAM_NML_USE_CASE="1850-2005_cam4"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CICE_MODE="prescribed"
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE" 
+         RUN_STARTDATE="1979-01-01" /> 
+
+<compset NAME="F_AMIP_CN" SHORTNAME="FAMIPCN" GRID_MATCH="f09_f09"
+         DESC="AMIP run for CMIP5 protocol - valid only for 1 degree cam/clm/pres-cice"
+         DOCN_SSTDATA_FILENAME="$DIN_LOC_ROOT/atm/cam/sst/sst_HadOIBl_bc_0.9x1.25_1870_2008_c091020.nc"
+         DOCN_SSTDATA_YEAR_START="1870"
+         DOCN_SSTDATA_YEAR_END="2008" 
+         CAM_CONFIG_OPTS="-phys cam4"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40.20th.track1.1deg.004"
+         RUN_REFDATE="1979-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="F_AMIP_CN" SHORTNAME="FAMIPCN" GRID_MATCH="f19_f19"
+         DESC="AMIP run for CMIP5 protocol - valid only for 2 degree cam/clm/pres-cice"
+         DOCN_SSTDATA_FILENAME="$DIN_LOC_ROOT/atm/cam/sst/sst_HadOIBl_bc_1.9x2.5_1850_2008_c100127.nc"
+         DOCN_SSTDATA_YEAR_START="1850"
+         DOCN_SSTDATA_YEAR_END="2008" 
+         CAM_CONFIG_OPTS="-phys cam4"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="b40.20th.track1.2deg.001"
+         RUN_REFDATE="1979-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="F_AMIP_CAM5" SHORTNAME="FAMIPC5"
+         DESC="INVALID: AMIP runs not supported at this resolution"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CCOST="1"
+         CCSM_BGC="CO2A"
+         CAM_NML_USE_CASE="1850-2005_cam5"
+         CAM_CONFIG_OPTS="-phys cam5"
+         CLM_NML_USE_CASE="20thC_transient"
+         CLM_CO2_TYPE="diagnostic"
+         CICE_MODE="prescribed"
+         CICE_NAMELIST_OPTS="cam5=.true."
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE"
+         RUN_STARTDATE="1979-01-01" />
+
+<compset NAME="F_AMIP_CAM5" SHORTNAME="FAMIPC5" GRID_MATCH="f19_f19"
+         DESC="AMIP run for CMIP5 protocol with cam5"
+         DOCN_SSTDATA_FILENAME="$DIN_LOC_ROOT/atm/cam/sst/sst_HadOIBl_bc_1.9x2.5_1850_2008_c100127.nc"
+         DOCN_SSTDATA_YEAR_START="1850"
+         DOCN_SSTDATA_YEAR_END="2008" />
+
+<compset NAME="F_AMIP_CAM5" SHORTNAME="FAMIPC5" GRID_MATCH="f09_f09"
+         DESC="AMIP run for CMIP5 protocol with cam5"
+         DOCN_SSTDATA_FILENAME="$DIN_LOC_ROOT/atm/cam/sst/sst_HadOIBl_bc_0.9x1.25_1850_2008_c100127.nc"
+         DOCN_SSTDATA_YEAR_START="1850"
+         DOCN_SSTDATA_YEAR_END="2008" />
+
+<compset NAME="F_AMIP_CAM5" SHORTNAME="FAMIPC5" GRID_MATCH="f05_f05"
+         DESC="AMIP run for CMIP5 protocol with cam5"
+         DOCN_SSTDATA_FILENAME="$DIN_LOC_ROOT/atm/cam/sst/sst_HadOIBl_bc_0.47x0.63_1850_2008_c100128.nc"
+         DOCN_SSTDATA_YEAR_START="1850"
+         DOCN_SSTDATA_YEAR_END="2008" />
+
+<compset NAME="F_AMIP_CAM5" SHORTNAME="FAMIPC5" GRID_MATCH="f02_f02"
+         DESC="AMIP run for CMIP5 protocol with cam5"
+         DOCN_SSTDATA_FILENAME="$DIN_LOC_ROOT/atm/cam/sst/sst_HadOIBl_bc_0.23x0.31_1870_2008_c091020.nc"
+         DOCN_SSTDATA_YEAR_START="1870"
+         DOCN_SSTDATA_YEAR_END="2008" />
+
+<compset NAME="F_1850" SHORTNAME="F1850"
+         DESC="Pre-industrial cam/clm with prescribed ice/ocn"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CO2_PPMV="284.7"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="0"
+         CAM_NML_USE_CASE="1850_cam4"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CLM_NML_USE_CASE="1850_control" 
+         CLM_CO2_TYPE="diagnostic"
+         CICE_MODE="prescribed"
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL" 
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="F_1850_CAM5" SHORTNAME="F1850C5"
+         DESC="Pre-industrial cam/clm with prescribed ice/ocn, cam5 physics"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="284.7"
+         CCSM_BGC="CO2A"
+         CAM_NML_USE_CASE="1850_cam5"
+         CAM_CONFIG_OPTS="-phys cam5"
+         CLM_NML_USE_CASE="1850_control" 
+         CLM_CO2_TYPE="diagnostic"
+         CICE_MODE="prescribed"
+         CICE_NAMELIST_OPTS="cam5=.true."
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL" 
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="F_2000" SHORTNAME="F"
+         DESC="Stand-alone cam default, prescribed ocn/ice"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="0"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CICE_MODE="prescribed"
+         CLM_CO2_TYPE="diagnostic"
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="F_2000_CAM5" SHORTNAME="FC5"
+         DESC="Stand-alone cam default, prescribed ocn/ice, cam5 physics"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CAM_CONFIG_OPTS="-phys cam5"
+         CLM_CO2_TYPE="diagnostic"
+         CICE_MODE="prescribed"
+         CICE_NAMELIST_OPTS="cam5=.true."
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="F_2000_CN" SHORTNAME="FCN"
+         DESC="Stand-alone cam default, prescribed ocn/ice with CN"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="0"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CICE_MODE="prescribed"
+         CLM_CO2_TYPE="diagnostic"
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="F_1850-2000_CN" SHORTNAME="F20TRCN"
+         DESC="20th Century transient stand-alone cam default, prescribed ocn/ice, with CN"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_CCOST="0"
+         CCSM_BGC="CO2A"
+         CAM_NML_USE_CASE="1850-2005_cam4"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CLM_NML_USE_CASE="20thC_transient" 
+         CLM_CO2_TYPE="diagnostic"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CICE_MODE="prescribed"
+         RUN_STARTDATE="1850-01-01"
+         BUDGETS="TRUE"
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="F_2000_GLC" SHORTNAME="FG"
+         DESC="INVALID: not supported at this resolution"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="cism"
+         GLC_NEC="10"
+         CLM_NML_USE_CASE="glacier_mec"
+         CLM_FORCE_COLDSTART="on"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="0"
+         CAM_CONFIG_OPTS="-phys cam4"
+         CICE_MODE="prescribed"
+         CLM_CO2_TYPE="diagnostic"
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="F_2000_GLC" SHORTNAME="FG" GRID_MATCH="f09_f09"
+         DESC="Stand-alone cam default, prescribed ocn/ice, glc (glacier model)" />
+
+<compset NAME="F_2000_GLC" SHORTNAME="FG" GRID_MATCH="f19_f19"
+         DESC="Stand-alone cam default, prescribed ocn/ice, glc (glacier model)" />
+
+<compset NAME="F_2000_GLC" SHORTNAME="FG" GRID_MATCH="T31_T31"
+         DESC="Stand-alone cam default, prescribed ocn/ice, glc (glacier model)" />
+
+<compset NAME="F_1850_CN_CHEM" SHORTNAME="F1850CNCHM"
+         DESC="stand-alone cam/clm, pre-industrial, with CN in CLM, super_fast_llnl chem in cam"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CCOST="0"
+         CCSM_CO2_PPMV="284.7"
+         CCSM_BGC="CO2A"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_CO2_TYPE="diagnostic"
+         CLM_NML_USE_CASE="1850_control"
+         CAM_NML_USE_CASE="1850_cam4_super_fast_llnl"
+         CAM_CONFIG_OPTS="-phys cam4 -chem super_fast_llnl"
+         CICE_MODE="prescribed"
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL"
+         BUDGETS="TRUE" />
+
+<compset NAME="F_1850_WACCM" SHORTNAME="F1850W"
+         DESC="Pre-industrial cam/clm with prescribed ice/ocn"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CO2_PPMV="284.7"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="3"
+         CAM_NML_USE_CASE="waccm_1850_cam4"
+         CAM_CONFIG_OPTS="-phys cam4 -chem waccm_mozart"
+         CLM_NML_USE_CASE="1850_control" 
+         CLM_CO2_TYPE="diagnostic"
+         CICE_MODE="prescribed"
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="F_2000_WACCM" SHORTNAME="FW"
+         DESC="present-day cam/clm with prescribed ice/ocn"
+         COMP_ATM="cam" COMP_LND="clm" COMP_ICE="cice" COMP_OCN="docn" COMP_GLC="sglc"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_BGC="CO2A"
+         CCSM_CCOST="3"
+         CAM_NML_USE_CASE="waccm_2000_cam4"
+         CAM_CONFIG_OPTS="-phys cam4 -chem waccm_mozart"
+         CLM_NML_USE_CASE="2000_control" 
+         CLM_CO2_TYPE="diagnostic"
+         CICE_MODE="prescribed"
+         DOCN_MODE="prescribed"
+         OCN_NCPL="$ATM_NCPL"
+         OCN_TIGHT_COUPLING="TRUE" />
+
+<compset NAME="G_1850_ECOSYS" SHORTNAME="G1850ECO"
+         DESC="1850 control for pop-ecosystem/cice/datm7/dlnd-rx1"
+         COMP_ATM="datm" COMP_LND="dlnd" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         DATM_MODE="CORE2_NYF"
+	 DATM_PRESAERO="clim_1850"
+         CCSM_CO2_PPMV="284.7"
+         CCSM_CCOST="-1"
+         OCN_COUPLING="partial" 
+         OCN_ICE_FORCING="active"
+         DLND_RUNOFF_MODE="RX1"
+         CPL_EPBAL="ocn" 
+         CPL_ALBAV="true"
+         BUDGETS="TRUE"
+         ATM_NCPL="24" 
+         OCN_TRACER_MODULES="iage ecosys" />
+
+<compset NAME="G_NORMAL_YEAR" SHORTNAME="G"
+         DESC="Coupled ocean ice with COREv2 normal year forcing"
+         COMP_ATM="datm" COMP_LND="dlnd" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         DATM_MODE="CORE2_NYF"
+	 DATM_PRESAERO="clim_2000"
+         OCN_COUPLING="partial" 
+         OCN_ICE_FORCING="active"
+         DLND_RUNOFF_MODE="RX1"
+         CCSM_CCOST="-1"
+         ATM_NCPL="24" 
+         CPL_EPBAL="ocn" 
+         CPL_ALBAV="true"
+         BUDGETS="TRUE" />
+
+<compset NAME="H_PRESENT_DAY" SHORTNAME="H"
+         DESC="Coupled ocean ice slnd"
+         COMP_ATM="datm" COMP_LND="slnd" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         OCN_COUPLING="partial" 
+         OCN_ICE_FORCING="active"
+         CCSM_CCOST="-1"
+         ATM_NCPL="24" 
+         CPL_EPBAL="ocn" 
+         CPL_ALBAV="true" />
+
+<compset NAME="I_2000" SHORTNAME="I"
+         DESC="Active land model with QIAN atm input data for 2003 and Satellite phenology (SP), CO2 level and Aerosol deposition for 2000"
+         COMP_ATM="datm" COMP_LND="clm" COMP_ICE="sice" COMP_OCN="socn" COMP_GLC="sglc"
+         CCSM_CCOST="-2"
+         CCSM_CO2_PPMV="368.9"
+         CLM_NML_USE_CASE="2000_control" 
+         DATM_MODE="CLM_QIAN" 
+	 DATM_PRESAERO="clim_2000"
+         DATM_CLMNCEP_YR_START="2003" 
+         DATM_CLMNCEP_YR_END="2003" />
+
+<compset NAME="I_2000" SHORTNAME="I" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I2000CN_f09_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_2000" SHORTNAME="I" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I2000CN_f19_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1850" SHORTNAME="I1850"
+         DESC="Active land model with QIAN atm input data for 1948 to 1972 and Satellite phenology (SP), CO2 level and Aerosol deposition for 1850"
+         COMP_ATM="datm" COMP_LND="clm" COMP_ICE="sice" COMP_OCN="socn" COMP_GLC="sglc"
+         CCSM_CCOST="-2"
+         CCSM_CO2_PPMV="284.7"
+         CLM_NML_USE_CASE="1850_control" 
+         DATM_MODE="CLM_QIAN" 
+         DATM_PRESAERO="clim_1850"
+         DATM_CLMNCEP_YR_START="1948" 
+         DATM_CLMNCEP_YR_END="1972" />
+
+<compset NAME="I_1850" SHORTNAME="I1850" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I1850CN_f09_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1850" SHORTNAME="I1850" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I1850CN_f19_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_2000_GLC" SHORTNAME="IG"
+         DESC="INVALID: not supported at this resolution"
+         COMP_ATM="datm" COMP_LND="clm" COMP_ICE="sice" COMP_OCN="socn" COMP_GLC="cism"
+         GLC_NEC="10"
+         CCSM_CO2_PPMV="368.9"
+         CLM_NML_USE_CASE="glacier_mec"
+         CLM_FORCE_COLDSTART="on"
+         CCSM_CCOST="-2"
+         DATM_MODE="CLM_QIAN" 
+	 DATM_PRESAERO="clim_2000"
+         DATM_CLMNCEP_YR_START="2003" 
+         DATM_CLMNCEP_YR_END="2003" />
+
+<compset NAME="I_2000_GLC" SHORTNAME="IG" GRID_MATCH="f09_g16"
+         DESC="Active glacier model and active land model with QIAN atm input data for 2003 and Satellite phenology (SP), CO2 level and Aerosol deposition for 2000" />
+
+<compset NAME="I_2000_GLC" SHORTNAME="IG" GRID_MATCH="f19_g16"
+         DESC="Active glacier model and active land model with QIAN atm input data for 2003 and Satellite phenology (SP), CO2 level and Aerosol deposition for 2000" />
+
+<compset NAME="I_2000_GLC" SHORTNAME="IG" GRID_MATCH="T31_g37"
+         DESC="Active glacier model and active land model with QIAN atm input data for 2003 and Satellite phenology (SP), CO2 level and Aerosol deposition for 2000" />
+
+<compset NAME="I_1948-2004" SHORTNAME="I4804"
+         DESC="Active land model with QIAN atm input data for 1948 to 2004 and Satellite phenology (SP), CO2 level and Aerosol deposition for 2000"
+         COMP_ATM="datm" COMP_LND="clm" COMP_ICE="sice" COMP_OCN="socn" COMP_GLC="sglc"
+         CCSM_CO2_PPMV="368.9"
+         CCSM_CCOST="-2"
+         DATM_MODE="CLM_QIAN" 
+	 DATM_PRESAERO="clim_2000"
+         DATM_CLMNCEP_YR_START="1948" 
+         DATM_CLMNCEP_YR_END="2004" />
+
+<compset NAME="I_1948-2004" SHORTNAME="I4804" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I2000CN_f09_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1948-2004" SHORTNAME="I4804" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I2000CN_f19_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1850-2000" SHORTNAME="I8520"
+         DESC="Active land model with QIAN atm input data for 1948 to 2004 and transient Satellite phenology (SP), and Aerosol deposition from 1850 to 2000 and 2000 CO2 level"
+         COMP_ATM="datm" COMP_LND="clm" COMP_ICE="sice" COMP_OCN="socn" COMP_GLC="sglc"
+         CCSM_CCOST="-2"
+         CCSM_CO2_PPMV="368.9"
+         CLM_NML_USE_CASE="20thC_transient" 
+         RUN_STARTDATE="1850-01-01"
+         DATM_MODE="CLM_QIAN" 
+	 DATM_PRESAERO="trans_1850-2000"
+         DATM_CLMNCEP_YR_ALIGN="1948" 
+         DATM_CLMNCEP_YR_START="1948" 
+         DATM_CLMNCEP_YR_END="1972" />
+
+<compset NAME="I_1850-2000" SHORTNAME="I8520" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="I1850CN_f09_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1850-2000" SHORTNAME="I8520" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="I1850CN_f19_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_2000_CN" SHORTNAME="ICN"
+         DESC="Active land model with QIAN atm input data for 2003 and CN (Carbon Nitrogen) biogeochemistry, CO2 level and Aerosol deposition for 2000"
+         COMP_ATM="datm" COMP_LND="clm" COMP_ICE="sice" COMP_OCN="socn" COMP_GLC="sglc"
+         CCSM_CCOST="-2"
+         CCSM_CO2_PPMV="368.9" 
+         CLM_CONFIG_OPTS="-bgc cn"
+         DATM_MODE="CLM_QIAN" 
+	 DATM_PRESAERO="clim_2000"
+         DATM_CLMNCEP_YR_START="2003" 
+         DATM_CLMNCEP_YR_END="2003" />
+
+<compset NAME="I_2000_CN" SHORTNAME="ICN" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I2000CN_f09_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_2000_CN" SHORTNAME="ICN" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I2000CN_f19_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1850_CN" SHORTNAME="I1850CN"
+         DESC="Active land model with QIAN atm input data for 1948 to 1972 and CN (Carbon Nitrogen) biogeochemistry, CO2 level and Aerosol deposition for 1850"
+         COMP_ATM="datm" COMP_LND="clm" COMP_ICE="sice" COMP_OCN="socn" COMP_GLC="sglc"
+         CCSM_CCOST="-2"
+         CCSM_CO2_PPMV="284.7"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_NML_USE_CASE="1850_control" 
+         DATM_MODE="CLM_QIAN" 
+	 DATM_PRESAERO="clim_1850"
+         DATM_CLMNCEP_YR_START="1948" 
+         DATM_CLMNCEP_YR_END="1972" />
+
+<compset NAME="I_1850_CN" SHORTNAME="I1850CN" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I1850CN_f09_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1850_CN" SHORTNAME="I1850CN" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I1850CN_f19_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1948-2004_CN" SHORTNAME="I4804CN"
+         DESC="Active land model with QIAN atm input data for 1948 to 2004 and CN (Carbon Nitrogen) biogeochemistry, CO2 level and Aerosol deposition for 2000"
+         COMP_ATM="datm" COMP_LND="clm" COMP_ICE="sice" COMP_OCN="socn" COMP_GLC="sglc"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CCSM_CO2_PPMV="368.9" 
+         CCSM_CCOST="-2"
+         DATM_MODE="CLM_QIAN" 
+	 DATM_PRESAERO="clim_2000"
+         DATM_CLMNCEP_YR_START="1948" 
+         DATM_CLMNCEP_YR_END="2004" />
+
+<compset NAME="I_1948-2004_CN" SHORTNAME="I4804CN" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I2000CN_f09_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1948-2004_CN" SHORTNAME="I4804CN" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_STARTDATE="0001-01-01"
+         RUN_REFCASE="I2000CN_f19_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1850-2000_CN" SHORTNAME="I8520CN"
+         DESC="Active land model with QIAN atm input data for 1948 to 1972 and transient CN, Aerosol dep from 1850 to 2000 and 2000 CO2 level"
+         COMP_ATM="datm" COMP_LND="clm" COMP_ICE="sice" COMP_OCN="socn" COMP_GLC="sglc"
+         CLM_CONFIG_OPTS="-bgc cn"
+         CLM_NML_USE_CASE="20thC_transient" 
+         CCSM_CCOST="-2"
+         CCSM_CO2_PPMV="368.9" 
+         RUN_STARTDATE="1850-01-01"
+         DATM_MODE="CLM_QIAN" 
+	 DATM_PRESAERO="trans_1850-2000"
+         DATM_CLMNCEP_YR_ALIGN="1895" 
+         DATM_CLMNCEP_YR_START="1948" 
+         DATM_CLMNCEP_YR_END="1972" />
+
+<compset NAME="I_1850-2000_CN" SHORTNAME="I8520CN" GRID_MATCH="f09_g16"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="I1850CN_f09_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="I_1850-2000_CN" SHORTNAME="I8520CN" GRID_MATCH="f19_g16"
+         RUN_TYPE="hybrid"
+         RUN_REFCASE="I1850CN_f19_g16_c100503"
+         RUN_REFDATE="0001-01-01" 
+         GET_REFCASE="TRUE" />
+
+<compset NAME="S_PRESENT_DAY" SHORTNAME="S"
+         DESC="All stub models plus xatm" 
+         COMP_ATM="xatm" COMP_LND="slnd" COMP_ICE="sice" COMP_OCN="socn" COMP_GLC="sglc"
+         CCSM_CCOST="-6"
+         GLC_NEC="10" />
+
+<compset NAME="X_PRESENT_DAY" SHORTNAME="X"
+         DESC="All dead model" 
+         COMP_ATM="xatm" COMP_LND="xlnd" COMP_ICE="xice" COMP_OCN="xocn" COMP_GLC="xglc"
+         CCSM_CCOST="-6"
+         GLC_NEC="10" />
+
+<compset NAME="XG_PRESENT_DAY" SHORTNAME="XG"
+         DESC="All dead model and cism" 
+         COMP_ATM="xatm" COMP_LND="xlnd" COMP_ICE="xice" COMP_OCN="xocn" COMP_GLC="cism"
+         CCSM_CCOST="-4"
+         GLC_NEC="10" />
+
+</config_compset>
+

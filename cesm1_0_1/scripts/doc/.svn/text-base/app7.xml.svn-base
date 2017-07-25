@@ -1,0 +1,14 @@
+<appendix id="env_build_vars">
+<title>env_build.xml variables</title>
+
+<para>
+The following table lists all the environment variables set in the &env_build.xml; file.
+Default values, where appropriate, are given in parentheses.
+</para>
+
+&env_build_list;
+
+</appendix>
+
+
+

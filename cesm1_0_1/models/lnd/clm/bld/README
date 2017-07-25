@@ -1,0 +1,47 @@
+models/lnd/clm/bld/README                              3/13/2008 
+
+CLM build and configure directory and scripts. Scripts to help
+you prepare to build CLM as a component within CESM, and setup
+a namelist for it. There is also functionality only used for CLM
+stand-alone testing to build and run the complete system (in conjuction
+with the scripts in the models/lnd/clm/test/system directory).
+
+Important files/directories:
+
+--------- Configure and build scripts
+--------- (These scripts are also used by the cpl7 scripts)
+
+configure ---------------- Configure script -- creates Makefile and files needed to build CLM
+  ----- configure --help - Configure help mode -- sends information on all configure options
+config_files/config_defaults.xml ----- XML file of defaults for CLM
+config_files/config_definition.xml --- XML file definining all CLM configuration items
+config_files/config_sys_defaults.xml - XML file of system defaults
+config_files/Makefile.in ------------- Base Makefile for building CLM used ONLY for stand-alone CLM testing
+                                       The Makefile and Macro's in the root scripts/ccsm_utils/Build and
+                                       scripts/ccsm_utils/Machines are used to build the model normally.
+
+--------- Scripts to build the namelists
+--------- (These scripts are also used by the cpl7 scripts)
+build-namelist --- Build the namelists needed
+
+--------- CPL7 Script to create namelist and clm library
+clm.cpl7.template ------- Script used by CPL7 scripts to create namelist
+
+--------- Scripts to query namelist defaults
+listDefaultNamelist.pl -- List the files needed for a list of resolutions 
+                          that are NOT available
+queryDefaultNamelist.pl - Query default namelist for variables
+queryDefaultXML.pm ------ Subroutines needed by queryDefaultNamelist.pl script
+
+---------- XML Files describing namelists in namelist_files
+namelist_files/namelist_defaults_clm.xml -------- List of default values for the clm namelist
+namelist_files/namelist_defaults_overall.xml ---- List of default values for overall settings
+namelist_files/namelist_defaults_usr_files.xml -- List of default values for the user-files
+namelist_files/namelist_definition.xml ---------- Definition of all namelist items
+namelist_files/namelist_definition.xsl ---------- Describes how to view the xml file as html
+namelist_files/use_cases ------------------------ Specific configurations that build-namelist uses
+
+---------- XML Files describing namelists only used in stand-alone CLM testing
+namelist_files/namelist_defaults_datm.xml -- List of default values for the datm model namelist
+namelist_files/namelist_defaults_drv.xml -- List of default values for the drv namelist
+

@@ -1,0 +1,126 @@
+10
+
+dir
+221
+https://svn-ccsm-release.cgd.ucar.edu/model_versions/cesm1_0_1/models/glc/cism
+https://svn-ccsm-release.cgd.ucar.edu
+
+
+
+2010-09-17T17:11:29.676270Z
+25
+mvr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6ec7379f-1bbc-4938-b9b9-58fa9e6a5fe1
+
+serial
+dir
+
+source_slap
+dir
+
+tools
+dir
+
+bld
+dir
+
+doc
+dir
+
+mpi
+dir
+
+source_glc
+dir
+
+source_glimmer-cism
+dir
+
+ChangeLog
+file
+
+
+
+
+2015-11-09T12:06:31.684161Z
+664647152c703e8298d139ea0123195d
+2010-09-17T17:11:29.676270Z
+25
+mvr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+533
+
+input_templates
+dir
+
+README
+file
+
+
+
+
+2015-11-09T12:06:31.685161Z
+bb11a3c33d033d0eaf2c7aca2010fa68
+2010-09-17T17:11:29.676270Z
+25
+mvr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1580
+
+drivers
+dir
+

@@ -1,0 +1,203 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists
+END
+jaguarpf.posttag
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/jaguarpf.posttag
+END
+bluefire.esmf.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/bluefire.esmf.auxtest
+END
+kraken.posttag
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/kraken.posttag
+END
+bluefire.glc.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/bluefire.glc.auxtest
+END
+jaguar.esmf.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/jaguar.esmf.auxtest
+END
+midnight.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/midnight.auxtest
+END
+bluefire.science.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/bluefire.science.auxtest
+END
+hadley.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/hadley.auxtest
+END
+bluefire.clm.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/bluefire.clm.auxtest
+END
+brutus_im.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/brutus_im.auxtest
+END
+brutus_io.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/brutus_io.auxtest
+END
+bluefire.pop2.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/bluefire.pop2.auxtest
+END
+lynx_pgi.pretag
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/lynx_pgi.pretag
+END
+bluefire.cice1.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/bluefire.cice1.auxtest
+END
+bluefire.posttag
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/bluefire.posttag
+END
+bluefire.cice2.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/bluefire.cice2.auxtest
+END
+hopper.posttag
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/hopper.posttag
+END
+edinburgh.clm.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/edinburgh.clm.auxtest
+END
+bluefire.pretag
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/bluefire.pretag
+END
+jaguar.clm.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/jaguar.clm.auxtest
+END
+franklin.posttag
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/franklin.posttag
+END
+jaguarpf.esmf.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/jaguarpf.esmf.auxtest
+END
+edinburgh.posttag
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/edinburgh.posttag
+END
+bluefire.cam.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/bluefire.cam.auxtest
+END
+edinburgh.pretag
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/edinburgh.pretag
+END
+jaguar.posttag
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/jaguar.posttag
+END
+jaguar.pretag
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/jaguar.pretag
+END
+newmachine.port.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/newmachine.port.auxtest
+END
+intrepid.posttag
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/intrepid.posttag
+END
+atlas.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/atlas.auxtest
+END
+jaguar.cam.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/jaguar.cam.auxtest
+END
+brutus_pm.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/brutus_pm.auxtest
+END
+brutus_po.auxtest
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testlists/brutus_po.auxtest
+END

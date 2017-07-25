@@ -1,0 +1,419 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism
+END
+glide.F90
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide.F90
+END
+glimmer_scales.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_scales.F90
+END
+glint_timestep.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_timestep.F90
+END
+glide_thck.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_thck.F90
+END
+isostasy_setup.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/isostasy_setup.F90
+END
+glide_lithot_io.F90
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_lithot_io.F90
+END
+glide_nc_custom.F90
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_nc_custom.F90
+END
+isostasy_el.F90
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/isostasy_el.F90
+END
+glint_mbal_io.F90
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_mbal_io.F90
+END
+isostasy_types.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/isostasy_types.F90
+END
+glimmer_ts.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_ts.F90
+END
+glimmer_searchcircle.F90
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_searchcircle.F90
+END
+glimmer_routing.F90
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_routing.F90
+END
+glimmer_daily_pdd.F90
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_daily_pdd.F90
+END
+xls.F90
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/xls.F90
+END
+glint_mbal.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_mbal.F90
+END
+glide_temp.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_temp.F90
+END
+glint_climate.F90
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_climate.F90
+END
+glimmer_utils.F90
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_utils.F90
+END
+glimmer_map_init.F90
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_map_init.F90
+END
+glimmer_anomcouple.F90
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_anomcouple.F90
+END
+glimmer_filenames.F90
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_filenames.F90
+END
+glimmer_ncparams.F90
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_ncparams.F90
+END
+glimmer_writestats.F90
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_writestats.F90
+END
+glint_initialise.F90
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_initialise.F90
+END
+glimmer_paramets.F90
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_paramets.F90
+END
+glimmer_vers.F90
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_vers.F90
+END
+glimmer_map_CFproj.F90
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_map_CFproj.F90
+END
+glide_lithot1d.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_lithot1d.F90
+END
+glide_mask.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_mask.F90
+END
+glint_io.F90
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_io.F90
+END
+glide_setup.F90
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_setup.F90
+END
+glide_profile.F90
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_profile.F90
+END
+glimmer_map_proj4.F90
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_map_proj4.F90
+END
+glide_types.F90
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_types.F90
+END
+glide_velo.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_velo.F90
+END
+glimmer_global.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_global.F90
+END
+glimmer_map_types.F90
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_map_types.F90
+END
+glimmer_deriv.F90
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_deriv.F90
+END
+glimmer_coordinates.F90
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_coordinates.F90
+END
+glimmer_ncdf.F90
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_ncdf.F90
+END
+kelvin.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/kelvin.F90
+END
+glide_stop.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_stop.F90
+END
+ncdf_utils.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/ncdf_utils.F90
+END
+glint_example_clim.F90
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_example_clim.F90
+END
+glimmer_log.F90
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_log.F90
+END
+glimmer_integrate.F90
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_integrate.F90
+END
+glint_precip_param.F90
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_precip_param.F90
+END
+glint_global_grid.F90
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_global_grid.F90
+END
+glint_constants.F90
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_constants.F90
+END
+glimmer_sparse.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_sparse.F90
+END
+glide_diagnostics.F90
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_diagnostics.F90
+END
+glint_global_interp.F90
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_global_interp.F90
+END
+isostasy.F90
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/isostasy.F90
+END
+glimmer_config.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_config.F90
+END
+glint_main.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_main.F90
+END
+glimmer_pdd.F90
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_pdd.F90
+END
+glint_mpinterp.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_mpinterp.F90
+END
+glide_lithot3d.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_lithot3d.F90
+END
+glint_interp.F90
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_interp.F90
+END
+glimmer_physcon.F90
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_physcon.F90
+END
+glimmer_map_trans.F90
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_map_trans.F90
+END
+profile.F90
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/profile.F90
+END
+glimmer_ncio.F90
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glimmer_ncio.F90
+END
+glide_lithot.F90
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_lithot.F90
+END
+glint_mbal_coupling.F90
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_mbal_coupling.F90
+END
+glide_io.F90
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glide_io.F90
+END
+glint_type.F90
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_type.F90
+END
+glint_smb.F90
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/glc/cism/source_glimmer-cism/glint_smb.F90
+END

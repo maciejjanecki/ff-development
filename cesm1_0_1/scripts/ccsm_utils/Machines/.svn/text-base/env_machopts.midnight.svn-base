@@ -1,0 +1,12 @@
+#! /bin/csh -f
+
+# -------------------------------------------------------------------------
+# Modules
+# -------------------------------------------------------------------------
+
+#module load netcdf/3.6.2
+source /usr/share/modules/init/tcsh
+module purge
+module load PrgEnv.pgi-9.0.4
+#module list
+

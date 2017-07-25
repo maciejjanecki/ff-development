@@ -1,0 +1,117 @@
+#! /bin/tcsh -f
+
+set mach = generic_ibm
+
+#################################################################################
+if ($PHASE == set_batch) then
+#################################################################################
+
+source ./Tools/ccsm_getenv || exit -1
+
+# Determine tasks and threads for batch queue 
+
+set max_tasks_per_node = $MAX_TASKS_PER_NODE
+
+set maxthrds = 0
+@ n = 0
+foreach model ($MODELS)
+  @ n = $n + 1
+  if ($NTHRDS[$n] > $max_tasks_per_node ) then
+     echo "ERROR, NTHRDS maximum is $max_tasks_per_node"
+     echo "you have set NTHRDS = ( $NTHRDS[$n] ) - must reset"
+     exit 1
+  endif   
+  if ($NTHRDS[$n] > $maxthrds) then
+     set maxthrds = $NTHRDS[$n]
+  endif
+end
+
+set ntasks_tot = `${UTILROOT}/Tools/taskmaker.pl -sumonly`
+set task_geo   = `${UTILROOT}/Tools/taskmaker.pl`
+set thrd_geo   = `${UTILROOT}/Tools/taskmaker.pl -thrdgeom`
+
+set ptile = $PES_PER_NODE
+if (($max_tasks_per_node) > $PES_PER_NODE) set ptile = $max_tasks_per_node
+if (($ntasks_tot) <= $PES_PER_NODE) set ptile = $PES_PER_NODE
+
+cat >! $CASEROOT/${CASE}.${mach}.run << EOF1
+#! /bin/tcsh -f
+#===============================================================================
+# GENERIC_USER
+# This is where the batch submission is set.
+#===============================================================================
+
+# @ shell = /bin/tcsh
+# @ output = poe.stdout.\$(jobid).\$(stepid)
+# @ error  = poe.stderr.\$(jobid).\$(stepid)
+# @ network.MPI = csss,not_shared,us,,instances=2
+# @ node_usage = not_shared
+# @ checkpoint = no
+## @ class = USER_FILL_THIS_IN
+# @ wall_clock_limit = 3600
+# @ job_type = parallel
+# @ job_name = $CASE
+# @ task_geometry = {$task_geo}
+# @ rset = rset_mcm_affinity
+# @ mcm_affinity_options=mcm_distribute mcm_mem_req mcm_sni_none
+# @ task_affinity=cpu($maxthrds)
+## @ account_no = 000000000
+# @ queue
+
+setenv OMP_NUM_THREADS $maxthrds
+EOF1
+
+
+#################################################################################
+else if ($PHASE == set_exe) then
+#################################################################################
+
+
+cat >> ${CASEROOT}/${CASE}.${MACH}.run << EOF1
+# -------------------------------------------------------------------------
+# Run the model
+# -------------------------------------------------------------------------
+
+cd \$RUNDIR
+echo "\`date\` -- CSM EXECUTION BEGINS HERE" 
+
+#===============================================================================
+# GENERIC_USER
+# This is where the job is launched
+#===============================================================================
+
+poe ./ccsm.exe >&! ccsm.log.\$LID
+
+wait
+echo "\`date\` -- CSM EXECUTION HAS FINISHED" 
+
+# -------------------------------------------------------------------------
+# For Postprocessing
+# -------------------------------------------------------------------------
+
+
+EOF1
+
+
+#################################################################################
+else if ($PHASE == set_larch) then
+#################################################################################
+
+
+   #This is a place holder for a long-term archiving script
+
+
+#################################################################################
+else
+#################################################################################
+
+    echo "mkscripts.$mach"
+    echo "  PHASE setting of $PHASE is not an accepted value"
+    echo "  accepted values are set_batch, set_exe and set_larch"
+    exit 1
+
+#################################################################################
+endif
+#################################################################################
+ 
+

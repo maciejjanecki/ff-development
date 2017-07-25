@@ -1,0 +1,448 @@
+<chapter id="creating_a_case ">
+<title>Creating a Case</title>
+
+<para>The first step in creating a &cesm; experiment is to use
+&create_newcase;. </para>
+
+<!-- ======================================================================= -->
+<sect1 id="how_to_create_case">
+<title>How to create a new case</title>
+
+<para>
+In what follows, $&CCSMROOT; is the full pathname of the root
+directory of your ccsm source code. First use the -h option to
+document the &create_newcase; options. Then use the -l option
+to determine which component sets, resolutions, and machines are
+supported.
+</para>
+
+<screen>
+> cd $&CCSMROOT;/scripts
+> create_newcase -h 
+> create_newcase -l
+</screen>
+
+<para>
+As explained in <link linkend="ccsm_component_sets">ccsm
+compsets</link>, a component set (compset) defines the specific
+model components that will be used in a given &cesm; configuration,
+along with any component-specific namelist or configuration settings
+that are specific to this configuration. See the <link
+linkend="supported_compsets">component set table</link> for a complete
+list of supported compset options. If you want to create a custom compset,
+create an appropriate xml compset file and use the create_newcase
+option -compset_file on the create_newcase command line.  For more information, 
+see the frequently asked quesitons (FAQ) section <link linkend="faq_createowncompset">How do I create my own compset?</link>
+</para>
+
+<para> See the <link linkend="supported_grids">grids table</link> for
+a complete list of supported grids options.</para>
+
+<para>See the <link linkend="supported_machines">machines table</link>
+for a complete list of machines.  </para>
+
+<note><para>&cesm; component sets and resolutions have both short
+and long names. Either the short or long name can be entered as input
+to &create_newcase;. As an example, the component set B_1850_RAMPCO2_CN has
+the short name B1850RMCN. Similarly, the resolution, 0.9x2.5_gx1v6 has
+the short name f09_g16. Both the long and short names appear in
+the output from &create_newcase; -l, where the short name always
+appears in parentheses.</para></note>
+
+<para> For a <link linkend="ccsm_machines">generic machine</link>,
+&create_newcase; can be invoked with the following arguments:</para>
+ 
+<screen>
+> create_newcase -case [case name] \
+           -mach [machine name] \
+           -compset [compset name] \
+           -res [resolution] \
+           -scratchroot [executable root directory] \
+           -din_loc_root_csmdata [input data root directory] \
+           -max_tasks_per_node [max mpi tasks per node] \
+           [-pes_file [user-defined pes-setup file]] \
+           [-compset_file [user-defined compset file]] \
+           [-pecount [S, M, L, X1, or X2]] \
+           [-silent] [-verbose] \
+           [-xmlmode normal/expert]
+</screen>
+
+<para> For a <link linkend="ccsm_machines">non-generic machine</link>,
+&create_newcase; can be invoked with the following arguments:</para>
+ 
+<screen>
+> create_newcase -case [case name] \
+           -mach [machine name] \
+           -compset [compset name] \
+           -res [resolution] \
+           [-pes_file [user-defined pes-setup file]] \
+           [-compset_file [user-defined compset file]] \
+           [-pecount [S, M, L, X1, or X2]] \
+           [-silent] [-verbose] \
+           [-xmlmode normal/expert]
+</screen>
+
+<note><para>-case, -mach, -compset and -res are required
+arguments to &create_newcase;. In addition, -scratchroot,
+-din_loc_root_csmdata and -max_tasks_per_node are
+additional required arguments when a generic machine is
+targeted.</para></note>
+
+<para> If you want to use your own pes setup file, specify the full
+pathname of that file for the optional -pes_file argument. The
+sample pes_file format is provided at
+<filename>$CCSMROOT/sample_pes_file.xml</filename>. </para>
+
+<para> Here is a simple example of using &create_newcase; for a
+non-generic machine.</para>
+
+<screen>
+> cd $&CCSMROOT;/scripts
+> create_newcase -case ~/ccsm4/b40.B2000 \
+                 -compset B_2000 \
+                 -res 0.9x1.25_gx1v6 -mach bluefire 
+</screen>
+
+<para>
+This example creates a $&CASEROOT; directory
+<filename>~/ccsm4/b40.B2000</filename> where $&CASE; is b40.B2000 with
+a model resolution of 0.9x1.25_gx1v6 (a 1-degree atmosphere/land
+grid with a nominal 1-degree ocean/ice grid using the gx1v6 ocean
+mask). The component set B_2000 uses fully active
+components configured to produce a present-day simulation. 
+</para>
+
+<note><para>The complete example appears in the
+<link linkend="use_case_basic">basic example</link>. $&CASE; can
+include letters, numbers, ".", and "_".  Note that &create_newcase;
+creates the $&CASEROOT; directory. If the directory already exists,
+it prints a warning and aborts. </para></note>
+
+<para>
+&create_newcase; creates the directory $&CASEROOT;, which is specified
+by the -case option. In $&CASEROOT;, &create_newcase; installs the
+files and directories that are responsible for configuring, building,
+and running the case. For example, the above command creates the
+following files and directories in
+<filename>~/ccsm4/b40.B2000/</filename>. (Note that user-modifiable
+files/directories appear in italics.)
+</para>
+
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry>Directory or Filename</entry>
+<entry>Description </entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry>LockedFiles/</entry>
+<entry>A directory that holds copies of files that should not be
+changed.</entry>
+</row>
+<row>
+<entry><emphasis>Macros.bluefire</emphasis> </entry>
+<entry>Contains machine-specific makefile
+directives. In the current release, the Macros have been organized into
+groups of machine-dependent files each containing site-specific and
+machine-specific options.</entry>
+</row>
+<row>
+<entry>README/</entry>
+<entry>A directory of README files for the components.</entry>
+</row>
+<row>
+<entry>README.case</entry> 
+<entry>A file detailing the &create_newcase; usage in creating your
+case. This is a good place to keep track of runtime problems and
+changes.</entry>
+</row>
+<row>
+<entry><emphasis>SourceMods</emphasis></entry>
+<entry>A directory where users can place modified source code.</entry>
+</row>
+<row>
+<entry>Tools/</entry> <entry>A directory containing support utility
+scripts. Users should never need to access the contents of this
+directory.</entry>
+</row>
+<row>
+<entry>check_input_data</entry>
+<entry>A script that checks for various input datasets and moves them
+into place.</entry>
+</row>
+<row>
+<entry><emphasis>configure</emphasis></entry>
+<entry> A script used to configure your case.</entry>
+</row>
+<row>
+<entry>create_production_test</entry> 
+<entry>A script used to create a test of your case.</entry>
+</row>
+<row>
+<entry><emphasis>env_build.xml</emphasis></entry>
+<entry> Controls model build settings (see <link
+linkend="building_ccsm_custom_env">customizing a build</link>).</entry>
+</row>
+<row>
+<entry>env_case.xml</entry> 
+<entry> Sets model components and resolution. This file 
+<emphasis>cannot</emphasis> be modified after a case has been created.
+To make changes, re-run &create_newcase; with different options.</entry>
+</row>
+<row>
+<entry><emphasis>env_conf.xml</emphasis></entry> <entry> Controls
+general settings including run initialization type (see <xref
+linkend="runtype_env"/>), coupler mapping files, component
+configuration, and namelist generation. Sets environment variables
+that are used by the component template scripts to generate component
+namelist and build scripts (see <link
+linkend="customizing_components">customizing components</link>).
+</entry>
+</row>
+<row>
+<entry><emphasis>env_mach_pes.xml</emphasis></entry> <entry>Controls
+component machine-specific processor layout (see <xref
+linkend="case_conf_setting_pes"/>). The settings in this are
+critical to a well-load-balanced simulation (see <link 
+linkend="running_ccsm_loadbalance">loadbalancing a run</link>).
+</entry>
+</row>
+<row>
+<entry><emphasis>env_mach_specific</emphasis></entry> 
+<entry>A file used to set a number of machine-specific environment
+variables for building and/or running. This file can be edited at any
+time. However, build environment variables should not be edited after
+a build is invoked.
+</entry>
+</row>
+<row>
+<entry><emphasis>env_run.xml</emphasis></entry>
+<entry>Controls run-time settings such as length of run, frequency of
+restarts, output of coupler diagnostics, and short-term and long-term
+archiving. See <link linkend="running_ccsm">running a case</link>.
+</entry>
+</row>
+<row>
+<entry>xmlchange</entry>
+<entry>A script used to modify values in the xml files.</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+
+<para>
+For more complete information about the files in the case directory, see
+<xref linkend="faq_casestuff"/>
+</para>
+
+<note><para> Since default values are provided for the above xml file
+variables, you could now go to <link linkend="case_conf">configuring a
+case</link> and configure your case. However, you should first
+understand what variables you might want to change and how these xml
+variables are used by the scripts. Please continue reading below if
+you are a new user.</para></note>
+
+<para>
+The xml variables in the <filename>env_*.xml</filename> files are
+translated into csh environment variables with the same name by the
+script <command>Tools/ccsm_getenv</command>. Conversion of xml
+variables to environment variables is used by numerous script
+utilities as part of configuring, building, and running a given
+case. It is important to note that you do not explicitly see this
+conversion.
+</para>
+<note><para>Users can only modify the xml variables. Users cannot
+modify the csh environment variables directly.</para></note>
+<para>Complete lists of &cesm; environment variables in the xml files
+that appear in $&CASEROOT; are provided in
+<link linkend="env_case_vars">env_case.xml variables</link>,
+<link linkend="env_conf_vars">env_conf.xml variables </link>,
+<link linkend="env_mach_pes_vars">env_mach_pes.xml variables </link>,
+<link linkend="env_build_vars">env_build.xml variables </link>, and
+<link linkend="env_run_vars">env_run.xml variables</link>.
+</para>
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="modifying_xml">
+<title>Modifying an xml file</title>
+
+<para>
+Users can edit the xml files directly to change the variable
+values. However, modification of variables in the xml scripts is best
+done using the <command>xmlchange</command> script in the $&CASEROOT;
+directory since it performs variable error checking as part of
+changing values in the xml files. To invoke the xmlchange script:
+</para>
+
+<screen>
+xmlchange -file [name] -id [name] -val [name] -help -silent -verbose -file
+</screen>
+
+<variablelist>
+
+<varlistentry><term><option>-file</option></term>
+<listitem>
+<para>
+The xml file to be edited.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-id</option></term>
+<listitem>
+<para>
+The xml variable name to be changed.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-val</option></term>
+<listitem>
+<para>
+The intended value of the variable associated with the -id argument.
+</para>
+<note><para>If you want a single quotation mark ("'", also called an
+apostrophe) to appear in the string provided by the -val option,
+you must specify it as "&amp;apos;".
+</para></note>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-silent</option></term>
+<listitem>
+<para>
+Turns on silent mode. Only fatal messages will be issued.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-verbose</option></term>
+<listitem>
+<para>
+Echoes all settings made by configure.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-help</option></term>
+<listitem>
+<para>
+Print usage info to STDOUT.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="cloning_case">
+<title>Cloning a case (Experts only)</title>
+
+<para>
+This is an advanced feature provided for expert users. If you are
+a new user, skip this section.</para>
+
+<para> If you have access to the run you want to clone, the
+&create_clone; command will create a new case while also preserving
+local modifications to the case that you want to clone. You can run the
+utility &create_clone; either from $&CCSMROOT; or from the directory
+where you want the new case to be created. It has the following
+arguments:</para>
+
+<variablelist>
+<varlistentry><term><option>-case</option></term>
+<listitem>
+<para>
+The name or path of the new case.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-clone</option></term>
+<listitem>
+<para>
+The full pathname of the case to be cloned.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-silent</option></term>
+<listitem>
+<para>
+Enables silent mode. Only fatal messages will be issued.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-verbose</option></term>
+<listitem>
+<para>
+Echoes all settings.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>-help</option></term>
+<listitem>
+<para>
+Prints usage instructions.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>
+Here is the simplest example of using &create_clone;:
+</para>
+
+<screen>
+> cd $&CCSMROOT;/scripts
+> create_clone -case $&CASEROOT; -clone $&CLONEROOT; 
+</screen>
+
+<para>
+When invoking &create_clone;, the following files are cloned in the new
+$&CLONEROOT; case directory. Note that the new case directory will be
+identical to the cloned case directory 
+<emphasis>except</emphasis> for the original cloned scripts
+$&CASEROOT;.$&MACH;.build, $&CASEROOT;.$&MACH;.clean_build,
+$&CASEROOT;.$&MACH;.run, and $&CASEROOT;.$&MACH;.l_archive,
+which will have new names in the new case.
+</para>
+
+<note><title>Important:</title>
+<para>Do not change anything in the &env_case.xml;
+file. In addition, if you want to modify &env_conf.xml;, the new case
+will no longer be a clone, and you will need to configure
+-cleanall, which removes all files associated with all previous
+invocations of the configure script. The $&CASEROOT;/ directory will now
+appear as if &create_newcase; had just been run -- with the exception
+that local modifications to the env_* files are preserved. The
+<filename>Buildconf/</filename> directory will be removed, however. As
+a result, any changes to the namelist generation scripts in
+<filename>Buildconf/</filename> will <emphasis>not</emphasis> be
+preserved. Before invoking this command, make backup copies of your
+"resolved" component namelists in the <filename>Buildconf/</filename>
+directory if modifications to the generated scripts were made.
+</para></note>
+
+<para>
+Another approach to duplicating a case is to use the information in
+that case's README.case file to create a new case. Note that this
+approach will <emphasis>not</emphasis> preserve any local
+modifications that were made to the original case, such as source-code
+or build-script modifications; you will need to import those
+changes manually.</para>
+
+</sect1>
+
+<!-- ======================================================================= -->
+
+</chapter>
+

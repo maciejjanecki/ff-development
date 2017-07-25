@@ -1,0 +1,123 @@
+#!/bin/csh -f
+
+#------------------------------------------------------------------
+# Given a dir/file type input, return either the dir or file part
+# "Usage ccsm_splitdf [-d -f -h] dir/file "
+#------------------------------------------------------------------
+set com0 = "ccsm_splitdf [-d -f -h] dir/file "
+set com1 = "#   Requires a dir and/or file "
+set com2 = "#   Returns the directory (-d) or filename (-f) "
+set com3 = "#   (-h) is help "
+set com4 = "#   Default is to return filename "
+set com5 = "#   No error messages are produced if erroneous options are input "
+set com6 = "#   Uses the last -d or -f option input "
+set com7 = "#   Reports an error if more than one arguement are input "
+set com8 = ""
+set com9 = ""
+
+#------------------------------------------------------------------
+# Default variable type of return to file
+# Check for options and arguments
+# If -h, return help information and exit
+#------------------------------------------------------------------
+set type = filonly
+if ($#argv == 0) then
+    echo "  Usage: $com0"
+    exit 1
+else
+  set idferror = FALSE
+  set idfinit = "-zzz"
+  set idf = $idfinit
+  foreach arg ($argv[*])
+    if ("${arg}" == "-f") set type = filonly
+    if ("${arg}" == "-d") set type = dironly
+    if ("${arg}" == "-h") then
+      echo " "
+      echo $com0
+      echo $com1
+      echo $com2
+      echo $com3
+      echo $com4
+      echo $com5
+      echo $com6
+      echo $com7
+      echo $com8
+      echo $com9
+      echo " "
+      exit 1
+    endif
+    if ("${idf}" != "${idfinit}") set idferror = TRUE
+    if ("${arg}" !~ -*) set idf = $arg
+  end
+  if ("${idf}" =~ -* || $idferror == TRUE) then
+    echo "  Usage: $com0"
+    exit 1
+  endif
+endif
+
+#------------------------------------------------------------------
+# Parse the input and determine the directory and file
+# Replace double // with /
+# Remove whitespace
+# Check if string ends in /, then filename = " " and dir = string
+# Replace / with space, count words, last word is filename,
+#   rest is directory
+# Check whether there is a leading slash, affect word count
+# Reconstruct the directory
+# Return reasonable values like "./" for directory if necessary
+#------------------------------------------------------------------
+set newdf = $idf
+set newdf = `echo ${newdf} | sed -e 's/\/\//\//g'`
+set newdf = `echo ${newdf} | sed -e 's/\/\//\//g'`
+set newdf = `echo ${newdf} | sed -e 's/\/\//\//g'`
+set n1a = `echo $newdf | sed -e 's/ //g'`
+if ( $n1a =~ *\/) then
+  set newd = $newdf
+  set newf = " "
+else
+  set n2a = `echo $n1a | sed -e 's/\// /g'`
+  set n2n = `echo $n2a | wc -w`
+  @ n2nm = $n2n - 1
+  @ n2np = $n2n + 1
+  if ($n2n == 1) then
+    if ($n1a == ".") then
+      set newd = $n1a
+      set newf = " "
+      set newd = ${newd}/
+    else
+      set newd = " "
+      set newf = $n1a
+    endif
+  else
+    if ($n1a =~ \/*) then
+      set newd = `echo $n1a | cut -d "/" -f 1-${n2n}`
+      set newf = `echo $n1a | cut -d "/" -f ${n2np}`
+    else
+      set newd = `echo $n1a | cut -d "/" -f 1-${n2nm}`
+      set newf = `echo $n1a | cut -d "/" -f ${n2n}`
+    endif
+    set newd = ${newd}/
+  endif
+endif
+if (${newd} == "") set newd = "./"
+if (${newf} == "") set newf = " "
+# For debugging, echo values
+#echo "  dir = $newd" 
+#echo "  fil = $newf" 
+
+#------------------------------------------------------------------
+# Return the output requested
+#------------------------------------------------------------------
+if ($type == filonly) then
+  echo ${newf}
+  exit 0
+else
+if ($type == dironly) then
+  echo ${newd}
+  exit 0
+else
+  echo ${newd} ${newf}
+  exit 0
+endif
+endif
+    

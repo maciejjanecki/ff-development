@@ -1,0 +1,71 @@
+#! /bin/csh -f
+#==============================================================================
+# Purpose:
+#     (a) Build mct library
+#==============================================================================
+
+setenv MCT_DIR $CCSMROOT/models/utils/mct   # mct directory
+setenv MCT_LIB $EXEROOT/mct
+
+  cd $MCT_LIB
+  echo "Copying source to CCSM EXEROOT..."
+  cp -r -p $MCT_DIR/* .
+
+  set runconf = 0
+  set runclean = 0
+
+# It would be harmless to just run "configure" each time but it
+# takes time so use file "mct_conf" to determine if configure must
+# be run.  There are three possibilities:
+# 1. brand new build -- run configure
+# 2. already built but platform has changed (this can happen
+#    when a filesystem is mounted on multiple platforms) -- run configure
+# 3. already built, same platform -- don't run configure
+#
+  if(-e mct_conf) then
+    echo "MCT already built. Checking machine type"
+    cp -f mct_conf mct_conf.old
+    echo ${OS} > mct_conf
+    set diffwc = 1
+    set diffwc = `diff mct_conf.old mct_conf | wc -m`
+    if ($diffwc != 0) then
+      echo "Different machine. Rerun configure"
+      rm Makefile.conf.old
+      rm -f $LIBROOT/libmct.a
+      rm -f $LIBROOT/libmpeu.a
+
+      set runconf = 1
+      set runclean = 1
+    else
+      echo "Same machine."
+      cp -p Makefile.conf.old Makefile.conf
+    endif
+  else
+    echo "New build of MCT"
+    echo ${OS} > mct_conf
+    set runconf = 1
+  endif
+
+# run configure with correct arguments if necessary
+  if ($runconf == 1) then
+    echo "Running configure..."
+    echo "for OS=$OS MACH=$MACH"
+    gmake -f $CASETOOLS/Makefile configure MODEL=mct MACFILE=$CASEROOT/Macros.$MACH
+  endif
+
+  if ($runclean == 1) then
+    make clean
+  endif
+
+  cp -p Makefile.conf Makefile.conf.old
+
+  make || exit 1
+
+  cp -p mct/lib*.a $LIBROOT/
+  cp -p mpeu/lib*.a $LIBROOT/
+  if (-d mpi-serial) cp -p mpi-serial/lib*.a $LIBROOT
+  cp -p mct/*.mod $LIBROOT/include/
+  cp -p mpeu/*.mod $LIBROOT/include/
+
+exit 0
+

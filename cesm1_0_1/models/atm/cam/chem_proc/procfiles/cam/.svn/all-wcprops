@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/chem_proc/procfiles/cam
+END
+mo_imp_sol_scalar.F90
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/chem_proc/procfiles/cam/mo_imp_sol_scalar.F90
+END
+mo_chem.mod
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/chem_proc/procfiles/cam/mo_chem.mod
+END
+mo_imp_sol_vector.F90
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/chem_proc/procfiles/cam/mo_imp_sol_vector.F90
+END
+mo_imp_sol_cache.F90
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/chem_proc/procfiles/cam/mo_imp_sol_cache.F90
+END

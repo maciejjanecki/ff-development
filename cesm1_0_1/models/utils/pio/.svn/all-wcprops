@@ -1,0 +1,281 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio
+END
+configure
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure
+END
+pionfwrite_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pionfwrite_mod.F90
+END
+alloc_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/alloc_mod.F90
+END
+pionfwrite_mod.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pionfwrite_mod.F90.in
+END
+piodarray.F90
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/piodarray.F90
+END
+pio_nf_utils.F90
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio_nf_utils.F90
+END
+alloc_mod.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/alloc_mod.F90.in
+END
+pio_spmd_utils.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio_spmd_utils.F90.in
+END
+pionfput_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pionfput_mod.F90
+END
+README.config
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/README.config
+END
+rearrange.F90
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/rearrange.F90
+END
+pionfread_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pionfread_mod.F90
+END
+configure.ac
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.ac
+END
+pio_utils.F90
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio_utils.F90
+END
+pionfput_mod.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pionfput_mod.F90.in
+END
+pio_types.F90
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio_types.F90
+END
+iompi_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/iompi_mod.F90
+END
+fdepends.awk
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/fdepends.awk
+END
+pio_mpi_utils.F90
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio_mpi_utils.F90
+END
+pnetcdfversion.c
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pnetcdfversion.c
+END
+piolib_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/piolib_mod.F90
+END
+pio_kinds.F90
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio_kinds.F90
+END
+pionfget_mod.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pionfget_mod.F90.in
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/Makefile
+END
+pionfatt_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pionfatt_mod.F90
+END
+box_rearrange.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/box_rearrange.F90.in
+END
+pio_support.F90
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio_support.F90
+END
+pio.F90
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio.F90
+END
+pionfatt_mod.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pionfatt_mod.F90.in
+END
+pio_support.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio_support.F90.in
+END
+ionf_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/ionf_mod.F90
+END
+pio_spmd_utils.F90
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio_spmd_utils.F90
+END
+pio_quicksort.F90
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pio_quicksort.F90
+END
+piodarray.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/piodarray.F90.in
+END
+topology.c
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/topology.c
+END
+nf_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/nf_mod.F90
+END
+genf90.pl
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/genf90.pl
+END
+Makefile.conf.in
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/Makefile.conf.in
+END
+mct_rearrange.F90
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/mct_rearrange.F90
+END
+pionfget_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pionfget_mod.F90
+END
+pionfread_mod.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/pionfread_mod.F90.in
+END
+rearrange.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/rearrange.F90.in
+END
+mct_rearrange.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/mct_rearrange.F90.in
+END
+box_rearrange.F90
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/box_rearrange.F90
+END
+aclocal.m4
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/aclocal.m4
+END
+iompi_mod.F90.in
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/iompi_mod.F90.in
+END

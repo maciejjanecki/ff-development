@@ -1,0 +1,34 @@
+
+#======================================================================
+# All things common to all tests that need to be done at the beginning 
+# of each test should be put here to avoid duplication.  
+#======================================================================
+
+#======================================================================
+# Test status files
+#======================================================================
+# test logs
+setenv TESTSTATUS_OUT   $CASEROOT/TestStatus
+setenv TESTSTATUS_LOG   $CASEROOT/TestStatus.out
+
+# valid test output states are:  
+#   PASS      Test passed
+#   FAIL      Test failed
+#   BFAIL     Base Results do not exist
+#   GEN       Case generated
+#   ERROR     Error underfined, test may or may not have passed
+#   UNDEF     Undefined
+#   BUILT     Build completed                           NOT YET IMPLEMENTED
+#   PEND      Test submitted
+#   RUN       Test started running, it may or may not have completed
+
+#======================================================================
+# Remove test status files
+#======================================================================
+rm -rf $TESTSTATUS_OUT
+rm -rf $TESTSTATUS_LOG
+set basestatus = "RUN  "
+echo "$basestatus ${CASE} " >&! $TESTSTATUS_OUT
+
+set sdate = `date +"%Y-%m-%d %H:%M:%S"`
+echo "test started $sdate" >>& CaseStatus

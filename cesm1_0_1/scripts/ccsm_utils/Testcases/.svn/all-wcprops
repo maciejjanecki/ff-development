@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases
+END
+PEM_auto_pes_file
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/PEM_auto_pes_file
+END
+ERU_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/ERU_script
+END
+PMT_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/PMT_script
+END
+PET_auto_pes_file
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/PET_auto_pes_file
+END
+SEQ_auto_pes_file
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/SEQ_auto_pes_file
+END
+SMS_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/SMS_script
+END
+config_tests.xml
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/config_tests.xml
+END
+CME_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/CME_script
+END
+PEA_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/PEA_script
+END
+PST_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/PST_script
+END
+ERB_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/ERB_script
+END
+PMT_auto_pes_file
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/PMT_auto_pes_file
+END
+LAR_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/LAR_script
+END
+ERH_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/ERH_script
+END
+ERI_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/ERI_script
+END
+PST_auto_pes_file
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/PST_auto_pes_file
+END
+PEM_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/PEM_script
+END
+P4A_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/P4A_script
+END
+APT_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/APT_script
+END
+ERP_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/ERP_script
+END
+PET_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/PET_script
+END
+PFS_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/PFS_script
+END
+SEQ_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/SEQ_script
+END
+ERS_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/ERS_script
+END
+ERT_script
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Testcases/ERT_script
+END

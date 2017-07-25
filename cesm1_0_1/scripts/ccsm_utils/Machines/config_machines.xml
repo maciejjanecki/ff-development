@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<config_machines>
+
+<machine MACH="tryton"
+         DESC="Tryton, os is Scientific Linux 6 (Linux.ifort), batch system is slurm"
+         EXEROOT="/users/work/$LOGNAME/models/$CASE"
+         OBJROOT="$EXEROOT"
+         INCROOT="$EXEROOT/lib/include"
+         STOP_OPTION="nhours"
+         STOP_N="48"
+         REST_OPTION="nhours"
+         REST_N="6"
+         DOUT_S="FALSE"
+         DOUT_S_SAVE_INT_REST_FILES="TRUE"
+         DIN_LOC_ROOT_CSMDATA="/users/kdm/$LOGNAME/CESM/inputdata"
+         DIN_LOC_ROOT_CLMQIAN="/users/kdm/$LOGNAME/CESM/inputdata/atm/datm7/atm_forcing.datm7.Qian.T62.c080727"
+         DIN_LOC_ROOT="/users/kdm/$LOGNAME/CESM/inputdata"
+         DOUT_S_ROOT="/users/work/$LOGNAME/archive/$CASE"
+         DOUT_L_HTAR="FALSE"
+         DOUT_L_MSROOT="csm/$CASE"
+         CCSM_BASELINE="/users/kdm/$LOGNAME/CESM/ccsm_baselines"
+         CCSM_CPRNC="/users/kdm/$LOGNAME/CESM/cprnc"
+         OS="Linux.ifort"
+         BATCHQUERY="squeue"
+         BATCHSUBMIT="sbatch"
+         GMAKE_J="8"
+         MAX_TASKS_PER_NODE="24"
+         MPISERIAL_SUPPORT="FALSE" />
+
+</config_machines>

@@ -1,0 +1,10 @@
+cntlvars.o : cntlvars.f90  
+cprnc.o : cprnc.F90 netcdfids.o utils.o driver.o nfwrappers.o cntlvars.o specialvalues.o 
+driver.o : driver.f90 cntlvars.o printers.o gatherstats.o specialvalues.o netcdfids.o utils.o prec.o nfwrappers.o 
+gatherstats.o : gatherstats.f90 cntlvars.o specialvalues.o utils.o prec.o 
+netcdfids.o : netcdfids.f90  
+nfwrappers.o : nfwrappers.f90 utils.o 
+prec.o : prec.f90  
+printers.o : printers.f90 specialvalues.o netcdfids.o prec.o nfwrappers.o 
+specialvalues.o : specialvalues.f90 prec.o 
+utils.o : utils.f90  

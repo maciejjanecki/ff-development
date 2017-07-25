@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/!svn/ver/25/model_versions/cesm1_0_1/models/drv/shr
+END
+seq_cdata_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/25/model_versions/cesm1_0_1/models/drv/shr/seq_cdata_mod.F90
+END
+seq_comm_mct.F90
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/25/model_versions/cesm1_0_1/models/drv/shr/seq_comm_mct.F90
+END
+seq_timemgr_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/drv/shr/seq_timemgr_mod.F90
+END
+seq_infodata_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/drv/shr/seq_infodata_mod.F90
+END
+seq_drydep_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/drv/shr/seq_drydep_mod.F90
+END
+seq_flds_indices.F90
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/drv/shr/seq_flds_indices.F90
+END
+seq_io_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/models/drv/shr/seq_io_mod.F90
+END
+seq_flds_mod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/25/model_versions/cesm1_0_1/models/drv/shr/seq_flds_mod.F90
+END

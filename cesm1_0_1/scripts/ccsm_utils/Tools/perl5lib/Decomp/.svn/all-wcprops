@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/Decomp
+END
+Config.pm
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/Decomp/Config.pm
+END
+OverallConfig.pm
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/Decomp/OverallConfig.pm
+END

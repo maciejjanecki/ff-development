@@ -1,0 +1,176 @@
+#!/bin/csh -f
+
+#----------------------------------------
+#  This tool is called as follows
+#
+#    ccsm_sedfile filename options
+#
+#  where filename is the file to be modified
+#  and options are like -OCN_COMP pop2.  IE
+#
+#    ccsm_sedfile env_conf -OCN_COMP pop2 -GRID T96_gx2v8
+#
+#  This tool seds files.  It's build to handle 
+#  CCSM env_conf and env_run files.  This
+#  assume lines in the files are of the form
+#
+#    setenv VAR Value   # option1 option2
+#
+#  where option1, option2, etc are possible
+#  values for VAR.  this script searches
+#  for instances of the setenv, checks if
+#  the value is allowed, and then modifies
+#  the file.
+#
+#  special error checking is setup for the 
+#  following strings set in the base file
+#    unlimited
+#    yyyymmdd
+#    yyyy-mm-dd
+#    integer
+#    calendar_alarm
+#
+#  can turn off checking all together with -nocheck flag
+#  as first argument
+#
+#    ccsm_sedfile -nocheck env_conf -OCN_COMP pop2 -GRID T96_gx2v8
+#
+#----------------------------------------
+
+if ( $#argv < 1 ) then
+  exit -1
+endif
+
+set check = true
+if ("$argv[1]" == "-nocheck") then
+  set check = false
+  shift argv
+  if ( $#argv < 1 ) then
+    exit -1
+  endif
+endif
+
+set file = $argv[1]
+set file1 = ${file}.sedfile1
+set file2 = ${file}.sedfile2
+
+cp -f $file $file1
+cp -f $file $file2
+
+set dash = "-"
+shift argv
+
+while (1)
+  if ( $#argv < 1 ) break;
+  set keywrd = $argv[1];
+
+  if ("$keywrd" !~ $dash* ) then
+      echo "Error: non keyword $keywrd";
+      exit -1
+  endif
+
+  shift argv
+
+  if($#argv <1 ) then
+      echo "Error: Please input the content for $keywrd"
+      exit -1
+  endif
+
+  if ("$argv[1]" =~ $dash* ) then
+      if ("$argv[1]" =~ ${dash}[0-9]*) then
+         # must be a negative number, continue
+      else
+         echo "Error: wrong argument for $keywrd $argv[1]";
+         exit -1
+      endif
+  endif
+
+  set value = $argv[1]
+
+  if ($#argv > 1) then
+  while ("$argv[2]" !~ $dash*)
+    set value = "$value $argv[2]"
+    shift argv
+    if ($#argv == 1) then
+      break
+    endif
+  end
+  endif
+
+  set keywrd = `echo $keywrd | sed 's,-,,'`
+  set qvalue = `echo \"$value\" `
+
+  if ($check == "true") then
+    set dosed = false
+  else
+    set dosed = true
+  endif
+
+  if ($dosed !~ "true") then
+    set gout =  `grep " $keywrd " $file1 | grep setenv | grep unlimited`
+    if ("$gout" !~ "") set dosed = true
+  endif
+  if ($dosed !~ "true") then
+    set gout =  `grep " $keywrd " $file1 | grep setenv | grep yyyymmdd`
+    if ("$gout" !~ "" && "$value" =~ [0-9][0-9][0-9]*) set dosed = true
+  endif
+  if ($dosed !~ "true") then
+    set gout =  `grep " $keywrd " $file1 | grep setenv | grep yyyy-mm-dd`
+    if ("$gout" !~ "" && "$value" =~ *[0-9]-[0-9][0-9]-[0-9][0-9]) set dosed = true
+  endif
+  if ($dosed !~ "true") then
+    set gout =  `grep " $keywrd " $file1 | grep setenv | grep integer`
+    if ("$gout" !~ "" && "$value" =~ [0-9]*) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ -[0-9]*) set dosed = true
+  endif
+  if ($dosed !~ "true") then
+    set gout =  `grep " $keywrd " $file1 | grep setenv | grep calendar_alarm`
+    if ("$gout" !~ "" && "$value" =~ date*   ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ nday*   ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ nmonth* ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ daily*  ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ month*  ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ year*   ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ nstep*  ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ ifsec*  ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ ifday*  ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ ifmon*  ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ ifyear* ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ none*   ) set dosed = true
+    if ("$gout" !~ "" && "$value" =~ never*  ) set dosed = true
+  endif
+  if ($dosed !~ "true") then
+    set gout =  `grep " $keywrd " $file1 | grep setenv | grep "$value"`
+    if ("$gout" !~ "") set dosed = true
+  endif
+  if ($dosed !~ "true") then
+    set gout =  `grep " $keywrd " $file1 | grep setenv | grep -v \#`
+    if ("$gout" !~ "") set dosed = true
+  endif
+
+  if ($dosed =~ "true") then
+    set gout =  `grep " $keywrd " $file1 | grep setenv | grep \# `
+    if ("$gout" !~ "") then
+      sed "s,^ *setenv *$keywrd .*#,setenv $keywrd    $qvalue       #,;" \
+        $file1 >! $file2;
+    endif
+    set gout =  `grep " $keywrd " $file1 | grep setenv | grep -v \# `
+    if ("$gout" !~ "") then
+      sed "s,^ *setenv *$keywrd .*,setenv $keywrd    $qvalue       ,;" \
+        $file1 >! $file2;
+    endif
+    cp -f $file2 $file1  
+  else
+    echo "Error: keyword/value not allowed $keywrd $value"
+    exit -1
+  endif
+
+  shift argv
+
+end
+
+cp -f $file2 $file
+rm -f $file1
+rm -f $file2
+
+exit 0

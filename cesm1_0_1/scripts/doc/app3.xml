@@ -1,0 +1,15 @@
+<appendix id="supported_machines">
+<title>Supported Machines</title>
+
+<para>
+The following table lists all supported and generic machines.
+Run "create_newcase -list" from the scripts directory to view the 
+list for the current version of CESM1.
+</para>
+
+&machines_list;
+
+</appendix>
+
+
+

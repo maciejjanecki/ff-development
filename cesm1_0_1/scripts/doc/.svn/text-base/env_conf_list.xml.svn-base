@@ -1,0 +1,375 @@
+<table><title>env_conf.xml variables</title>
+<tgroup cols="4">
+<thead>
+<row> 
+<entry>Name</entry>
+<entry>Type</entry>
+<entry>Default</entry>
+<entry>Description [Valid Values]</entry>
+</row> 
+</thead>
+<tbody>
+<row> 
+<entry>BRNCH_RETAIN_CASENAME</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>allow same branch casename as reference casename [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>CAM_CONFIG_OPTS</entry>
+<entry>char</entry>
+<entry></entry>
+<entry>CAM configure options, see CAM configure utility for details</entry>
+</row>
+<row> 
+<entry>CAM_DYCORE</entry>
+<entry>char</entry>
+<entry>fv</entry>
+<entry>CAM dynamical core [eul,fv,homme] </entry>
+</row>
+<row> 
+<entry>CAM_NAMELIST_OPTS</entry>
+<entry>char</entry>
+<entry></entry>
+<entry>CAM specific namelist settings for -namelist option</entry>
+</row>
+<row> 
+<entry>CAM_NML_USE_CASE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>CAM namelist use_case</entry>
+</row>
+<row> 
+<entry>CCSM_BGC</entry>
+<entry>char</entry>
+<entry>none</entry>
+<entry>BGC flag [none,CO2A,CO2B,CO2C,CO2_DMSA] </entry>
+</row>
+<row> 
+<entry>CCSM_CO2_PPMV</entry>
+<entry>real</entry>
+<entry>379.000</entry>
+<entry>CO2 ppmv</entry>
+</row>
+<row> 
+<entry>CCSM_VOC</entry>
+<entry>char</entry>
+<entry>FALSE</entry>
+<entry>Only used for B,E,F,I compsets: if true will pass VOC fields from lnd to atm [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>CICE_CONFIG_OPTS</entry>
+<entry>char</entry>
+<entry> </entry>
+<entry>CICE configure options, see CICE configure utility for details</entry>
+</row>
+<row> 
+<entry>CICE_MODE</entry>
+<entry>char</entry>
+<entry>prognostic</entry>
+<entry>cice mode [prognostic,prescribed,thermo_only] </entry>
+</row>
+<row> 
+<entry>CICE_NAMELIST_OPTS</entry>
+<entry>char</entry>
+<entry></entry>
+<entry>CICE specific namelist settings for -namelist option</entry>
+</row>
+<row> 
+<entry>CLM_BLDNML_OPTS</entry>
+<entry>char</entry>
+<entry></entry>
+<entry>Options to send to CLM build-namelist (see models/lnd/clm/bld/build-namelist -h for list of options)</entry>
+</row>
+<row> 
+<entry>CLM_CO2_TYPE</entry>
+<entry>char</entry>
+<entry>constant</entry>
+<entry>clm CO2 type, constant means value in CLM namelist, diagnostic or prognostic mean use the value sent from the atmosphere model [constant,diagnostic,prognostic] </entry>
+</row>
+<row> 
+<entry>CLM_CONFIG_OPTS</entry>
+<entry>char</entry>
+<entry></entry>
+<entry>Options to send to CLM configure (see models/lnd/clm/bld/configure -h for list of options)</entry>
+</row>
+<row> 
+<entry>CLM_FORCE_COLDSTART</entry>
+<entry>char</entry>
+<entry>off</entry>
+<entry>Value of 'on' forces model to spinup from a cold-start (arbitrary initial conditions) [on,off] </entry>
+</row>
+<row> 
+<entry>CLM_NAMELIST_OPTS</entry>
+<entry>char</entry>
+<entry></entry>
+<entry>Namelist settings to add to the clm_inparm namelist 
+        Note, use &apos; around character values, as XML parser can't handle quotes
+inside strings.
+        (list of item=value settings, see models/lnd/clm/bld/namelist_files/namelist_definition.xml)</entry>
+</row>
+<row> 
+<entry>CLM_NML_USE_CASE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>CLM namelist use_case
+        (for a list see models/lnd/clm/bld/build-namelist -use_case list)</entry>
+</row>
+<row> 
+<entry>CLM_PT1_NAME</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>Name of single point resolution dataset to be used in I compset only
+        (for a list see models/lnd/clm/bld/build-namelist -res list)</entry>
+</row>
+<row> 
+<entry>CLM_USRDAT_NAME</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>Data identifier name for CLM user-created datasets (see Quickstart.userdatasets)</entry>
+</row>
+<row> 
+<entry>CPL_ALBAV</entry>
+<entry>logical</entry>
+<entry>false</entry>
+<entry>Only used for C,G compsets: if true, compute albedos to work with daily avg SW down [true,false] </entry>
+</row>
+<row> 
+<entry>CPL_EPBAL</entry>
+<entry>char</entry>
+<entry>off</entry>
+<entry>Only used for C,G compsets: if ocn, ocn provides EP balance factor for precip [off,ocn] </entry>
+</row>
+<row> 
+<entry>DATM_CLMNCEP_YR_ALIGN</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>year align (simulation year corresponding to starting year) for CLM_QIAN mode</entry>
+</row>
+<row> 
+<entry>DATM_CLMNCEP_YR_END</entry>
+<entry>integer</entry>
+<entry>2004</entry>
+<entry>ending year to loop data over for CLM_QIAN mode</entry>
+</row>
+<row> 
+<entry>DATM_CLMNCEP_YR_START</entry>
+<entry>integer</entry>
+<entry>2002</entry>
+<entry>starting year to loop data over for CLM_QIAN mode</entry>
+</row>
+<row> 
+<entry>DATM_MODE</entry>
+<entry>char</entry>
+<entry>CORE2_NYF</entry>
+<entry>DATM mode [CORE2_NYF,CLM_QIAN,CLM1PT] </entry>
+</row>
+<row> 
+<entry>DATM_PRESAERO</entry>
+<entry>char</entry>
+<entry>none</entry>
+<entry>DATM prescribed aerosol forcing [none,clim_1850,clim_2000,trans_1850-2000,rcp2.6,rcp4.5,rcp8.5,pt1_pt1] </entry>
+</row>
+<row> 
+<entry>DICE_MODE</entry>
+<entry>char</entry>
+<entry>ssmi</entry>
+<entry>DICE mode [ssmi] </entry>
+</row>
+<row> 
+<entry>DLND_MODE</entry>
+<entry>char</entry>
+<entry>NULL</entry>
+<entry>DLND mode [CPLHIST,NULL] </entry>
+</row>
+<row> 
+<entry>DLND_RUNOFF_MODE</entry>
+<entry>char</entry>
+<entry>RX1</entry>
+<entry>DLND runoff mode [CPLHIST,RX1,NULL] </entry>
+</row>
+<row> 
+<entry>DOCN_MODE</entry>
+<entry>char</entry>
+<entry>prescribed</entry>
+<entry>DOCN mode [prescribed,som] </entry>
+</row>
+<row> 
+<entry>DOCN_SSTDATA_FILENAME</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>Sets sst/ice_cov filename for amip runs, only used in F compset</entry>
+</row>
+<row> 
+<entry>DOCN_SSTDATA_YEAR_END</entry>
+<entry>integer</entry>
+<entry>-999</entry>
+<entry>Sets year end of sst/ice_cov for amip runs, only used in F compset</entry>
+</row>
+<row> 
+<entry>DOCN_SSTDATA_YEAR_START</entry>
+<entry>integer</entry>
+<entry>-999</entry>
+<entry>Sets year start of sst/ice_cov for amip runs, only used in F compset</entry>
+</row>
+<row> 
+<entry>GET_REFCASE</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>flag for automatically prestaging the refcase restart dataset [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>GLC_GRID</entry>
+<entry>char</entry>
+<entry>gland20</entry>
+<entry>  [gland20,gland10,gland5] </entry>
+</row>
+<row> 
+<entry>MAP_A2LF_FILE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>atm to land mapping file for fluxes</entry>
+</row>
+<row> 
+<entry>MAP_A2LS_FILE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>atm to land mapping file for states</entry>
+</row>
+<row> 
+<entry>MAP_A2OF_FILE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>atm to ocn flux mapping file for fluxes (currently first order conservative)</entry>
+</row>
+<row> 
+<entry>MAP_A2OS_FILE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>atm to ocn state mapping file for states (currently bilinear)</entry>
+</row>
+<row> 
+<entry>MAP_L2AF_FILE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>land to atm mapping file for fluxes</entry>
+</row>
+<row> 
+<entry>MAP_L2AS_FILE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>land to atm mapping file for states</entry>
+</row>
+<row> 
+<entry>MAP_O2AF_FILE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>ocn to atm mapping file for fluxes (currently first order conservative)</entry>
+</row>
+<row> 
+<entry>MAP_O2AS_FILE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>ocn to atm mapping file for states</entry>
+</row>
+<row> 
+<entry>MAP_R2O_FILE_R05</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>runoff (.5 degree) to ocn mapping file</entry>
+</row>
+<row> 
+<entry>MAP_R2O_FILE_R19</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>runoff (19 basin) to ocn mapping file</entry>
+</row>
+<row> 
+<entry>MAP_R2O_FILE_RX1</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>runoff (1 degree) to ocn mapping file</entry>
+</row>
+<row> 
+<entry>MPISERIAL_SUPPORT</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>TRUE implies this machine supports the use of the mpiserial lib.
+        Not all machines support the use of the mpiserial lib [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>OCN_CHL_TYPE</entry>
+<entry>char</entry>
+<entry>diagnostic</entry>
+<entry>provenance of surface Chl for radiative penetration computations [diagnostic,prognostic] </entry>
+</row>
+<row> 
+<entry>OCN_CO2_FLUX_OCMIP_BUG_FIX</entry>
+<entry>char</entry>
+<entry>TRUE</entry>
+<entry>TRUE implies using fix to pH scale of carbon thermodynamic constants [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>OCN_CO2_TYPE</entry>
+<entry>char</entry>
+<entry>constant</entry>
+<entry>provenance of atmospheric CO2 for gas flux computation [constant,prognostic,diagnostic] </entry>
+</row>
+<row> 
+<entry>OCN_COUPLING</entry>
+<entry>char</entry>
+<entry>full</entry>
+<entry>surface heat and freshwater forcing, partial is consistent with coupling to a data atm model [full,partial] </entry>
+</row>
+<row> 
+<entry>OCN_ICE_FORCING</entry>
+<entry>char</entry>
+<entry>active</entry>
+<entry>under ice forcing, inactive is consistent with coupling to a data ice model [active,inactive] </entry>
+</row>
+<row> 
+<entry>OCN_TRANSIENT</entry>
+<entry>char</entry>
+<entry>unset</entry>
+<entry>specification of transient forcing datasets [unset,1850-2000] </entry>
+</row>
+<row> 
+<entry>RUN_REFCASE</entry>
+<entry>char</entry>
+<entry>case.std</entry>
+<entry>Reference case for hybrid or branch runs</entry>
+</row>
+<row> 
+<entry>RUN_REFDATE</entry>
+<entry>char</entry>
+<entry>0001-01-01</entry>
+<entry>Reference date for hybrid or branch runs (yyyy-mm-dd).
+        Used to determine the component dataset that the model starts from.
+        Ignored for startup runs </entry>
+</row>
+<row> 
+<entry>RUN_STARTDATE</entry>
+<entry>char</entry>
+<entry>0001-01-01</entry>
+<entry>Run start date (yyyy-mm-dd). Only used for startup or hybrid runs
+        Ignored for branch runs. </entry>
+</row>
+<row> 
+<entry>RUN_TYPE</entry>
+<entry>char</entry>
+<entry>startup</entry>
+<entry>Run initialization type [startup,hybrid,branch] </entry>
+</row>
+<row> 
+<entry>USE_MPISERIAL</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>TRUE implies code is built using the mpiserial library.
+        If TRUE, the MPISERIAL_SUPPORT must also be TRUE.
+        FALSE (default) implies that code is built with a real MPI library.
+        If a job uses only one MPI task (e.g. single-column CAM and CLM), 
+        the mpiserial lib may be an alternative to real mpi lib [TRUE,FALSE] </entry>
+</row>
+</tbody>
+</tgroup>
+</table>

@@ -1,0 +1,266 @@
+<table><title>env_case.xml variables</title>
+<tgroup cols="4">
+<thead>
+<row> 
+<entry>Name</entry>
+<entry>Type</entry>
+<entry>Default</entry>
+<entry>Description [Valid Values]</entry>
+</row> 
+</thead>
+<tbody>
+<row> 
+<entry>ATM_GRID</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>atmosphere grid</entry>
+</row>
+<row> 
+<entry>ATM_NX</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>number of atmosphere cells in i direction</entry>
+</row>
+<row> 
+<entry>ATM_NY</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>Number of atmosphere cells in j direction</entry>
+</row>
+<row> 
+<entry>BLDROOT</entry>
+<entry>char</entry>
+<entry>$CCSMROOT/scripts/ccsm_utils/Build</entry>
+<entry>CCSM source scripts build directory location</entry>
+</row>
+<row> 
+<entry>CASE</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>case name</entry>
+</row>
+<row> 
+<entry>CASEBUILD</entry>
+<entry>char</entry>
+<entry>$CASEROOT/Buildconf</entry>
+<entry>Buildconf directory location</entry>
+</row>
+<row> 
+<entry>CASEROOT</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>full path of case</entry>
+</row>
+<row> 
+<entry>CASETOOLS</entry>
+<entry>char</entry>
+<entry>$CASEROOT/Tools</entry>
+<entry>Case Tools directory location</entry>
+</row>
+<row> 
+<entry>CCSMROOT</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>ccsm source root directory</entry>
+</row>
+<row> 
+<entry>CCSMUSER</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>case user name</entry>
+</row>
+<row> 
+<entry>CCSM_CCOST</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>2**n relative cost of compset B is 1 (DO NOT EDIT)</entry>
+</row>
+<row> 
+<entry>CCSM_COMPSET</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>CCSM component set</entry>
+</row>
+<row> 
+<entry>CCSM_GCOST</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>2**n relative cost of grid f19_g15 is 1 (DO NOT EDIT)</entry>
+</row>
+<row> 
+<entry>CCSM_LCOMPSET</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>CCSM component set, longname</entry>
+</row>
+<row> 
+<entry>CCSM_MCOST</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>2**n relative cost of machine (DO NOT EDIT)</entry>
+</row>
+<row> 
+<entry>CCSM_SCOMPSET</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>CCSM component set, shortname</entry>
+</row>
+<row> 
+<entry>CODEROOT</entry>
+<entry>char</entry>
+<entry>$CCSMROOT/models</entry>
+<entry>CCSM source models directory location</entry>
+</row>
+<row> 
+<entry>COMP_ATM</entry>
+<entry>char</entry>
+<entry>cam</entry>
+<entry>Name of atmospheric component  [cam,datm,xatm,satm] </entry>
+</row>
+<row> 
+<entry>COMP_CPL</entry>
+<entry>char</entry>
+<entry>cpl</entry>
+<entry>Name of coupling component [cpl] </entry>
+</row>
+<row> 
+<entry>COMP_GLC</entry>
+<entry>char</entry>
+<entry>sglc</entry>
+<entry>Name of land ice component [xglc,sglc,cism] </entry>
+</row>
+<row> 
+<entry>COMP_ICE</entry>
+<entry>char</entry>
+<entry>cice</entry>
+<entry>Name of sea ice component [cice,dice,xice,sice] </entry>
+</row>
+<row> 
+<entry>COMP_LND</entry>
+<entry>char</entry>
+<entry>clm</entry>
+<entry>Name of land component [clm,dlnd,xlnd,slnd] </entry>
+</row>
+<row> 
+<entry>COMP_OCN</entry>
+<entry>char</entry>
+<entry>pop2</entry>
+<entry>Name of ocean component [pop2,docn,xocn,socn,camdom] </entry>
+</row>
+<row> 
+<entry>GLC_NX</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>number of glc cells in i direction</entry>
+</row>
+<row> 
+<entry>GLC_NY</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>number of glc cells in j direction</entry>
+</row>
+<row> 
+<entry>GRID</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>CCSM grid</entry>
+</row>
+<row> 
+<entry>ICE_GRID</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>ice grid (must equal ocn grid)</entry>
+</row>
+<row> 
+<entry>ICE_NX</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>number of ice cells in i direction</entry>
+</row>
+<row> 
+<entry>ICE_NY</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>number of ice cells in j direction</entry>
+</row>
+<row> 
+<entry>LND_GRID</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>land grid</entry>
+</row>
+<row> 
+<entry>LND_NX</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>Number of land cells in i direction</entry>
+</row>
+<row> 
+<entry>LND_NY</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>number of land cells in j direction</entry>
+</row>
+<row> 
+<entry>MACH</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>current machine name</entry>
+</row>
+<row> 
+<entry>OCN_GRID</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>ocn grid</entry>
+</row>
+<row> 
+<entry>OCN_NX</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>number of ocn cells in i direction</entry>
+</row>
+<row> 
+<entry>OCN_NY</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>number of ocn cells in j direction</entry>
+</row>
+<row> 
+<entry>OS</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>operating system</entry>
+</row>
+<row> 
+<entry>PTS_MODE</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>Points mode logical for single point [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>SCRIPTSROOT</entry>
+<entry>char</entry>
+<entry>$CCSMROOT/scripts</entry>
+<entry>CCSM source scripts directory location</entry>
+</row>
+<row> 
+<entry>SHAREROOT</entry>
+<entry>char</entry>
+<entry>$CCSMROOT/models/csm_share</entry>
+<entry>CCSM source models share code location</entry>
+</row>
+<row> 
+<entry>UTILROOT</entry>
+<entry>char</entry>
+<entry>$CCSMROOT/scripts/ccsm_utils</entry>
+<entry>CCSM source scripts utils directory location</entry>
+</row>
+<row> 
+<entry>XMLMODE</entry>
+<entry>char</entry>
+<entry>normal</entry>
+<entry>xml format option, expert removes extra comments from env xml files [normal,expert] </entry>
+</row>
+</tbody>
+</tgroup>
+</table>

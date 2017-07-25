@@ -1,0 +1,8 @@
+-nospmd -nosmp
+-dyn eul
+-res 64x128
+-camiop
+-chem none
+-debug
+-phys cam5
+-s

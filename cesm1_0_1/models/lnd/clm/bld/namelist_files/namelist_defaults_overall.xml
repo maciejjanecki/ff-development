@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet type="text/xsl" href="namelist_defaults.xsl"?>
+
+<namelist_defaults>
+
+<!--
+Values to use by default for creation of CLM model namelists.
+These are overall settings used as defaults for the model
+configuration of all namelists. None of these are items
+in a namelist, but they are default values that will help
+determine default values for namelists.
+-->
+
+<!-- Default CLM start-type -->
+<clm_start_type                >arb_ic</clm_start_type>
+<clm_start_type ad_spinup="on" >cold</clm_start_type>
+
+<!-- Default location of {csmdata} -->
+<csmdata>/fs/cgd/csm/inputdata</csmdata>
+
+<!-- Default resolution -->
+<res>1.9x2.5</res>
+
+<!-- Default simulation year -->
+<sim_year>2000</sim_year>
+
+<!-- Default simulation year range -->
+<sim_year_range>constant</sim_year_range>
+
+<!-- Default representative concentration pathway for future scenarios -->
+<rcp>-999.9</rcp>
+
+<!-- Default Nitrogen deposition source type -->
+<ndepsrc bgc="none"                  >none</ndepsrc>
+<ndepsrc bgc="casa"                  >none</ndepsrc>
+<ndepsrc bgc="cn"                    >stream</ndepsrc>
+<ndepsrc bgc="cndv"                  >stream</ndepsrc>
+
+<!-- Default land/ocean mask type -->
+<mask hgrid="0.23x0.31"           >gx1v6</mask>
+<mask hgrid="0.47x0.63"           >gx1v6</mask>
+<mask hgrid="0.9x1.25"            >gx1v6</mask>
+<mask hgrid="1.9x2.5"             >gx1v6</mask>
+<mask hgrid="2.65x3.33"           >USGS</mask>
+<mask hgrid="2.5x3.33"            >gx3v7</mask>
+<mask hgrid="4x5"                 >gx3v7</mask>
+<mask hgrid="10x15"               >USGS</mask>
+
+<mask hgrid="128x256"             >USGS</mask>
+<mask hgrid="64x128"              >USGS</mask>
+<mask hgrid="48x96"               >gx3v7</mask>
+<mask hgrid="32x64"               >USGS</mask>
+<mask hgrid="8x16"                >USGS</mask>
+
+<mask hgrid="94x192"              >T62</mask>
+
+<mask hgrid="5x5_amazon"          >navy</mask>
+<mask hgrid="1x1_tropicAtl"       >test</mask>
+<mask hgrid="1x1_camdenNJ"        >navy</mask>
+<mask hgrid="1x1_vancouverCAN"    >navy</mask>
+<mask hgrid="1x1_mexicocityMEX"   >navy</mask>
+<mask hgrid="1x1_asphaltjungleNJ" >navy</mask>
+<mask hgrid="1x1_brazil"          >navy</mask>
+<mask hgrid="1x1_urbanc_alpha"    >navy</mask>
+<mask                             >gx1v6</mask>
+
+<!-- Default glacier model grid/resolution -->
+<glc_grid glc_nec="0"  >none</glc_grid>
+<glc_grid glc_nec="10" >gland20</glc_grid>
+
+<!-- Whether aerosol comes from datm or clm (none) -->
+<datm_presaero hgrid="1x1_brazil"                                   >pt1_pt1</datm_presaero>
+<datm_presaero hgrid="1x1_camdenNJ"                                 >pt1_pt1</datm_presaero>
+<datm_presaero hgrid="1x1_topicAtl"                                 >pt1_pt1</datm_presaero>
+<datm_presaero hgrid="1x1_asphaltjungleNJ"                          >pt1_pt1</datm_presaero>
+<datm_presaero hgrid="1x1_vancouverCAN"                             >pt1_pt1</datm_presaero>
+<datm_presaero hgrid="1x1_mexicocityMEX"                            >pt1_pt1</datm_presaero>
+<datm_presaero hgrid="1x1_urbanc_alpha"                             >pt1_pt1</datm_presaero>
+<datm_presaero hgrid="5x5_amazon"                                   >pt1_pt1</datm_presaero>
+<datm_presaero                 sim_year_range="1850-2100" rcp="2.6" >rcp2.6</datm_presaero>
+<datm_presaero                 sim_year_range="1850-2100" rcp="4.5" >rcp4.5</datm_presaero>
+<datm_presaero                 sim_year_range="1850-2100" rcp="8.5" >rcp8.5</datm_presaero>
+<datm_presaero                 sim_year_range="2000-2100" rcp="2.6" >rcp2.6</datm_presaero>
+<datm_presaero                 sim_year_range="2000-2100" rcp="4.5" >rcp4.5</datm_presaero>
+<datm_presaero                 sim_year_range="2000-2100" rcp="8.5" >rcp8.5</datm_presaero>
+<datm_presaero                 sim_year_range="1850-2000"           >trans_1850-2000</datm_presaero>
+<datm_presaero                 sim_year_range="1000-1002"           >clim_2000</datm_presaero>
+<datm_presaero                 sim_year_range="1000-1004"           >clim_2000</datm_presaero>
+<datm_presaero sim_year="1850" sim_year_range="constant"            >clim_1850</datm_presaero>
+<datm_presaero sim_year="2000" sim_year_range="constant"            >clim_2000</datm_presaero>
+<datm_presaero sim_year="1000" sim_year_range="constant"            >clim_2000</datm_presaero>
+<datm_presaero                                                      >none</datm_presaero>
+
+</namelist_defaults>

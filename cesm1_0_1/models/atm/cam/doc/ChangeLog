@@ -1,0 +1,45 @@
+===============================================================
+
+Tag name: cesm1_0_rel_03_cam5_0_13
+Originator(s): mvr
+Date: 26 August 2010
+One-line Summary: updated to trunk tag cam5_0_13; updated external definitions
+to the release tags of the other components
+
+Purpose of changes:
+
+. Add namelist specifier for which history file to write heat/moisture
+  budget terms to.
+
+. Separate aerosol activation code from microphysics code.  (code cleanup;
+  introduces roundoff diffs in cam5 on some platforms)
+
+. Fix FV offline driver for 2D decomp and WACCM configs; fix configure to
+  allow chem customization w/ trop_bam and *_ghg.
+
+. Rename of types for import/export states (code cleanup).
+
+. Add ability to read FAA aircraft emissions w/ conservative interpolation.
+
+. Fix memory leak with workaround for xlf compiler bug.
+
+. FV memory optimization; repro_sum update; spmd_utils and mod_comm
+  communication protocol updates.
+
+. Change FV filter defaults for high resolution grids (1/2 degree and
+  finer).  This changes answers in high res runs.
+
+===============================================================
+===============================================================
+
+Tag name: cesm1_0_rel_02_cam5_0_03
+Originator(s): mvr
+Date: 21 June 2010
+One-line Summary: updated to trunk tag cam5_0_03; updated external definitions
+to the release tags of the other components
+
+Purpose of changes:
+
+. create initial public release
+
+===============================================================

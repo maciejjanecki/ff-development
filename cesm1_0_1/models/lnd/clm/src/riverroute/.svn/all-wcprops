@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/src/riverroute
+END
+RtmMod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/src/riverroute/RtmMod.F90
+END
+RunoffMod.F90
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/src/riverroute/RunoffMod.F90
+END

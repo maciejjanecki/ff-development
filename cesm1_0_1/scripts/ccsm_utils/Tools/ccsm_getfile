@@ -1,0 +1,14 @@
+#! /bin/csh -f
+
+#------------------------------------------------------------------
+# Generic hierarchical search for a file
+# "Usage: ccsm_getfile [dir/]file [dir/][file]"
+#------------------------------------------------------------------
+
+# return gracefully in all cases, ccsm4 doesn't 
+# support prestaging at this point.  this exit should
+# be removed and the logic below "adjusted" for ccsm4
+# to support prestaging in the future.
+echo "WARNING: ccsm_getfile is OFF, no prestaging support in ccsm4 right now"
+exit 0
+

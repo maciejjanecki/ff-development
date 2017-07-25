@@ -1,0 +1,218 @@
+<table><title>env_mach_pes.xml variables</title>
+<tgroup cols="4">
+<thead>
+<row> 
+<entry>Name</entry>
+<entry>Type</entry>
+<entry>Default</entry>
+<entry>Description [Valid Values]</entry>
+</row> 
+</thead>
+<tbody>
+<row> 
+<entry>BATCH_PES</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>pes requested at batch runtime</entry>
+</row>
+<row> 
+<entry>CCSM_ESTCOST</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>2**n relative cost of case (DO NOT EDIT)</entry>
+</row>
+<row> 
+<entry>CCSM_PCOST</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>cost relative to 64 pes (DO NOT EDIT)</entry>
+</row>
+<row> 
+<entry>CCSM_TCOST</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>2**n relative cost of test where ERS is 1 (DO NOT EDIT)</entry>
+</row>
+<row> 
+<entry>CICE_AUTO_DECOMP</entry>
+<entry>logical</entry>
+<entry>true</entry>
+<entry>if false, user must set the CICE decomp, otherwise configure sets it [true,false] </entry>
+</row>
+<row> 
+<entry>MAX_TASKS_PER_NODE</entry>
+<entry>integer</entry>
+<entry>UNSET</entry>
+<entry>maximum number of mpi tasks per node</entry>
+</row>
+<row> 
+<entry>NTASKS_ATM</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of atmosphere tasks</entry>
+</row>
+<row> 
+<entry>NTASKS_CPL</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of coupler mpi tasks</entry>
+</row>
+<row> 
+<entry>NTASKS_GLC</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of glc mpi tasks</entry>
+</row>
+<row> 
+<entry>NTASKS_ICE</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of ice mpi tasks</entry>
+</row>
+<row> 
+<entry>NTASKS_LND</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of land mpi tasks</entry>
+</row>
+<row> 
+<entry>NTASKS_OCN</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of ocean mpi tasks</entry>
+</row>
+<row> 
+<entry>NTHRDS_ATM</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of atmosphere threads</entry>
+</row>
+<row> 
+<entry>NTHRDS_CPL</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of coupler mpi threads</entry>
+</row>
+<row> 
+<entry>NTHRDS_GLC</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of glc mpi threads</entry>
+</row>
+<row> 
+<entry>NTHRDS_ICE</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of ice mpi threads</entry>
+</row>
+<row> 
+<entry>NTHRDS_LND</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of land mpi threads</entry>
+</row>
+<row> 
+<entry>NTHRDS_OCN</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>number of ocean mpi threads</entry>
+</row>
+<row> 
+<entry>PES_LEVEL</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>pes level determined by automated initialization (DO NOT EDIT)</entry>
+</row>
+<row> 
+<entry>PES_PER_NODE</entry>
+<entry>char</entry>
+<entry>$MAX_TASKS_PER_NODE</entry>
+<entry>pes per node for cost scaling</entry>
+</row>
+<row> 
+<entry>POP_AUTO_DECOMP</entry>
+<entry>logical</entry>
+<entry>true</entry>
+<entry>if false, user must set the POP decomp, otherwise configure sets it [true,false] </entry>
+</row>
+<row> 
+<entry>PSTRID_ATM</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>stride of mpi tasks for atm comp - currently should always be set to 1 [1] </entry>
+</row>
+<row> 
+<entry>PSTRID_CPL</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>stride of mpi tasks for cpl comp - currently should always be set to 1 [1] </entry>
+</row>
+<row> 
+<entry>PSTRID_GLC</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>stride of mpi tasks for glc comp - currently should always be set to 1 [1] </entry>
+</row>
+<row> 
+<entry>PSTRID_ICE</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>stride of mpi tasks for ice comp - currently should always be set to 1 [1] </entry>
+</row>
+<row> 
+<entry>PSTRID_LND</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>stride of mpi tasks for lnd comp - currently should always be set to 1 [1] </entry>
+</row>
+<row> 
+<entry>PSTRID_OCN</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>stride of mpi tasks for ocn comp - currently should always be set to 1 [1] </entry>
+</row>
+<row> 
+<entry>ROOTPE_ATM</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>root atm mpi task</entry>
+</row>
+<row> 
+<entry>ROOTPE_CPL</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>root cpl mpi task</entry>
+</row>
+<row> 
+<entry>ROOTPE_GLC</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>root glc mpi task</entry>
+</row>
+<row> 
+<entry>ROOTPE_ICE</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>root ice mpi task</entry>
+</row>
+<row> 
+<entry>ROOTPE_LND</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>root lnd mpi task</entry>
+</row>
+<row> 
+<entry>ROOTPE_OCN</entry>
+<entry>char</entry>
+<entry>0</entry>
+<entry>root ocn mpi task</entry>
+</row>
+<row> 
+<entry>TOTALPES</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>total number of pes (derived automatically - DO NOT EDIT)</entry>
+</row>
+</tbody>
+</tgroup>
+</table>

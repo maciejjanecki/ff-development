@@ -1,0 +1,149 @@
+#!/usr/bin/env perl
+#=======================================================================
+#
+#
+#=======================================================================
+
+use Cwd;
+use strict;
+#use diagnostics;
+use Getopt::Long;
+use English;
+
+#-----------------------------------------------------------------------------------------------
+
+#Figure out where configure directory is and where can use the XML/Lite module from
+my $ProgName;
+($ProgName = $PROGRAM_NAME) =~ s!(.*)/!!; # name of program
+my $ProgDir = $1;                         # name of directory where program lives
+
+my $cmdline = "@ARGV";                    # Command line arguments to script
+my $cwd = getcwd();                       # current working directory
+my $cfgdir = $cwd;
+
+if ($ProgDir) { 
+   $cfgdir = $ProgDir; 
+} else { 
+   $cfgdir = $cwd; 
+}
+
+# Defaults
+my $csmdata   = "\$DIN_LOC_ROOT";
+my $ccsmroot  = $ENV{'CCSMROOT'};
+
+sub usage {
+    die <<EOF;
+SYNOPSIS
+     $ProgName [options]
+OPTIONS
+
+     -template "template" [or -t]  Input streams file.  (REQUIRED OPTION)
+
+     -domain                       Return information on the domain rather than the data fields.
+     -help                [or -h]  Print usage to STDOUT.
+     -input_data_list     [or -l]  Print input_data_list format 
+                                   (lists both domain and data files)
+     -listpath                     List the file-path rather than the filenames.
+
+EOF
+
+}
+
+#-----------------------------------------------------------------------------------------------
+# Add $cfgdir to the list of paths that Perl searches for modules
+my @dirs = ( $cfgdir, "$cfgdir/perl5lib", "$cfgdir/../../../../scripts/ccsm_utils/Tools", 
+"$ccsmroot/scripts/ccsm_utils/Tools", "$ccsmroot/scripts/ccsm_utils/Tools/perl5lib");
+unshift @INC, @dirs;
+my $result = eval "require XML::Lite";
+if ( ! defined($result) ) {
+   die <<"EOF";
+** Cannot find perl module \"XML/Lite.pm\" from directories: @dirs **
+EOF
+}
+require XML::Lite;
+require Streams::Template;
+
+my %opts = ( template => undef,
+             domain   => undef,
+             listpath => undef,
+             inputlst => undef,
+             help     => undef,
+           );
+
+GetOptions(
+    "t|template=s"      => \$opts{'template'},
+    "domain"            => \$opts{'domain'},
+    "listpath"          => \$opts{'listpath'},
+    "l|input_data_list" => \$opts{'inputlst'},
+    "h|help"            => \$opts{'help'},
+)  or usage();
+
+# Give usage message.
+usage() if $opts{'help'};
+
+# Check for unparsed arguments
+if (@ARGV) {
+    print "ERROR: unrecognized arguments: @ARGV\n";
+    usage();
+}
+if ( ! defined($opts{'template'} ) ) {
+    print "ERROR: template is a required command-line argument\n";
+    usage();
+}
+  my %inputopts;
+  $inputopts{'printing'}   = 0;
+  $inputopts{'ProgName'}   = $ProgName;
+  $inputopts{'ProgDir'}    = $cfgdir;
+  $inputopts{'yearfirst'}  = -1;
+  $inputopts{'yearlast'}   = -1;
+  $inputopts{'filepath'}   = "";
+  $inputopts{'cmdline'}    = $cmdline;
+  $inputopts{'test'}       = 0;
+  $inputopts{'datasource'} = "";
+  $inputopts{'case'}       = "";
+  $inputopts{'domain'}     = "";
+  $inputopts{'domainpath'} = "";
+  $inputopts{'filenames'}  = "";
+  $inputopts{'res'}        = "";
+  $inputopts{'csmdata'}    = "";
+
+  my $type;
+  if ( defined($opts{'domain'} ) ) {
+     $type = "domain";
+  } else {
+     $type = "data";
+  }
+
+  my $streams = Streams::Template->new( \%inputopts );
+  $streams->Read( $opts{'template'} );
+  my $expand_env = 1;
+  if (     defined($opts{'inputlst'}) ) {
+     $expand_env = 0;
+     $inputopts{'csmdata'}    = "DIN_LOC_ROOT";
+     $type = "domain";
+     $streams = Streams::Template->new( \%inputopts );
+     $streams->Read( $opts{'template'} );
+     my @filenames = $streams->GetDataFilenames( $type, $expand_env );
+     my $i = 0;
+     foreach my $file ( @filenames ) {
+        $i++;
+        print "domain${i} = $file\n"
+     }
+     $type = "data";
+     $streams = Streams::Template->new( \%inputopts );
+     $streams->Read( $opts{'template'} );
+     my @filenames = $streams->GetDataFilenames( $type, $expand_env );
+     my $i = 0;
+     foreach my $file ( @filenames ) {
+        $i++;
+        print "file${i} = $file\n"
+     }
+  } elsif ( ! defined($opts{'listpath'}) ) {
+     my @filenames = $streams->GetDataFilenames( $type, $expand_env );
+     foreach my $file ( @filenames ) {
+        print "$file "
+     }
+  } else {
+     my $filepath = $streams->GetDataFilepath( $type, $expand_env );
+     print "$filepath"
+  }

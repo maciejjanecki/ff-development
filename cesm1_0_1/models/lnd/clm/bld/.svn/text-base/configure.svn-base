@@ -1,0 +1,2293 @@
+#!/usr/bin/env perl
+#-----------------------------------------------------------------------------------------------
+#
+# configure
+#
+#
+# This utility allows the CLM user to specify compile-time configuration
+# options via a commandline interface.  The output from configure is a
+# Makefile and a cache file that contains all configuration parameters
+# required to produce the Makefile.  A subsequent invocation of configure
+# can use the cache file as input (via the -defaults argument) to reproduce
+# the CLM configuration contained in it.  Note that when a cache file is
+# used to set default values only the model parameters are used.  The
+# parameters that are platform dependent (e.g., compiler options, library
+# locations, etc) are ignored.
+#
+# As the build time configurable options of CLM are changed, this script
+# must also be changed.  Thus configure is maintained under revision
+# control in the CLM source tree and it is assumed that only the version of
+# configure in the source tree will be used to build CLM.  Thus we assume
+# that the root of the source tree can be derived from the location of this
+# script.
+#
+# configure has an optional test mode to check that the Fortran90 compiler
+# works and that external references to the netCDF and MPI libraries can be
+# resolved at link time.
+#
+#-----------------------------------------------------------------------------------------------
+
+use strict;
+#use warnings;
+#use diagnostics;
+
+use Cwd;
+use English;
+use Getopt::Long;
+use IO::File;
+use IO::Handle;
+#-----------------------------------------------------------------------------------------------
+
+sub usage {
+    die <<EOF;
+SYNOPSIS
+     configure [options]
+OPTIONS
+     User supplied values are denoted in angle brackets (<>).  Any value that contains
+     white-space must be quoted.  Long option names may be supplied with either single
+     or double leading dashes.  A consequence of this is that single letter options may
+     NOT be bundled.
+
+     -ad_spinup <name>   Turn on AD_SPINUP mode for bgc setting of CN [on | off] (default is off).
+     -bgc <name>         Build CLM with bgc package [ none | cn | casa | cndv ] (default is none).
+                         NOTE: When set to cn or casa -- also turns on the CLAMP CPP macro.
+     -c13 <name>         Turn on C13 mode for bgc setting of CN [on | off] (default is off).
+     -cache <file>       Name of output cache file (default: config_cache.xml).
+     -cachedir <file>    Name of directory where output cache file is written (default: CLM build directory).
+     -clm_root <dir>     Root directory of clm source code (default: directory above location of this script)
+     -cppdefs <string>   A string of user specified CPP defines.  Appended to
+                         Makefile defaults.  E.g. -cppdefs '-DVAR1 -DVAR2'
+     -comp_intf <name>   Component interface to use (ESMF, MCT or cpl_\$COMP) (default MCT)
+     -defaults <file>    Specify full path to a configuration file which will be used to supply defaults instead of
+                         the defaults in bld/config_files.  This file is used to specify model
+                         configuration parameters only.  Parameters relating to the build which
+                         are system dependent will be ignored.
+     -dust <name>        Turn on DUST [on | off] (default is on).
+     -exit_spinup <name> Turn on EXIT_SPINUP mode for bgc setting of CN [on | off] (default is off).
+     -glc_nec <name>     Glacier number of elevation classes [0 | 3 | 5 | 10] (default is 0)
+     -help [or -h]       Print usage to STDOUT.
+     -mach <name>        Machine name to use for CESM build.
+     -maxpft <n>         Value of maxpatch_pft (default is numpft+1) 
+                         (required to be numpft+1 for CN or CNDV or transient cases)
+     -mode <name>        CLM mode [ccsm_seq | ext_ccsm_seq]
+     -nofire             Turn off wildfires for bgc setting of CN (default includes fire for CN)
+     -pergro <name>      Switch enables building CLM for perturbation growth tests. [on | off] (default is off)
+     -prog_seasalt<name> Turn on prognostic sea-salt (PROGSSLT cppdef token) [on | off] (default is on)
+     -rtm <name>         Turn on RTM  [on | off] (default is on)
+     -silent [or -s]     Turns on silent mode - only fatal messages issued.
+     -snicar_frc <name>  Turn on SNICAR radiative forcing calculation. [on | off] (default is off)
+     -[no]smp            Switch on [off] SMP parallelism.
+     -[no]spmd           Switch on [off] SPMD parallelism.
+     -target_os          Override the os setting for cross platform compilation [aix | darwin | dec_osf | irix | 
+                         linux | solaris | super-ux | bgl | bgp ].  Default: OS on which configure is
+			 executing as defined by the perl \$OSNAME variable.
+     -[no]test           Switch on [off] testing of Fortran compiler and external libraries.
+     -usr_src <dir1>[,<dir2>[,<dir3>[...]]]
+                         Directories containing user source code.
+     -verbose [or -v]    Turn on verbose echoing of settings made by configure.
+     -version            Echo the SVN tag name used to check out this CLM distribution.
+
+
+OPTIONS used ONLY for clm standalone testing: (i.e. ONLY used when mode=ccsm_seq)
+
+    The CESM scripts already take care of everything here. These options exist for
+    use with the CLM standalone testing in the models/lnd/clm/test/system directory.
+
+     -ccsm_bld <name>    Turn use of CESM build and makefiles. [on | off] (default is off)
+                         Can ONLY be turned on for mode=ccsm_seq.
+     -cc <name>          User specified C compiler (linux or darwin only).  Overrides Makefile default.
+     -cflags <string>    A string of user specified C compiler options.  Appended to
+                         Makefile defaults.
+     -debug              Switch to turn on building CLM with debugging compiler options.
+     -fc <name>          User specified Fortran compiler.  Overrides Makefile default.
+     -fflags <string>    A string of user specified Fortran compiler flags.  Appended to
+                         Makefile defaults.  See -fopt to override optimization flags.
+     -fopt <string>      A string of user specified Fortran compiler optimization flags.  
+                         Overrides Makefile defaults.
+     -gmake <name>       Name of the GNU make program on your system.  Supply the absolute
+                         pathname if the program is not in your path (or fix your path).
+     -ldflags <string>   A string of user specified load options.  Appended to
+                         Makefile defaults.
+     -linker <name>      User specified linker.  Overrides Makefile default of \$(FC).
+     -mpi_inc <dir>      Directory containing MPI include files.
+     -mpi_lib <dir>      Directory containing MPI library.
+     -nc_inc <dir>       Directory containing netCDF include files.
+     -nc_lib <dir>       Directory containing netCDF library.
+     -nc_mod <dir>       Directory containing netCDF module files.
+     -voc <name>         Turn on passing of Volatile Organic Compounds (VOC's) to driver [on | off] (default is on)
+EOF
+}
+
+#-----------------------------------------------------------------------------------------------
+# Setting autoflush (an IO::Handle method) on STDOUT helps in debugging.  It forces the test
+# descriptions to be printed to STDOUT before the error messages start.
+
+*STDOUT->autoflush();                  
+
+#-----------------------------------------------------------------------------------------------
+# Set the directory that contains the CLM configuration scripts.  If the configure command was
+# issued using a relative or absolute path, that path is in $ProgDir.  Otherwise assume the
+# command was issued from the current working directory.
+
+(my $ProgName = $0) =~ s!(.*)/!!;      # name of this script
+my $ProgDir = $1;                      # name of directory containing this script -- may be a
+                                       # relative or absolute path, or null if the script is in
+                                       # the user's PATH
+my $cwd = getcwd();                    # current working directory
+my $cfgdir;                            # absolute pathname of directory that contains this script
+if ($ProgDir) { 
+    $cfgdir = absolute_path($ProgDir);
+} else {
+    $cfgdir = $cwd;
+}
+
+#-----------------------------------------------------------------------------------------------
+# Save commandline
+my $commandline = "$cfgdir/configure @ARGV";
+
+#-----------------------------------------------------------------------------------------------
+# Parse command-line options.
+my %opts = (
+	    cache       => "config_cache.xml",
+            nofire      => undef,
+            glc_nec     => undef,
+            clm_root    => undef,
+	    );
+GetOptions(
+    "ad_spinup=s"               => \$opts{'ad_spinup'}, 
+    "c13=s"                     => \$opts{'c13'}, 
+    "bgc=s"                     => \$opts{'bgc'}, 
+    "cache=s"                   => \$opts{'cache'},
+    "cachedir=s"                => \$opts{'cachedir'},
+    "ccsm_bld=s"                => \$opts{'ccsm_bld'},
+    "snicar_frc=s"              => \$opts{'snicar_frc'},
+    "cc=s"                      => \$opts{'cc'},
+    "cflags=s"                  => \$opts{'cflags'},
+    "clm_root=s"                => \$opts{'clm_root'},
+    "cppdefs=s"                 => \$opts{'cppdefs'},
+    "comp_intf=s"               => \$opts{'comp_interface'},
+    "debug"                     => \$opts{'debug'},
+    "defaults=s"                => \$opts{'defaults'},
+    "dust=s"                    => \$opts{'dust'}, 
+    "exit_spinup=s"             => \$opts{'exit_spinup'}, 
+    "glc_nec=i"                 => \$opts{'glc_nec'},
+    "fc=s"                      => \$opts{'fc'},
+    "fflags=s"                  => \$opts{'fflags'},
+    "fopt=s"                    => \$opts{'fopt'},
+    "gmake=s"                   => \$opts{'gmake'},
+    "mach=s"                    => \$opts{'mach'},
+    "h|help"                    => \$opts{'help'},
+    "ldflags=s"                 => \$opts{'ldflags'},
+    "linker=s"                  => \$opts{'linker'},
+    "maxpft=s"                  => \$opts{'maxpft'},
+    "mode=s"                    => \$opts{'mode'},
+    "mpi_inc=s"                 => \$opts{'mpi_inc'},
+    "mpi_lib=s"                 => \$opts{'mpi_lib'},
+    "nadv=s"                    => \$opts{'nadv'},
+    "nc_inc=s"                  => \$opts{'nc_inc'},
+    "nc_lib=s"                  => \$opts{'nc_lib'},
+    "nc_mod=s"                  => \$opts{'nc_mod'},
+    "nofire"                    => \$opts{'nofire'},
+    "pergro=s"                  => \$opts{'pergro'}, 
+    "snicar_frc=s"              => \$opts{'snicar_frc'}, 
+    "prog_seasalt=s"            => \$opts{'progsslt'}, 
+    "rtm=s"                     => \$opts{'rtm'}, 
+    "s|silent"                  => \$opts{'silent'},
+    "smp!"                      => \$opts{'smp'},
+    "spmd!"                     => \$opts{'spmd'},
+    "target_os=s"               => \$opts{'target_os'},
+    "test!"                     => \$opts{'test'},
+    "usr_src=s"                 => \$opts{'usr_src'},
+    "v|verbose"                 => \$opts{'verbose'},
+    "version"                   => \$opts{'version'},
+    "voc=s"                     => \$opts{'voc'}, 
+)  or usage();
+
+# Give usage message.
+usage() if $opts{'help'};
+
+# Echo version info.
+version($cfgdir) if $opts{'version'};    
+
+# Check for unparsed argumentss
+if (@ARGV) {
+    print "ERROR: unrecognized arguments: @ARGV\n";
+    usage();
+}
+
+# Define 3 print levels:
+# 0 - only issue fatal error messages
+# 1 - only informs what files are created (default)
+# 2 - verbose
+my $print = 1;
+if ($opts{'silent'})  { $print = 0; }
+if ($opts{'verbose'}) { $print = 2; }
+my $eol = "\n";
+
+my %cfg = ();           # build configuration
+
+#-----------------------------------------------------------------------------------------------
+# Make sure we can find required perl modules and configuration files.
+# Look for them in the directory that contains the configure script.
+
+# Check for the configuration definition file.
+my $config_def_file = "config_definition.xml";
+(-f "$cfgdir/config_files/$config_def_file")  or  die <<"EOF";
+** Cannot find configuration definition file \"$config_def_file\" in directory 
+    \"$cfgdir/config_files\" **
+EOF
+
+# The configuration defaults file modifies the generic defaults in the configuration
+# definition file.  Note that the -defaults option has precedence over all other options.
+my $config_defaults_file;
+if    ($opts{'defaults'})  {$config_defaults_file = $opts{'defaults'}}
+else                       {$config_defaults_file = "$cfgdir/config_files/config_defaults.xml"}
+(-f "$config_defaults_file")  or  die <<"EOF";
+** Cannot find configuration defaults file \"$config_defaults_file\" **
+EOF
+
+# System defaults (currently for spmd and smp settings)
+my $sys_defaults_file = 'config_sys_defaults.xml';
+(-f "$cfgdir/config_files/$sys_defaults_file")  or  die <<"EOF";
+** Cannot find system defaults file \"$sys_defaults_file\" in directory 
+    \"$cfgdir/config_fiels\" **
+EOF
+
+
+
+# The XML::Lite module is required to parse the XML configuration files.
+(-f "$cfgdir/../../../../scripts/ccsm_utils/Tools/perl5lib/XML/Lite.pm")  or  die <<"EOF";
+** Cannot find perl module \"XML/Lite.pm\" in directory 
+    \"$cfgdir/../../../../scripts/ccsm_utils/Tools/perl5lib\" **
+EOF
+
+# The Build::Config module provides utilities to store and manipulate the configuration.
+(-f "$cfgdir/../../../../scripts/ccsm_utils/Tools/perl5lib/Build/Config.pm")  or  die <<"EOF";
+** Cannot find perl module \"Build/Config.pm\" in directory 
+    \"$cfgdir/../../../../scripts/ccsm_utils/Tools/perl5lib\" **
+EOF
+
+if ($print>=2) { print "Setting CLM configuration script directory to $cfgdir$eol"; }
+if ($print>=2) { print "Using configuration defaults file $config_defaults_file$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Add $cfgdir/perl5lib to the list of paths that Perl searches for modules
+my @dirs = (  $cfgdir, "$cfgdir/../../../../scripts/ccsm_utils/Tools/perl5lib");
+unshift @INC, @dirs;
+require XML::Lite;
+require Build::Config;
+
+# Initialize the configuration.  The $config_def_file provides the definition of a CLM
+# configuration, and the $config_defaults_file provides default values for a specific CLM
+# configuration.   $cfg_ref is a reference to the new configuration object.
+my $cfg_ref = Build::Config->new("$cfgdir/config_files/$config_def_file", 
+				 "$config_defaults_file");
+
+#-----------------------------------------------------------------------------------------------
+# Figure out the CLM mode you to run in
+if (defined $opts{'mode'}) {
+    $cfg_ref->set('mode', $opts{'mode'});
+}
+my $clm_mode = $cfg_ref->get('mode');
+if ($clm_mode ne "ccsm_seq" && $clm_mode ne "ext_ccsm_seq" ) {
+    die <<"EOF";
+x** $clm_mode is not a supported mode **
+EOF
+}
+if ($print>=2) { print "Using $clm_mode mode for running clm.$eol"; }
+
+# Note that when building within the CESM or CAM scripts the CLM Makefile is not written
+# since the CESM build does not use it.  Many of the checks to ensure that a working
+# CLM Makefile is produced are disabled when the ccsm option is set.  Use the $clm_build
+# variable to turn on CLM specific tests.
+my $clm_build = 1;
+if ( $clm_mode eq "ext_ccsm_seq") {
+    $clm_build = 0;
+}
+
+#-----------------------------------------------------------------------------------------------
+# CLM root directory.  
+my $clm_root;
+
+if ( ! defined($opts{'clm_root'} ) ) {
+  $clm_root = absolute_path("$cfgdir/..");
+} else {
+  $clm_root = $opts{'clm_root'};
+}
+
+if ( &is_valid_directory( "$clm_root/src", allowEnv=>1 ) ) {
+    $cfg_ref->set('clm_root', $clm_root);
+} else {
+    die <<"EOF";
+** Invalid CLM root directory: $clm_root
+** 
+** The CLM root directory must contain the subdirectory /src/.
+** clm_root can be entered on the command line or it will be derived
+** from the location of this script.
+EOF
+}
+
+if ($print>=2) { print "Setting CLM root directory to $clm_root$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# CLM build directory is current directory
+my $clm_bld = `pwd`;
+chomp( $clm_bld );
+
+# Make sure directory is valid
+if ( ! &is_valid_directory( $clm_bld ) and ! mkdirp($clm_bld)) {
+    die <<"EOF";
+** Could not create the specified CLM build directory: $clm_bld
+EOF
+}
+
+if ($print>=2) { print "Setting CLM build directory to $clm_bld$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# CLM install directory same as build directory
+my $clm_exedir = $clm_bld;
+
+if ($clm_build) {
+
+    if ( ! &is_valid_directory( $clm_exedir ) and ! mkdirp($clm_exedir)) {
+	die <<"EOF";
+** Could not create the specified CLM installation directory: $clm_exedir
+EOF
+    }
+
+    if ($print>=2) { print "The CLM executable will be created in $clm_exedir$eol"; }
+}
+
+#-----------------------------------------------------------------------------------------------
+# User source directories.
+my $usr_src = '';
+if (defined $opts{'usr_src'}) {
+    my @dirs = split ',', $opts{'usr_src'};
+    my @adirs;
+    while ( my $dir = shift @dirs ) {
+	if (&is_valid_directory( "$dir", allowEnv=>1 ) ) {
+	    push @adirs, $dir;
+	} else {
+	    die "** User source directory does not exist: $dir\n";
+	}
+    }
+    $usr_src = join ',', @adirs;
+    $cfg_ref->set('usr_src', $usr_src);
+}
+
+if ($print>=2) { print "Setting user source directories to $usr_src$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# configuration cache directory and file.
+my $config_cache_dir;
+my $config_cache_file;
+if (defined $opts{'cachedir'}) {
+    $config_cache_dir = absolute_path($opts{'cachedir'});
+}
+else {
+    $config_cache_dir = $clm_bld;
+}
+
+if (&is_valid_directory( $config_cache_dir, allowEnv=>1 ) or mkdirp($config_cache_dir)) {
+    $config_cache_file = "$config_cache_dir/$opts{'cache'}";
+} else {
+    die <<"EOF";
+** Could not create the specified directory for configuration cache file: $config_cache_dir
+EOF
+}
+
+if ($print>=2) { print "The configuration cache file will be created in $config_cache_file$eol"; }
+
+
+#-----------------------------------------------------------------------------------------------
+# glacier multiple elevation classes
+
+if( defined($opts{'glc_nec'}) ) {
+  $cfg_ref->set('glc_nec', $opts{'glc_nec'});
+}
+my $glc_nec = $cfg_ref->get('glc_nec');
+if ($print>=2) { print "Using $glc_nec for number of elevation classes over glacier.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# BGC option
+if (defined $opts{'bgc'}) {
+    $cfg_ref->set('bgc', $opts{'bgc'});
+}
+my $bgc_mode = $cfg_ref->get('bgc');
+if ($print>=2) { print "Using $bgc_mode for bgc.$eol"; }
+
+# NOFIRE option -- currently only in bgc=CN
+if (defined $opts{'nofire'}) {
+    $cfg_ref->set('nofire', "on" );
+}
+my $nofire = $cfg_ref->get('nofire');
+if ( ($nofire eq "on") && ($bgc_mode ne "cn") ) {
+   die <<"EOF";
+** Cannot turn nofire mode on -- without cn for bgc mode** 
+EOF
+}
+if ($print>=2) { 
+   if ( $nofire eq "on") { print "Wildfires are active as normal.$eol"; }
+   else                  { print "Wildfires are turned off.$eol";       }
+}
+
+# AD_SPINUP option for BGC/CN mode only
+if (defined $opts{'ad_spinup'}) {
+    $cfg_ref->set('ad_spinup', $opts{'ad_spinup'});
+}
+my $ad_spinup = $cfg_ref->get('ad_spinup');
+if ( ($ad_spinup eq "on" ) && ($bgc_mode ne "cn") ) {
+   die <<"EOF";
+** Cannot turn ad_spinup mode on -- without cn for bgc mode** 
+** 
+** Set the bgc mode by the following means from highest to lowest precedence:
+** * by the command-line option -bgc cn
+** * by a default configuration file, specified by -defaults 
+EOF
+}
+if ($print>=2) { print "Using $ad_spinup for ad_spinup for cn mode.$eol"; }
+
+# EXIT_SPINUP option for BGC/CN mode only
+if (defined $opts{'exit_spinup'}) {
+    $cfg_ref->set('exit_spinup', $opts{'exit_spinup'});
+}
+my $exit_spinup = $cfg_ref->get('exit_spinup');
+if ( ($exit_spinup eq "on" ) && ($bgc_mode ne "cn") ) {
+   die <<"EOF";
+** Cannot turn exit_spinup mode on -- without cn for bgc mode** 
+** 
+** Set the bgc mode by the following means from highest to lowest precedence:
+** * by the command-line option -bgc cn
+** * by a default configuration file, specified by -defaults 
+EOF
+}
+if ( ($exit_spinup eq "on") && ($ad_spinup eq "on") ) {
+   die <<"EOF";
+** Cannot turn exit_spinup mode on -- when ad_spinup mode is on.
+** 
+** Set the spinup modes by the following means from highest to lowest precedence:
+** * by the command-line option -bgc cn
+** * by a default configuration file, specified by -defaults 
+EOF
+}
+if ($print>=2) { print "Using $exit_spinup for exit_spinup for cn mode.$eol"; }
+
+# C13 option for BGC/CN mode only
+if (defined $opts{'c13'}) {
+    $cfg_ref->set('c13', $opts{'c13'});
+}
+my $c13 = $cfg_ref->get('c13');
+if ( ($c13 eq "on" ) && ($bgc_mode ne "cn") ) {
+   die <<"EOF";
+** Cannot turn c13 mode on -- without cn for bgc mode** 
+EOF
+}
+if ($print>=2) { print "Using $c13 for c13 for cn mode.$eol"; }
+
+
+#-----------------------------------------------------------------------------------------------
+# RTM option
+if (defined $opts{'rtm'}) {
+    $cfg_ref->set('rtm', $opts{'rtm'});
+}
+my $rtm = $cfg_ref->get('rtm');
+if ($print>=2) { print "Using $rtm for rtm.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# comp_interface option
+if (defined $opts{'comp_interface'}) {
+    $cfg_ref->set('comp_interface', $opts{'comp_interface'});
+}
+my $comp_interface = $cfg_ref->get('comp_interface');
+if ($print>=2) { print "Using $comp_interface for comp_interface.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# DUST option
+if (defined $opts{'dust'}) {
+    $cfg_ref->set('dust', $opts{'dust'});
+}
+my $dust = $cfg_ref->get('dust');
+if ($print>=2) { print "Using $dust for dust.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# VOC option
+if (defined $opts{'voc'}) {
+    $cfg_ref->set('voc', $opts{'voc'});
+}
+my $voc = $cfg_ref->get('voc');
+if ( $voc eq "on" && $clm_mode eq "ext_ccsm_seq" ) {
+   die <<"EOF";
+** Can NOT turn on passing of VOC to driver just in CLM -- must also do this in the driver as well.
+** 
+**** Turn passing VOCs to and from the driver with the CCSM_VOC env_conf variable.
+EOF
+}
+if ($print>=2) { print "Using $voc for passing voc to driver.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# MAXPFT option
+if (defined $opts{'maxpft'}) {
+    $cfg_ref->set('maxpft', $opts{'maxpft'});
+}
+my $maxpft = $cfg_ref->get('maxpft');
+if ( (($bgc_mode eq "cn") || ($bgc_mode eq "cndv")) && ($maxpft ne "numpft+1") ) {
+   die <<"EOF";
+** For CN or CNDV BGC mode you MUST set max patch PFT's to "numpft+1"
+** 
+** Set the bgc mode and maxpft by the following means from highest to lowest precedence:
+** * by the command-line options -bgc and -maxpft
+** * by a default configuration file, specified by -defaults 
+EOF
+}
+if ($print>=2) { print "Using $maxpft for maxpft.$eol"; }
+#-----------------------------------------------------------------------------------------------
+
+# PROGSSLT option
+if (defined $opts{'progsslt'}) {
+    $cfg_ref->set('progsslt', $opts{'progsslt'});
+}
+my $progsslt = $cfg_ref->get('progsslt');
+if ($print>=2) { print "Using $progsslt for progsslt.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# PERGRO option
+if (defined $opts{'pergro'}) {
+    $cfg_ref->set('pergro', $opts{'pergro'});
+}
+my $pergro = $cfg_ref->get('pergro');
+if ($print>=2) { print "Using $pergro for pergro.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# SNICAR_FRC option
+if (defined $opts{'snicar_frc'}) {
+    $cfg_ref->set('snicar_frc', $opts{'snicar_frc'});
+}
+my $snicar_frc = $cfg_ref->get('snicar_frc');
+if ($print>=2) { print "Using $snicar_frc for snicar_frc.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# ccsm_bld option
+if ( defined $opts{'ccsm_bld'}) {
+     $cfg_ref->set('ccsm_bld', $opts{'ccsm_bld'});
+}
+my $ccsm_bld = $cfg_ref->get('ccsm_bld');
+if ($clm_mode ne "ccsm_seq" && $ccsm_bld eq "on" ) {
+    die <<"EOF";
+*** ccsm_bld can NOT be turned on if mode does NOT equal ccsm_seq **
+EOF
+}
+if ($print>=2) { print "Using $ccsm_bld for CESM build.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Makefile configuration #######################################################################
+#-----------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------
+# Determine target OS -- allow cross compilation only if target_os is specified on commandline.
+my $target_os = $OSNAME;
+if (defined $opts{'target_os'}) {
+    $target_os = $opts{'target_os'};
+}
+$cfg_ref->set('target_os', $target_os);
+
+if ($print>=2) { print "Target OS: $target_os.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Read system defaults file.
+my %sys_defaults = get_sys_defaults("$cfgdir/config_files/$sys_defaults_file", $target_os);
+
+#-----------------------------------------------------------------------------------------------
+# Name of CLM executable.
+my $clm_exe = "clm";
+
+if ($print>=2) { print "Name of CLM executable: $clm_exe.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Allow override of Makefile default Fortran compiler (linux platform only)
+my $fc = '';
+if (defined $opts{'fc'}) {
+    $fc = $opts{'fc'};
+} elsif (defined $ENV{USER_FC}) {
+    $fc = $ENV{USER_FC};
+}
+$cfg_ref->set('fc', $fc);
+
+#-----------------------------------------------------------------------------------------------
+# Allow override of Makefile default C compiler (linux platform only)
+my $cc = '';
+if (defined $opts{'cc'}) {
+    $cc = $opts{'cc'};
+} elsif (defined $ENV{USER_CC}) {
+    $cc = $ENV{USER_CC};
+}
+$cfg_ref->set('cc', $cc);
+
+if ($cc) {
+    if ($target_os eq 'linux' || $target_os eq 'darwin' ) {
+	if ($print>=2) { print "Override Makefile default C compiler with: $cc.$eol"; }
+    }
+    else {
+	die "** ERROR: -cc option only recognized when target OS is linux or darwin.$eol";
+    }
+}
+
+#-----------------------------------------------------------------------------------------------
+# Allow override of Makefile default linker
+my $linker = '';
+if (defined $opts{'linker'}) {
+    $linker = $opts{'linker'};
+}
+$cfg_ref->set('linker', $linker);
+
+if ($linker and $print>=2) { print "Setting linker to $linker.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Use compiler debugging options?
+my $debug_opt = (defined $opts{'debug'}) ? 1 : 0;
+$cfg_ref->set('debug', $debug_opt);
+my $debug = $debug_opt ? 'on': 'off';
+
+if ($print>=2) { print "Compiler debugging options: $debug.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Append to Makefile default C compiler options
+my $cflags = '';
+if (defined $opts{'cflags'}) {
+    $cflags = $opts{'cflags'};
+}
+$cfg_ref->set('cflags', $cflags);
+
+if ($cflags and $print>=2) { print "Setting additional C compiler options \'$cflags\'$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Append to Makefile default Fortran compiler options
+my $fflags = '';
+if (defined $opts{'fflags'}) {
+    $fflags = $opts{'fflags'};
+}
+$cfg_ref->set('fflags', $fflags);
+
+if ($fflags and $print>=2) { print "Setting additional Fortran compiler options \'$fflags\'$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Fortran compiler optimization overrides Makefile defaults
+my $fopt = '';
+if (defined $opts{'fopt'}) {
+    $fopt = $opts{'fopt'};
+}
+$cfg_ref->set('fopt', $fopt);
+
+if ($fopt and $print>=2) { print "Override default Fortran optimization flags with \'$fopt\'$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Load options appended to Makefile defaults
+my $ldflags = '';
+if (defined $opts{'ldflags'}) {
+    $ldflags = $opts{'ldflags'};
+}
+$cfg_ref->set('ldflags', $ldflags);
+
+if ($ldflags and $print>=2) { print "Load options appended to Makefile defaults: \'$ldflags\'$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# SPMD
+my $spmd_val = (defined $opts{'spmd'}) ? $opts{'spmd'} : $sys_defaults{'spmd'};
+
+# enforce platform specific restrictions
+if ($spmd_val  and  ($target_os =~ "darwin") ) {
+    print "WARNING: Darwin does not have an option for compiling SPMD. " . 
+	      "This option is being Disabled.$eol";
+    $spmd_val = 0;
+}
+
+$cfg_ref->set('spmd', $spmd_val);
+my $spmd = $spmd_val ? 'on': 'off';
+
+if ($print>=2) { print "SPMD parallelism: $spmd$eol";}
+
+#-----------------------------------------------------------------------------------------------
+# SMP
+my $smp_val = (defined $opts{'smp'}) ? $opts{'smp'} : $sys_defaults{'smp'};
+
+# enforce platform specific restrictions
+if ($smp_val  and  ($target_os =~ "darwin") ) {
+    print "WARNING: Darwin does not have an option for compiling SMP. " . 
+	      "This option is being Disabled.$eol";
+    $smp_val = 0;
+}
+
+$cfg_ref->set('smp', $smp_val);
+my $smp = $smp_val ? 'on': 'off';
+
+if ($print>=2) { print "SMP parallelism: $smp$eol";}
+
+#-----------------------------------------------------------------------------------------------
+# machine
+my $mach_val = (defined $opts{'mach'}) ? $opts{'mach'} : $sys_defaults{'mach'};
+
+$cfg_ref->set('mach', $mach_val);
+my $mach = $mach_val;
+
+if ($print>=2) { print "CESM machine/compiler: $mach$eol";}
+
+#-----------------------------------------------------------------------------------------------
+# For the CPP tokens, start with the defaults (from defaults file) and append the specifications
+# from the commandline.  That way the user can override defaults since the commandline versions
+# occur last.
+my $usr_cppdefs = $cfg_ref->get('cppdefs');
+if (defined $opts{'cppdefs'}) {
+    $usr_cppdefs .= " $opts{'cppdefs'}";
+}
+$cfg_ref->set('cppdefs', $usr_cppdefs);
+
+if ($usr_cppdefs and $print>=2) { print "Default and user CPP definitions: \'$usr_cppdefs\'$eol";}
+
+# The following CPP macro definitions are used to implement the compile-time options.  They are
+# determined by the configuration parameters that have been set above.  They will be appended to
+# the CPP definitions that were explicitly set in the defaults file or by the user on the commandline.
+my $cfg_cppdefs = '';
+
+# Fortran name mangling (only when NOT using the CESM build as it already does this)
+if ( $clm_mode ne "ext_ccsm_seq" && $ccsm_bld ne "on" ) {
+   if ( $target_os eq 'aix'  or  $target_os eq 'darwin'  
+   or   $target_os eq 'bgl'  or  $target_os eq 'bgp' ) {
+       $cfg_cppdefs .= " -DFORTRAN_SAME";
+   }
+   elsif ( $target_os eq 'irix'      or  $target_os eq 'linux'   or
+           $target_os eq 'super-us'  or  $target_os eq 'es'      or
+           $target_os eq 'solaris'   or  $target_os eq 'dec_osf'   ) {
+       $cfg_cppdefs .= " -DFORTRANUNDERSCORE";
+   }
+}
+
+$cfg_cppdefs .= " -DMAXPATCH_PFT=$maxpft";
+
+if ( $progsslt eq 'on') { 
+    $cfg_cppdefs .= " -DPROGSSLT";
+}
+if ($rtm eq 'on') { 
+    $cfg_cppdefs .= " -DRTM";
+}
+if ($dust eq 'on') { 
+    $cfg_cppdefs .= " -DDUST";
+}
+if ($voc eq 'on') { 
+    $cfg_cppdefs .= " -DVOC";
+}
+if ($bgc_mode eq 'cn') { 
+    $cfg_cppdefs .= " -DCN -DCLAMP";
+}
+if ($bgc_mode eq 'cndv') { 
+    $cfg_cppdefs .= " -DCNDV -DCN";
+}
+if ($bgc_mode eq 'casa') { 
+    $cfg_cppdefs .= " -DCASA -DCLAMP";
+}
+if ($nofire eq 'on') {
+    $cfg_cppdefs .= " -DNOFIRE";
+}
+if ($ad_spinup eq 'on') { 
+    $cfg_cppdefs .= " -DAD_SPINUP";
+}
+if ($c13 eq 'on') { 
+    $cfg_cppdefs .= " -DC13";
+}
+if ($exit_spinup eq 'on') { 
+    $cfg_cppdefs .= " -DEXIT_SPINUP";
+}
+if ( $pergro eq 'on' ) {
+    $cfg_cppdefs .= " -DPERGRO";
+}
+if ( $snicar_frc eq 'on' ) {
+    $cfg_cppdefs .= " -DSNICAR_FRC";
+}
+# Always built with PIO
+$cfg_cppdefs .= " -D_USEBOX -D_NETCDF";
+if ( ($clm_mode eq "ccsm_seq") && ($spmd eq "off") ) { $cfg_cppdefs .= " -D_MPISERIAL";}
+if ($glc_nec > 0 ) { 
+    $cfg_cppdefs .= " -DGLC_NEC_" . $glc_nec;
+}
+
+# -DSPMD only added for CESM build.  The CLM Makefile has a separate SPMD macro.
+if ( ($clm_mode eq "ext_ccsm_seq") && $spmd eq "on" ) { $cfg_cppdefs .= " -DSPMD";}
+
+# CPP defines to put on Makefile
+my $make_cppdefs = "$usr_cppdefs $cfg_cppdefs";
+
+if ($print>=2) { print "CPP definitions set by configure: \'$cfg_cppdefs\'$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# External libraries ###########################################################################
+#-----------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------
+# NetCDF include
+my $nc_inc = '';
+if ($clm_build) {
+    if (defined $opts{'nc_inc'}) {
+	$nc_inc = $opts{'nc_inc'};
+    }
+    elsif (defined $ENV{INC_NETCDF}) {
+	$nc_inc = $ENV{INC_NETCDF};
+    }
+    else {
+	$nc_inc = '/usr/local/include';
+    }
+
+    if (-f "$nc_inc/netcdf.inc") {
+	$cfg_ref->set('nc_inc', $nc_inc);
+    }
+    else {
+	die <<"EOF";
+** Cannot find netcdf.inc in specified directory: $nc_inc
+** 
+** The NetCDF include directory is determined from the following set of options listed
+** from highest to lowest precedence:
+** * by the command-line option -nc_inc
+** * by the environment variable INC_NETCDF
+** * by the default value /usr/local/include
+EOF
+    }
+
+    if ($print>=2) { print "Found netCDF include file in $nc_inc$eol"; }
+}
+
+# NetCDF library
+my $nc_lib = '';
+if ($clm_build) {
+    if (defined $opts{'nc_lib'}) {
+	$nc_lib = $opts{'nc_lib'};
+    }
+    elsif (defined $ENV{LIB_NETCDF}) {
+	$nc_lib = $ENV{LIB_NETCDF};
+    }
+    else {
+	$nc_lib = '/usr/local/lib';
+    }
+
+    if (-f "$nc_lib/libnetcdf.a") {
+	$cfg_ref->set('nc_lib', $nc_lib);
+    }
+    else {
+	die <<"EOF";
+** Cannot find libnetcdf.a in specified directory: $nc_lib
+** 
+** The NetCDF library directory is determined from the following set of options listed
+** from highest to lowest precedence:
+** * by the command-line option -nc_lib
+** * by the environment variable LIB_NETCDF
+** * by the default value /usr/local/lib
+EOF
+    }
+
+    if ($print>=2) { print "Found netCDF library in $nc_lib$eol"; }
+}
+
+# NetCDF module files
+my $nc_mod = '';
+if ($clm_build) {
+    if (defined $opts{'nc_mod'}) {
+	$nc_mod = $opts{'nc_mod'};
+    }
+    elsif (defined $ENV{MOD_NETCDF}) {
+	$nc_mod = $ENV{MOD_NETCDF};
+    }
+
+    # check for the mod files in the user specified location
+    if ($nc_mod and (-f "$nc_mod/netcdf.mod"    or -f "$nc_mod/NETCDF.mod")
+                and (-f "$nc_mod/typesizes.mod" or -f "$nc_mod/TYPESIZES.mod") ) {
+	$cfg_ref->set('nc_mod', $nc_mod);
+    }
+    # if not there check in the netcdf lib directory
+    elsif (    (-f "$nc_lib/netcdf.mod"    or -f "$nc_lib/NETCDF.mod")
+           and (-f "$nc_lib/typesizes.mod" or -f "$nc_lib/TYPESIZES.mod") ) { 
+	$nc_mod = $nc_lib;
+	$cfg_ref->set('nc_mod', $nc_mod);
+    } 
+    # then check in the netcdf include directory
+    elsif (    (-f "$nc_inc/netcdf.mod"    or -f "$nc_inc/NETCDF.mod")
+           and (-f "$nc_inc/typesizes.mod" or -f "$nc_inc/TYPESIZES.mod") ) { 
+	$nc_mod = $nc_inc;
+	$cfg_ref->set('nc_mod', $nc_mod);
+    }
+    else {
+	die <<"EOF";
+** Cannot find netcdf.mod and typesizes.mod in specified directories: 
+**  $nc_mod
+**  $nc_inc
+**  $nc_lib
+** 
+** The NetCDF module directory is determined from the following set of options listed
+** from highest to lowest precedence:
+** * by the command-line option -nc_mod
+** * by the environment variable MOD_NETCDF
+** * by the directories containing the NetCDF library or include files
+EOF
+   }
+
+    if ($print>=2) { print "Found netCDF module files in $nc_mod$eol"; }
+}
+
+#-----------------------------------------------------------------------------------------------
+# MPI
+# Only check for the MPI include or library files if the user has explicitly specified
+# where to look.  Often the Fortran compiler knows where to look for these files and so
+# not specifying them is the best strategy.
+my $mpi_inc = '';
+my $mpi_lib = '';
+my $mpi_lib_name = '';
+if ($clm_build and $spmd eq 'on') {
+
+    # MPI include
+    if (defined $opts{'mpi_inc'}) {
+	$mpi_inc = $opts{'mpi_inc'};
+    }
+    elsif (defined $ENV{INC_MPI}) {
+	$mpi_inc = $ENV{INC_MPI};
+    }
+
+    if ($mpi_inc eq '' or -f "$mpi_inc/mpif.h") {
+	$cfg_ref->set('mpi_inc', $mpi_inc);
+    }
+    else {
+	die <<"EOF";
+** Cannot find mpif.h in specified directory: $mpi_inc
+** 
+** The MPI include directory is determined from the following set of options listed
+** from highest to lowest precedence:
+** * by the command-line option -mpi_inc
+** * by the environment variable INC_MPI
+EOF
+    }
+
+    if ($mpi_inc and $print>=2) { print "Found MPI include file in $mpi_inc$eol"; }
+
+    # MPI library
+    if (defined $opts{'mpi_lib'}) {
+	$mpi_lib = $opts{'mpi_lib'};
+    }
+    elsif (defined $ENV{LIB_MPI}) {
+	$mpi_lib = $ENV{LIB_MPI};
+    }
+
+    if ($mpi_lib eq '') {
+	$cfg_ref->set('mpi_lib', $mpi_lib);
+	$cfg_ref->set('mpi_lib_name', '');
+    }
+    elsif (-f "$mpi_lib/libmpi.a" or -f "$mpi_lib/libmpi.so") {
+	$cfg_ref->set('mpi_lib', $mpi_lib);
+	$cfg_ref->set('mpi_lib_name', 'mpi');
+    }
+    elsif (-f "$mpi_lib/libmpich.a") {
+	$cfg_ref->set('mpi_lib', $mpi_lib);
+	$cfg_ref->set('mpi_lib_name', 'mpich');
+    }
+    else {
+	die <<"EOF";
+** Cannot find libmpi.a, libmpi.so or libmpich.a in specified directory: $mpi_lib
+** 
+** The MPI library directory is determined from the following set of options listed
+** from highest to lowest precedence:
+** * by the command-line option -mpi_lib
+** * by the environment variable LIB_MPI
+EOF
+    }
+
+    if ($mpi_lib and $print>=2) { print "Found MPI library in $mpi_lib$eol"; }
+
+}
+
+#-----------------------------------------------------------------------------------------------
+# Write configuration files ####################################################################
+#-----------------------------------------------------------------------------------------------
+
+my $fp_filename      = 'Filepath';             # name of output filepath file
+my $cpp_filename     = 'CCSM_cppdefs';         # name of output file for clm's cppdefs in ccsm
+my $misc_filename    = 'misc.h';               # name of output auxiliary cpp tokens file
+my $preproc_filename = 'preproc.h';            # name of output land model cpp tokens file
+
+if ($clm_mode eq "ext_ccsm_seq" ) {
+
+    # Write the filepath file for cesm.
+    write_filepath_ccsmbld("$clm_bld/$fp_filename", "clm", $cfg_ref, allowEnv=>1 );
+    if ($print>=2) { print "creating $clm_bld/$fp_filename\n"; }
+
+    # Write the misc.h file 
+    write_misc_h("$clm_bld/$misc_filename", $cfg_ref);
+    if ($print>=2) { print "creating $clm_bld/$misc_filename\n"; }
+
+    # Write the preproc.h file.
+    write_preproc_h("$clm_bld/$preproc_filename", $cfg_ref);
+    if ($print>=2) { print "creating $clm_bld/$preproc_filename\n"; }
+
+    # Write the file for clm's cppdefs needed in cesm.
+    write_cppdefs("$clm_bld/$cpp_filename", $make_cppdefs);
+    if ($print>=2) { print "creating $clm_bld/$cpp_filename\n"; }
+
+} elsif ( $ccsm_bld eq "off" ) {
+
+    # Write the filepath file.
+    write_filepath("$clm_bld/$fp_filename", $cfg_ref);
+    if ($print>=2) { print "creating $clm_bld/$fp_filename\n"; }
+
+    # Write the misc.h file 
+    write_misc_h("$clm_bld/$misc_filename", $cfg_ref);
+    if ($print>=2) { print "creating $clm_bld/$misc_filename\n"; }
+
+    # Write the preproc.h file.
+    write_preproc_h("$clm_bld/$preproc_filename", $cfg_ref);
+    if ($print>=2) { print "creating $clm_bld/$preproc_filename\n"; }
+
+    # Write the Makefile.
+    write_makefile("$cfgdir/config_files/Makefile.in", "$clm_bld/Makefile", $cfg_ref, $make_cppdefs);
+    if ($print>=2) { print "creating $clm_bld/Makefile\n"; }
+
+} elsif ( $ccsm_bld eq "on" ) {
+
+    # Create all the directories and subdirecties needed
+    my @dirs = ( "$clm_bld",                    "$clm_bld/lib", "$clm_bld/include", 
+                 "$clm_bld/SourceMods/src.clm", "$clm_bld/SourceMods/src.ccsm",
+                 "$clm_bld/ccsm_lib",           "$clm_bld/lnd" );
+    foreach my $dir ( @dirs ) {
+       mkdirp( "$dir" );
+    }
+
+    # Write the file for clm's cppdefs needed in cesm.
+    write_cppdefs("$clm_bld/$cpp_filename", $make_cppdefs);
+    if ($print>=2) { print "creating $clm_bld/$cpp_filename\n"; }
+
+    # Write the Macro's file for machine dependent build information
+    my $macro      = "Macros.$mach";
+    my $cppmacro   = "Macros.cppdefs";
+    my $config_dir = "$cfgdir/config_files";
+    my $scriptsdir = "$cfgdir/../../../../scripts/ccsm_utils/Machines";
+    my $builddir   = "$cfgdir/../../../../scripts/ccsm_utils/Build";
+    my $macdir;
+    if (      -f "$config_dir/$macro" ) {
+       $macdir = "$config_dir";
+    } elsif ( -f "$scriptsdir/$macro" ) {
+       $macdir = "$scriptsdir";
+    } else {
+	die <<"EOF";
+** Could not find a $macro file in $config_dir or $scriptsdir
+** 
+EOF
+    }
+    if ( ! -f "$scriptsdir/$cppmacro" ) {
+	die <<"EOF";
+** Could not find a $cppmacro file in $scriptsdir
+** 
+EOF
+    }
+    write_macros("$macdir/$macro", "$scriptsdir/$cppmacro", "$clm_bld/$macro", $cfg_ref );
+    if ($print>=2) { print "creating $clm_bld/$macro\n"; }
+
+    # Write the cesm top level Makefile.
+    write_ccsm_makefile("$builddir/Makefile", "$clm_bld/Makefile",
+                        "ccsm", "$macro", $cfg_ref );
+    if ($print>=2) { print "creating $clm_bld/ccsm_lib/Makefile\n"; }
+
+    # Write the top level filepath file for cesm build
+    write_filepath_ccsmbld("$clm_bld/$fp_filename", "ccsm", $cfg_ref);
+    if ($print>=2) { print "creating $clm_bld/$fp_filename\n"; }
+
+    # Write the cesm_lib level Makefile.
+    write_ccsm_makefile("$builddir/Makefile", "$clm_bld/ccsm_lib/Makefile", 
+                        "ccsm_lib", "../$macro", $cfg_ref );
+    if ($print>=2) { print "creating $clm_bld/ccsm_lib/Makefile\n"; }
+
+    # Write the cesm_lib level filepath file for cesm build
+    write_filepath_ccsmbld("$clm_bld/ccsm_lib/$fp_filename", "ccsm_lib", $cfg_ref);
+    if ($print>=2) { print "creating $clm_bld/ccsm_lib/$fp_filename\n"; }
+
+    # Write the lnd level Makefile.
+    write_ccsm_makefile("$builddir/Makefile", "$clm_bld/lnd/Makefile", 
+                        "clm", "../$macro", $cfg_ref );
+    if ($print>=2) { print "creating $clm_bld/lnd/Makefile\n"; }
+
+    # Write the filepath file for cesm build of clm library
+    write_filepath_ccsmbld("$clm_bld/lnd/$fp_filename", "clm", $cfg_ref);
+    if ($print>=2) { print "creating $clm_bld/lnd/$fp_filename\n"; }
+
+    # Write the misc.h file 
+    write_misc_h("$clm_bld/lnd/$misc_filename", $cfg_ref);
+    if ($print>=2) { print "creating $clm_bld/lnd/$misc_filename\n"; }
+
+    # Write the preproc.h file.
+    write_preproc_h("$clm_bld/lnd/$preproc_filename", $cfg_ref);
+    if ($print>=2) { print "creating $clm_bld/lnd/$preproc_filename\n"; }
+
+} else {
+	die <<"EOF";
+** Mode and ccsm_bld option are not valid.
+** 
+EOF
+
+}
+
+
+# Write the configuration file.
+$cfg_ref->write_file($config_cache_file, $commandline);
+if ($print>=2) { print "creating $config_cache_file\n"; }
+
+#-----------------------------------------------------------------------------------------------
+# Finished unless testing requested ############################################################
+#-----------------------------------------------------------------------------------------------
+unless ($clm_build and $opts{'test'}) {
+    if ($print>=2) { print "configure done.\n"; }
+    exit;
+}
+
+# create a subdirectory of the current directory for testing
+my $test_dir = "$clm_bld/configure-tests";
+unless ( &is_valid_directory( $test_dir, allowEnv=>1 ) or mkdirp($test_dir)) {
+    die <<"EOF";
+** Could not create the testing directory: $test_dir
+EOF
+}
+chdir( $test_dir ) || die <<"EOF";
+** Trouble changing directory to $test_dir
+**
+EOF
+
+# check for GNU make in the user's path
+if ($print) { print "Looking for a valid GNU make... "; }
+my @makenames = qw(gmake gnumake make);
+if ($opts{'gmake'}) { unshift @makenames, $opts{'gmake'}; }
+my $gmake = get_gmake(@makenames);
+if ($gmake) {
+    if ($print>=2) { print "using $gmake$eol"; }
+} else {
+    print "\n".
+          "** Cannot find a valid GNU make.  Tried:\n".
+          "@makenames\n";
+    die "The name of GNU make on your system can be specified to configure via\n".
+	"the -gmake option.  Make sure this\n".
+	"name is in your path (add the appropriate directory to your PATH\n".
+	"environment variable) or specify an absolute pathname.\n";
+}
+
+# The CLM Makefile requires a Filepath file.  To run the tests construct a Filepath file
+# that contains only the test directory.
+write_tests_filepath($test_dir);
+
+# Test for Fortran 90 compatible compiler
+if ($print>=2) { print "Testing for Fortran 90 compatible compiler... "; }
+my $fc = check_fc($gmake, "$clm_bld/Makefile");
+if ($fc) {
+    if ($print) { print "using $fc$eol"; }
+}
+
+# Test NetCDF library
+if ($print) { print "Test linking to NetCDF library... "; }
+if (check_netcdf($gmake, "$clm_bld/Makefile")==0) { if ($print) { print "ok$eol"; } }
+
+# Test MPI library
+if ($spmd eq 'on') {
+    if ($print) { print "Test linking to MPI library... "; }
+    if (check_mpi($gmake, "$clm_bld/Makefile")==0) { if ($print) { print "ok$eol"; } }
+}
+
+#-----------------------------------------------------------------------------------------------
+# Done testing.
+chdir( $cwd ) || die <<"EOF";
+** Trouble changing directory back to $cwd
+**
+EOF
+if ($print) { print "configure done.\n"; }
+exit;
+
+#-----------------------------------------------------------------------------------------------
+# REALLY FINNISHED #############################################################################
+#-----------------------------------------------------------------------------------------------
+
+sub write_filepath
+{
+    my ($file, $cfg_ref) = @_;
+    my  $fh = new IO::File;
+
+    $fh->open(">$file") or die "** can't open filepath file: $file\n";
+
+    # configuration parameters used to determine paths
+    my $usr_src     = $cfg_ref->get('usr_src');
+    my $clm_root    = $cfg_ref->get('clm_root');
+    my $spmd        = $cfg_ref->get('spmd');
+    my $rtm         = $cfg_ref->get('rtm');
+    my $comp_intf   = $cfg_ref->get('comp_interface');
+    my $mode        = $cfg_ref->get('mode');
+
+    # User specified source directories.
+    if ($usr_src  =~ /\S+/) {
+	my @dirs = split ',', $usr_src;
+	while ( my $dir = shift @dirs ) {
+	    print $fh "$dir\n";
+        }
+    }
+
+    # Source root
+    my $srcdir = "$clm_root/src";
+    if ( ! -d "$srcdir" ) { die "** source directory does not exist: $srcdir\n"; }
+
+    # Shared utilities.
+    my @dirs = ( "csm_share/shr", 
+                 "utils/timing",   
+                 "utils/mct/mpeu",
+                 "utils/mct/mct" );
+    if ( ! $spmd ) {
+	push( @dirs, "utils/mct/mpi-serial" );
+    }
+    push( @dirs, "utils/esmf_wrf_timemgr" );
+
+    foreach my $dir ( @dirs ) {
+	if ( -d "$srcdir/$dir" ) {
+	    print $fh "$srcdir/$dir\n";
+	} elsif ( -d "$srcdir/../../../$dir" ) {
+	    print $fh absolute_path( "$srcdir/../../../$dir" ) . "\n";
+	} else {
+	    die "** source directory does not exist: $srcdir/$dir or $srcdir/../../../$dir\n";
+	}
+    }
+    
+    # Driver, stub ocean, and stub sea-ice
+    if ($mode eq "ccsm_seq") {
+	my @dirs = ( "drv/driver", "drv/shr", "atm/datm", "ocn/socn", 
+                     "ice/sice" );
+        if ( $comp_intf eq "MCT" ) { 
+	    push( @dirs, "atm/datm/cpl_mct" );
+	    #push( @dirs, "drv/shr_mct" );
+        } elsif ( $comp_intf eq "ESMF" ) { 
+	    push( @dirs, "atm/datm/cpl_esmf" );
+	    push( @dirs, "drv/shr_esmf" );
+        } else {
+	    die "** Bad component interface name -- should be MCT or ESMF\n";
+        }
+	foreach my $dir ( @dirs ) {
+            # For stub components
+            if ( $dir =~ /^...\/s...$/ ) {
+               if ( $comp_intf eq "MCT" ) { 
+                  $dir .= "/cpl_mct";
+               } else {
+                  $dir .= "/cpl_esmf";
+               }
+            }
+	    if ( -d "$srcdir/../../../$dir" ) {
+		print $fh absolute_path( "$srcdir/../../../$dir" ) . "\n";
+	    } else {
+		die "** source directory does not exist: $srcdir/../../../$dir\n";
+	    }
+	}
+        my $cdir;
+        if ( $comp_intf eq "MCT" ) { 
+           $cdir .= "/cpl_mct";
+        } else {
+           $cdir .= "/cpl_esmf";
+        }
+        my $glc_model = "sglc";
+	print $fh absolute_path( "$srcdir/../../../glc/$glc_model/$cdir" ) . "\n";
+	print $fh absolute_path( "$srcdir/../../../utils/pio" ) . "\n";
+    }
+    
+    # CLM
+    my @dirs = ( "main", "biogeophys", "biogeochem" );
+    if ( $rtm eq "on" ) { 
+	push( @dirs, "riverroute" );
+    }
+    if ( $comp_intf eq "MCT" ) { 
+	push( @dirs, "main/cpl_mct" );
+    } elsif ( $comp_intf eq "ESMF" ) { 
+	push( @dirs, "main/cpl_esmf" );
+    }
+    foreach my $dir ( @dirs ) {
+	if ( -d "$srcdir/$dir" ) {
+	    print $fh "$srcdir/$dir\n";
+	} else {
+	    die "** source directory does not exist: $srcdir/$dir\n";
+	}
+    }
+    
+    $fh->close;
+}
+
+#-------------------------------------------------------------------------------
+
+sub write_filepath_ccsmbld
+{
+    my ($file, $model, $cfg_ref, %opts) = @_;
+    my  $fh = new IO::File;
+
+    $fh->open(">$file") or die "** can't open filepath file: $file\n";
+
+    # configuration parameters used to determine paths
+    my $usr_src     = $cfg_ref->get('usr_src');
+    my $clm_root    = $cfg_ref->get('clm_root');
+    my $spmd        = $cfg_ref->get('spmd');
+    my $rtm         = $cfg_ref->get('rtm');
+    my $mode        = $cfg_ref->get('mode');
+    my $comp_intf   = $cfg_ref->get('comp_interface');
+
+    # Source root
+    my $srcdir = "$clm_root/src";
+    if ( ! &is_valid_directory( "$srcdir", %opts )  ) { die "** source directory does not exist: $srcdir\n"; }
+
+    # Shared utilities.
+    if ( $model eq "ccsm_lib" ) {
+       my @dirs = ( "csm_share/shr", 
+                    "utils/timing",   
+                    "utils/mct/mpeu",
+                    "utils/mct/mct" );
+       if ( ! $spmd ) {
+	   push( @dirs, "utils/mct/mpi-serial" );
+       }
+       push( @dirs, "utils/esmf_wrf_timemgr" );
+
+       print $fh "../SourceMods/src.ccsm\n";
+
+       foreach my $dir ( @dirs ) {
+	   if ( &is_valid_directory( "$srcdir/$dir", %opts )  ) {
+	       print $fh "$srcdir/$dir\n";
+	   } elsif ( &is_valid_directory( "$srcdir/../../../$dir", %opts )  ) {
+	       print $fh absolute_path( "$srcdir/../../../$dir" ) . "\n";
+	   } else {
+	       die "** source directory does not exist: $srcdir/$dir or $srcdir/../../../$dir\n";
+	   }
+       }
+    
+       # Driver, stub ocean, stub glacier, and stub sea-ice
+       if ($mode eq "ccsm_seq") {
+	   my @dirs = ( "drv/shr", "atm/datm", "ocn/socn", "ice/sice", "glc/sglc" );
+           if ( $comp_intf eq "MCT" ) { 
+	       push( @dirs, "atm/datm/cpl_mct" );
+	       #push( @dirs, "drv/shr_mct" );
+           } elsif ( $comp_intf eq "ESMF" ) { 
+	       push( @dirs, "atm/datm/cpl_esmf" );
+	       push( @dirs, "drv/shr_esmf" );
+           } else {
+	       push( @dirs, "main/$comp_intf" );
+           }
+	   foreach my $dir ( @dirs ) {
+               # For stub components
+               if ( $dir =~ /^...\/s...$/ ) {
+                  if ( $comp_intf eq "MCT" ) { 
+                     $dir .= "/cpl_mct";
+                  } elsif ( $comp_intf eq "ESMF" ) { 
+                     $dir .= "/cpl_esmf";
+                 } else {
+                     $dir .= "/$comp_intf";
+                  }
+               }
+	       if ( &is_valid_directory( "$srcdir/../../../$dir", %opts )  ) {
+		   print $fh absolute_path( "$srcdir/../../../$dir" ) . "\n";
+	       } else {
+		   die "** source directory does not exist: $srcdir/../../../$dir\n";
+	       }
+	   }
+	   print $fh absolute_path( "$srcdir/../../../utils/pio" ) . "\n";
+       }
+    }
+    
+    # CLM
+    if ( $model eq "clm" ) {
+
+       # User specified source directories.
+       if ($usr_src  =~ /\S+/) {
+	   my @dirs = split ',', $usr_src;
+	   while ( my $dir = shift @dirs ) {
+	       print $fh "$dir\n";
+           }
+       } else {
+          print $fh "../SourceMods/src.clm\n";
+       }
+
+       my @dirs = ( "main", "biogeophys", "biogeochem" );
+       if ( $rtm eq "on" ) { 
+	   push( @dirs, "riverroute" );
+       }
+       if ( $comp_intf eq "MCT" ) { 
+	   push( @dirs, "main/cpl_mct" );
+       } elsif ( $comp_intf eq "ESMF" ) { 
+	   push( @dirs, "main/cpl_esmf" );
+       } else {
+	   push( @dirs, "main/$comp_intf" );
+       }
+       foreach my $dir ( @dirs ) {
+	   if ( &is_valid_directory( "$srcdir/$dir", %opts )  ) {
+	       print $fh "$srcdir/$dir\n";
+	   } else {
+	       die "** source directory does not exist: $srcdir/$dir\n";
+	   }
+       }
+       if ( ! $spmd ) {
+	   print $fh "$srcdir/../../../utils/mct/mpi-serial\n";
+       }
+    }
+
+    # CESM driver
+    if ( $model eq "ccsm" ) {
+       print $fh absolute_path( "$srcdir/../../../drv/driver" ) . "\n";
+    }
+    
+    $fh->close;
+}
+#-------------------------------------------------------------------------------
+
+sub write_cppdefs
+{
+    my ($file, $make_cppdefs) = @_;
+    my  $fh = new IO::File;
+
+    $fh->open(">$file") or die "** can't open cpp defs file: $file\n";
+
+    print $fh "$make_cppdefs\n";
+    $fh->close;
+}
+
+#-------------------------------------------------------------------------------
+
+sub write_macros
+{
+    my ($file_in, $cppfile_in, $file_out, $cfg_ref) = @_;
+    my  $fh_in  = new IO::File;
+    my  $fh_out = new IO::File;
+
+    $fh_in->open("<$file_in") or die "** can't open macros file: $file_in\n";
+    $fh_out->open(">$file_out") or die "** can't open macros file: $file_out\n";
+
+    # configuration parameters
+    my $nc_inc       = $cfg_ref->get('nc_inc');
+    my $nc_lib       = $cfg_ref->get('nc_lib');
+    my $nc_mod       = $cfg_ref->get('nc_mod');
+    my $debug        = $cfg_ref->get('debug') ? 'TRUE' : 'FALSE';
+    my $spmd         = $cfg_ref->get('spmd') ? 'TRUE' : 'FALSE';
+    my $smp          = $cfg_ref->get('smp') ? 'TRUE' : 'FALSE';
+    my $fc           = $cfg_ref->get('fc');
+    my $cc           = $cfg_ref->get('cc');
+    my $linker       = $cfg_ref->get('linker');
+    my $cflags       = $cfg_ref->get('cflags');
+    my $fflags       = $cfg_ref->get('fflags');
+    my $fopt         = $cfg_ref->get('fopt');
+    my $ldflags      = $cfg_ref->get('ldflags');
+    my $clm_root     = $cfg_ref->get('clm_root');
+    my $voc;
+    if ( $cfg_ref->get('voc') eq "on" ) {
+       $voc = "TRUE";
+    } else {
+       $voc = "FALSE";
+    }
+    my $compile_threaded = "false";
+    if ( $smp eq "TRUE" ) {
+       $compile_threaded = "true";
+    }
+
+    my $casetools = absolute_path( "$clm_root/../../../scripts/ccsm_utils/Build" );
+
+    my $mpiserial;
+    my $mpi_inc      = " ";
+    my $mpi_lib      = " ";
+    my $mpi_lib_name = " ";
+    if ( $spmd eq "FALSE" ) {
+       $mpi_inc = absolute_path( "$clm_root/../../utils/mct/mpi-serial" );
+       $mpiserial = "TRUE";
+    } else {
+       $mpiserial = "FALSE";
+       $mpi_inc      = $cfg_ref->get('mpi_inc');
+       $mpi_lib      = $cfg_ref->get('mpi_lib');
+       $mpi_lib_name = $cfg_ref->get('mpi_lib_name');
+    }
+    print $fh_out  <<"EOF";
+# Make macro settings for building CLM using the CESM build files.
+BLDROOT                 := $clm_bld
+CASETOOLS               := $casetools
+LIBROOT                 := \$(BLDROOT)/lib
+INCROOT                 := \$(BLDROOT)/include
+SMP                     := $smp
+compile_threaded        := $compile_threaded
+SPMD                    := $spmd
+DEBUG                   := $debug
+BUILD_THREADED          := $smp
+USEPIO                  := false
+HIRES                   := false
+FRAMEWORK               := MCT
+CCSM_BGC                := none
+CCSM_VOC                := $voc
+GLC_NEC                 := 0
+USER_CPPDEFS            := \$(shell cat \$(BLDROOT)/CCSM_cppdefs)
+USER_LINKER             := $linker
+USER_LIB_NETCDF         := $nc_lib
+USER_INC_NETCDF         := $nc_inc
+USER_INC_MPI            := $mpi_inc
+USER_LIB_MPI            := $mpi_lib
+USER_MPI_LIB_NAME       := $mpi_lib_name
+USER_ESMF_LIBDIR        := 
+USER_FC                 := $fc
+USER_CC                 := $cc
+USER_CFLAGS             := $cflags
+USER_FFLAGS             := $fflags
+USER_LDFLAGS            := $ldflags
+USE_MPISERIAL           := $mpiserial
+USE_ESMF_LIB            := FALSE
+F_OPTIMIZATION_OVERRIDE := $fopt
+
+EOF
+
+    # Copy the "template" cpp Macros file to the new file.
+    $fh_in->open("<$cppfile_in") or die "** can't open file: $cppfile_in\n";
+    while (<$fh_in>) {
+	print $fh_out $_;
+    }
+    $fh_in->close;
+    # Copy the "template" Macros file to the new file.
+    $fh_in->open("<$file_in") or die "** can't open file: $file_in\n";
+    while (<$fh_in>) {
+	print $fh_out $_;
+    }
+    $fh_in->close;
+
+    $fh_out->close;
+}
+
+#-------------------------------------------------------------------------------
+
+sub write_misc_h
+{
+    my ($file, $cfg_ref) = @_;
+    my  $fh = new IO::File;
+
+    $fh->open(">$file") or die "** can't open header file: $file\n";
+
+    print $fh  <<"EOF";
+#ifndef MISC_SET
+#define MISC_SET
+#endif
+EOF
+
+    $fh->close;
+}
+
+#-------------------------------------------------------------------------------
+
+sub write_preproc_h
+{
+    my ($file, $cfg_ref) = @_;
+    my  $fh = new IO::File;
+
+    $fh->open(">$file") or die "** can't open header file: $file\n";
+
+    print $fh  <<"EOF";
+#ifndef PREPROC_SET
+#define PREPROC_SET
+#endif
+EOF
+    $fh->close;
+}
+
+#-------------------------------------------------------------------------------
+
+sub write_makefile
+{
+    # Add macro definitions to the beginning of the Makefile
+    # in the CLM configuration script directory
+
+    my ($file_in, $file_out, $cfg_ref, $make_cppdefs) = @_;
+    my  $fh_in = new IO::File;
+    my  $fh_out = new IO::File;
+
+    $fh_out->open(">$file_out") or die "** can't open file: $file_out\n";
+
+    # configuration parameters
+    my $target_os    = $cfg_ref->get('target_os');
+    my $clm_root     = $cfg_ref->get('clm_root');
+    my $nc_inc       = $cfg_ref->get('nc_inc');
+    my $nc_lib       = $cfg_ref->get('nc_lib');
+    my $nc_mod       = $cfg_ref->get('nc_mod');
+    my $mpi_inc      = $cfg_ref->get('mpi_inc');
+    my $mpi_lib      = $cfg_ref->get('mpi_lib');
+    my $mpi_lib_name = $cfg_ref->get('mpi_lib_name');
+    my $debug        = $cfg_ref->get('debug') ? 'TRUE' : 'FALSE';
+    my $spmd         = $cfg_ref->get('spmd') ? 'TRUE' : 'FALSE';
+    my $smp          = $cfg_ref->get('smp') ? 'TRUE' : 'FALSE';
+    my $fc           = $cfg_ref->get('fc');
+    my $cc           = $cfg_ref->get('cc');
+    my $linker       = $cfg_ref->get('linker');
+    my $cflags       = $cfg_ref->get('cflags');
+    my $fflags       = $cfg_ref->get('fflags');
+    my $fopt         = $cfg_ref->get('fopt');
+    my $ldflags      = $cfg_ref->get('ldflags');
+
+    # map between local os names ($OSNAME) and names which are
+    # used in the Makefile (return value from "uname -s" command).
+    my %uname_map = ( 'aix'      => 'AIX',
+		      'darwin'   => 'Darwin',
+		      'dec_osf'  => 'OSF1',
+		      'es'       => 'ES',
+		      'irix'     => 'IRIX64',
+		      'linux'    => 'Linux',
+		      'solaris'  => 'SunOS',
+		      'super-ux' => 'SUPER-UX',
+                      'bgl'      => 'BGL',
+                      'bgp'      => 'BGP',
+		      );
+
+    print $fh_out  <<"EOF";
+# Make macros for CLM.
+
+UNAMES       := $uname_map{$target_os}
+ROOTDIR      := $clm_root
+EXENAME      := $clm_exe
+MODEL_EXEDIR := $clm_exedir
+INC_NETCDF   := $nc_inc
+LIB_NETCDF   := $nc_lib
+MOD_NETCDF   := $nc_mod
+INC_MPI      := $mpi_inc
+LIB_MPI      := $mpi_lib
+MPI_LIB_NAME := $mpi_lib_name
+ESMF_LIBDIR  := 
+DEBUG        := $debug
+SPMD         := $spmd
+SMP          := $smp
+USER_FC      := $fc
+USER_CC      := $cc
+USER_LINKER  := $linker
+USER_CPPDEFS := $make_cppdefs
+USER_CFLAGS  := $cflags
+USER_FFLAGS  := $fflags
+F_OPTIMIZATION_OVERRIDE := $fopt
+USER_LDFLAGS := $ldflags
+
+EOF
+
+    # Copy the "template" makefile to the new makefile.
+    $fh_in->open("<$file_in") or die "** can't open file: $file_in\n";
+    while (<$fh_in>) {
+	print $fh_out $_;
+    }
+
+    $fh_out->close;
+    $fh_in->close;
+}
+
+#-------------------------------------------------------------------------------
+
+sub write_ccsm_makefile
+{
+    # Add macro definitions to the beginning of the cesm Makefile that will be written
+
+    my ($file_in, $file_out, $model, $macfile, $cfg_ref) = @_;
+    my  $fh_in = new IO::File;
+    my  $fh_out = new IO::File;
+
+    $fh_out->open(">$file_out") or die "** can't open file: $file_out\n";
+
+    # configuration parameters
+
+    my $target_name;
+    my $target;
+    my $lib_name;
+    if ( $model eq "ccsm" ) {
+       $target_name = "EXEC_SE := $clm_exedir/$clm_exe";
+       $target      = "exec_se";
+    } else {
+       if ( $model eq "clm" ) {
+          $lib_name = "lnd";
+       } else { 
+          $lib_name = "$model";
+       }
+       $target_name = "COMPLIB := \$(LIBROOT)/lib$lib_name.a";
+       $target      = "mkcomplib";
+    }
+    print $fh_out  <<"EOF";
+# Make macros for CLM.
+MODEL   := $model
+MACFILE := $macfile
+-include \$(MACFILE)
+$target_name
+
+target: $target
+
+EOF
+    if ( $model eq "ccsm" ) {
+        print $fh_out  <<"EOF";
+ULIBS   := -L\$(LIBROOT) -lccsm_lib
+CLIBS   := -L\$(LIBROOT) -llnd
+ULIBDEP := \$(LIBROOT)/libccsm_lib.a \$(LIBROOT)/liblnd.a
+
+\$(LIBROOT)/liblnd.a: \$(LIBROOT)/libccsm_lib.a
+	cd lnd && \$(MAKE) \$(MAKEFLAGS)
+
+\$(LIBROOT)/libccsm_lib.a:
+	cd ccsm_lib && \$(MAKE) \$(MAKEFLAGS)
+
+#-----------------------------------------------------------------------------
+# This is duplicated from the CESM Makefile with the following mods.
+# The changes are highlighted with "### NOTE:" and are as follows...
+#
+# 1.) Include dependency on $(ULIBDEP) for Depends file
+# 2.) On clean go to subdirectories and clean
+#-----------------------------------------------------------------------------
+
+EOF
+
+    } else {
+        print $fh_out  <<"EOF";
+mkcomplib: complib copymod
+copymod: complib
+	\$(CP) *.mod \$(INCROOT)
+EOF
+    }
+
+    # Copy the "template" makefile to the new makefile.
+    $fh_in->open("<$file_in") or die "** can't open file: $file_in\n";
+    while (<$fh_in>) {
+        if ( $model eq "ccsm" ) {
+           # Add ULIBDEP to end of Depends dependency
+           if ( /\$\(CURDIR\)\/Depends\:/ ) {
+              chomp( $_ );
+              $_ = "$_ \$(ULIBDEP)\n";
+           }
+        }
+        print $fh_out $_;
+        if ( $model eq "ccsm" ) {
+          if ( /(mostly|real||)clean\:\s*$/ ) {
+             my $type = $1;
+             $_ = <$fh_in>;
+             print $fh_out $_;
+             print $fh_out "### NOTE: Also remove these and then go to subdirs...\n";
+             if ( $type eq "real" && $type eq "" ) {
+                print $fh_out "\t\$(RM) -f \$(INCROOT)/* \$(LIBROOT)/*\n";
+             }
+             print $fh_out "\tcd lnd;      \$(MAKE) \$@\n";
+             print $fh_out "\tcd ccsm_lib; \$(MAKE) \$@\n";
+          }
+        }
+    }
+
+    $fh_out->close;
+    $fh_in->close;
+}
+
+#-------------------------------------------------------------------------------
+
+sub get_sys_defaults
+{
+    my ($file, $os) = @_;
+    my $xml = XML::Lite->new( $file );
+    my $root = $xml->root_element();
+    my $e;          # xml element
+    my %a;          # element attributes
+    my %sys = ();   # return values
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "system_defaults" or die
+	"file $file is not a system defaults file\n";
+
+    my @vars = ( "spmd", "smp", "mach" );
+    foreach my $var ( @vars ) {
+       $e = $xml->elements_by_name( $var );
+       %a = $e->get_attributes();
+       $sys{$var} = $a{$os};
+    }
+
+    return %sys;
+}
+
+#-------------------------------------------------------------------------------
+
+sub absolute_path {
+#
+# Convert a pathname into an absolute pathname, expanding any . or .. characters.
+# Assumes pathnames refer to a local filesystem.
+# Assumes the directory separator is "/".
+#
+  my $path = shift;
+  my $cwd = getcwd();  # current working directory
+  my $abspath;         # resulting absolute pathname
+
+# Strip off any leading or trailing whitespace.  (This pattern won't match if
+# there's embedded whitespace.
+  $path =~ s!^\s*(\S*)\s*$!$1!;
+
+# Convert relative to absolute path.
+
+  if ($path =~ m!^\.$!) {          # path is "."
+      return $cwd;
+  } elsif ($path =~ m!^\./!) {     # path starts with "./"
+      $path =~ s!^\.!$cwd!;
+  } elsif ($path =~ m!^\.\.$!) {   # path is ".."
+      $path = "$cwd/..";
+  } elsif ($path =~ m!^\.\./!) {   # path starts with "../"
+      $path = "$cwd/$path";
+  } elsif ($path =~ m!^[^/]!) {    # path starts with non-slash character
+      $path = "$cwd/$path";
+  }
+
+  my ($dir, @dirs2);
+  my @dirs = split "/", $path, -1;   # The -1 prevents split from stripping trailing nulls
+                                     # This enables correct processing of the input "/".
+
+  # Remove any "" that are not leading.
+  for (my $i=0; $i<=$#dirs; ++$i) {
+      if ($i == 0 or $dirs[$i] ne "") {
+	  push @dirs2, $dirs[$i];
+      }
+  }
+  @dirs = ();
+
+  # Remove any "."
+  foreach $dir (@dirs2) {
+      unless ($dir eq ".") {
+	  push @dirs, $dir;
+      }
+  }
+  @dirs2 = ();
+
+  # Remove the "subdir/.." parts.
+  foreach $dir (@dirs) {
+    if ( $dir !~ /^\.\.$/ ) {
+        push @dirs2, $dir;
+    } else {
+        pop @dirs2;   # remove previous dir when current dir is ..
+    }
+  }
+  if ($#dirs2 == 0 and $dirs2[0] eq "") { return "/"; }
+  $abspath = join '/', @dirs2;
+  return( $abspath );
+}
+
+#-------------------------------------------------------------------------------
+
+sub subst_env_path {
+#
+# Substitute for any environment variables contained in a pathname.
+# Assumes the directory separator is "/".
+#
+  my $path = shift;
+  my $newpath;         # resulting pathname
+  my $nm = "subst_env_path";
+
+# Strip off any leading or trailing whitespace.  (This pattern won't match if
+# there's embedded whitespace.
+  $path =~ s!^\s*(\S*)\s*$!$1!;
+
+  my ($dir, @dirs2);
+  my @dirs = split "/", $path, -1;   # The -1 prevents split from stripping trailing nulls
+                                     # This enables correct processing of the input "/".
+
+  foreach $dir (@dirs) {
+    if ( $dir =~ m/(^[^\$]*)\$(.*$)/ ) {
+        my $startvar = $1;
+        my $envvarnm = $2;
+        if ( ! defined($ENV{$envvarnm}) ) {
+           die "${nm}:: ENV variable $envvarnm is in pathname ($path) -- but NOT defined\n";
+        }
+        push @dirs2, "$startvar$ENV{$envvarnm}";
+    } elsif ( $dir =~ m/\$/) {
+        die "${nm}:: malformed ENV variable is in pathname ($path)\n";
+    } else {
+        push @dirs2, $dir;
+    }
+  }
+  $newpath = join '/', @dirs2;
+  return( $newpath );
+}
+
+#-------------------------------------------------------------------------------
+
+sub mkdirp {
+    my ($dir) = @_;
+    my (@dirs) = split /\//, $dir;
+    my (@subdirs, $path);
+
+    # if $dir is absolute pathname then @dirs will start with ""
+    if ($dirs[0] eq "") { push @subdirs, shift @dirs; }  
+
+    while ( @dirs ) { # check that each subdir exists and mkdir if it doesn't
+	push @subdirs, shift @dirs;
+	$path = join '/', @subdirs;
+	unless (-d $path or mkdir($path, 0777)) { return 0; }
+    }
+    return 1;
+}
+
+#-------------------------------------------------------------------------------
+
+sub get_option {
+
+    my ($mes, @expect) = @_;
+    my ($ans, $expect, $max_tries);
+
+    $max_tries = 5;
+    print $mes;
+    while ($max_tries) {
+	$ans = <>; chomp $ans;
+	--$max_tries;
+	$ans =~ s/^\s+//;
+	$ans =~ s/\s+$//;
+	# Check for null response which indicates that default is accepted.
+	unless ($ans) { return ""; }
+	foreach $expect (@expect) {
+	    if ($ans =~ /^$expect$/i) { return $expect; }
+	}
+	if ($max_tries > 1) {
+	    print "$ans does not match any of the expected values: @expect\n";
+	    print "Please try again: ";
+	} elsif ($max_tries == 1) {
+	    print "$ans does not match any of the expected values: @expect\n";
+	    print "Last chance! ";
+	}
+    }
+    die "Failed to get answer to question: $mes\n";
+}
+
+#-------------------------------------------------------------------------------
+
+sub get_gmake {
+
+# check for a valid version of GNU make in the user's path
+
+    my @makenames = @_;
+    my ($make, $retval);
+
+    foreach $make (@makenames) {
+	$retval = `$make -v 2>&1`;
+	return $make if ($retval =~ /GNU Make/);
+    }
+    return;
+}
+
+#-------------------------------------------------------------------------------
+
+sub write_tests_filepath
+{
+    my ($test_dir) = @_;
+    my  $fh = new IO::File;
+
+    $fh->open(">Filepath") or die "** can't open file: $test_dir/Filepath\n";
+
+    print $fh "$test_dir\n";
+
+    $fh->close;
+}
+
+#-------------------------------------------------------------------------------
+
+sub run_test
+{
+    # Return true if the test should be run after a successful build.
+    # Note that this function is depending on the main package variables
+    # main::$spmd and main:: $target_os.
+
+    # Default is to try running a test that's been successfully built.
+    my $result = 1;
+
+    # But don't attempt to run a test if...
+    if ( $spmd eq 'on'                     # SPMD is enabled
+	 or $target_os ne $OSNAME          # cross compilation
+	 ) {$result = 0;}
+
+    return $result;
+}
+
+#-------------------------------------------------------------------------------
+
+sub check_fc {
+
+# Create a "hello world" test code in Fortran 90 syntax to check the compiler.
+# If successful then the name of the compiler used is returned.
+
+    my ($gmake, $makefile) = @_;
+    my $fh = new IO::File;
+    my $file = 'test_fc.F90';
+
+    # create test program
+    $fh->open(">$file") or die "** can't open file: $file\n";
+    print $fh  <<"EOF";
+module m1
+   private
+   public :: hello
+contains
+subroutine hello()
+   implicit none
+   print *, 'hello world'
+end subroutine hello
+end module m1
+program main
+   use m1, only: hello
+   implicit none
+   call hello
+end program main
+EOF
+    $fh->close;
+
+    # Build the test_fc target in the CLM Makefile
+    my $cmd = "$gmake -f $makefile test_fc 2>&1";
+    my $out = `$cmd`;
+    my $cmd_error = $CHILD_ERROR;
+    my $test_output = "Issued the command:\n$cmd\n\nThe output was:\n$out\n";
+
+    if ($cmd_error) { 
+	die "**** FAILED ****\n$test_output";
+    } elsif ($print>=2) {
+	print "**** PASS ****\n$test_output";
+    }
+
+    # search make output for name of Fortran compiler -- Assume that the Makefile
+    # rule has the syntax "$(FC) -c ..."
+    $out =~ m{ ^\s*      # leading whitespace
+	       (\w+)     # 1st word (name of compiler)
+	       \s+       # followed by one or more spaces
+	       -c        # and the -c option
+	       \s   
+	     }xm;
+
+    my $fc_compiler_name = $1;
+
+    if (run_test()) {
+	# Run test_fc.
+	my $cmd = "./test_fc";
+	my $out = `$cmd`;
+	my $cmd_error = $CHILD_ERROR;
+	my $test_output = "Issued the command:\n$cmd\n\nThe output was:\n$out\n";
+
+	if ($cmd_error) { 
+	    die "**** FAILED ****\n$test_output";
+	} elsif ($print>=2) {
+	    print "**** PASS ****\n$test_output";
+	}
+    }
+
+    # clean-up (Srcfiles and Depends are created by the makefile)
+    unlink 'test_fc.F90', 'test_fc.o', 'test_fc', 'Depends', 'Srcfiles', glob("[Mm]1.[Mm][Oo][Dd]");
+
+    return $fc_compiler_name;
+}
+
+#-------------------------------------------------------------------------------
+
+sub check_netcdf {
+
+# Create a test code that has an external reference to the netCDF library
+# and check that the Makefile can build it.  Returns 0 on success.
+
+    my ($gmake, $makefile) = @_;
+    my $fh = new IO::File;
+    my $file = 'test_nc.F90';
+
+    # create test program
+    $fh->open(">$file") or die "** can't open file: $file\n";
+    print $fh  <<"EOF";
+program main
+   use netcdf
+   implicit none
+   integer :: cmode, ncid, ret
+   ret = nf90_create('foo.nc', cmode, ncid)
+   if ( ret == NF90_NOERR ) then
+      print *, 'created foo.nc'
+   else
+      print *, nf90_strerror( ret )
+   end if
+end program main
+EOF
+    $fh->close;
+
+    # Build the test_nc target in the CLM Makefile
+    my $cmd = "$gmake -f $makefile test_nc 2>&1";
+    my $out = `$cmd`;
+    my $cmd_error = $CHILD_ERROR;
+    my $test_output = "Issued the command:\n$cmd\n\nThe output was:\n$out\n";
+
+    if ($cmd_error) { 
+	die "**** FAILED ****\n$test_output";
+    } elsif ($print>=2) {
+	print "**** PASS ****\n$test_output";
+    }
+
+    if (run_test()) {
+	# Run test_nc.
+	my $cmd = "./test_nc";
+	my $out = `$cmd`;
+	my $cmd_error = $CHILD_ERROR;
+	my $test_output = "Issued the command:\n$cmd\n\nThe output was:\n$out\n";
+
+	if ($cmd_error) { 
+	    die "**** FAILED ****\n$test_output";
+	} elsif ($print>=2) {
+	    print "**** PASS ****\n$test_output";
+	}
+    }
+
+    # clean-up
+    unlink 'test_nc.F90', 'test_nc.o', 'test_nc', 'foo.nc', 'Depends', 'Srcfiles';
+
+    return 0;
+}
+
+#-------------------------------------------------------------------------------
+
+sub check_mpi {
+
+# Create a test code that has an external reference to the MPI library
+# and check that the Makefile can build it.  Returns 0 on success.
+
+    my ($gmake, $makefile) = @_;
+    my $fh = new IO::File;
+    my $file = 'test_mpi.F90';
+
+    # create the test program
+    $fh->open(">$file") or die "** can't open file: $file\n";
+    print $fh  <<"EOF";
+      program test_mpi
+      implicit none
+#include <mpif.h>
+      integer :: ierr
+      call mpi_init(ierr)
+      if ( ierr == MPI_SUCCESS ) then
+         print *, 'successfully called mpi_init'
+      else
+         print *, 'ERROR returned from mpi_init'
+      end if
+      end program test_mpi
+EOF
+    $fh->close;
+
+    # Build the test_mpi target in the CLM Makefile
+    my $cmd = "$gmake -f $makefile test_mpi 2>&1";
+    my $out = `$cmd`;
+    my $cmd_error = $CHILD_ERROR;
+    my $test_output = "Issued the command:\n$cmd\n\nThe output was:\n$out\n";
+
+    if ($cmd_error) { 
+	die "**** FAILED ****\n$test_output";
+    } elsif ($print>=2) {
+	print "**** PASS ****\n$test_output";
+    }
+
+    if (run_test()) {
+	# Run test_mpi.
+	my $cmd = "./test_mpi";
+	my $out = `$cmd`;
+	my $cmd_error = $CHILD_ERROR;
+	my $test_output = "Issued the command:\n$cmd\n\nThe output was:\n$out\n";
+
+	if ($cmd_error) { 
+	    die "**** FAILED ****\n$test_output";
+	} elsif ($print>=2) {
+	    print "**** PASS ****\n$test_output";
+	}
+    }
+
+    # clean-up
+    unlink 'test_mpi.F90', 'test_mpi.o', 'test_mpi', 'Depends', 'Srcfiles';
+
+    return 0;
+}
+
+#-------------------------------------------------------------------------------
+
+sub check_esmf {
+
+# Create a test code that has an external reference to the ESMF library
+# and check that the Makefile can build it.  Returns 0 on success.
+
+    my ($gmake, $makefile) = @_;
+    my $fh = new IO::File;
+    my $file = 'test_esmf.F90';
+
+    # create the test program
+    $fh->open(">$file") or die "** can't open file: $file\n";
+    print $fh  <<"EOF";
+      program test_esmf
+      use ESMF_Mod
+      implicit none
+      integer :: ierr
+      call ESMF_Initialize(rc=ierr)
+      if ( ierr == ESMF_SUCCESS ) then
+         print *, 'successfully called ESMF_Initialize'
+      else
+         print *, 'ERROR returned from ESMF_Initialize'
+      end if
+      end program test_esmf
+EOF
+    $fh->close;
+
+    # Build the test_esmf target in the CLM Makefile
+    my $cmd = "$gmake -f $makefile test_esmf 2>&1";
+    my $out = `$cmd`;
+    my $cmd_error = $CHILD_ERROR;
+    my $test_output = "Issued the command:\n$cmd\n\nThe output was:\n$out\n";
+
+    if ($cmd_error) { 
+	die "**** FAILED ****\n$test_output";
+    } elsif ($print>=2) {
+	print "**** PASS ****\n$test_output";
+    }
+
+    if (run_test()) {
+	# Run test_esmf.
+	my $cmd = "./test_esmf";
+	my $out = `$cmd`;
+	my $cmd_error = $CHILD_ERROR;
+	my $test_output = "Issued the command:\n$cmd\n\nThe output was:\n$out\n";
+
+	if ($cmd_error) { 
+	    die "**** FAILED ****\n$test_output";
+	} elsif ($print>=2) {
+	    print "**** PASS ****\n$test_output";
+	}
+    }
+
+    # clean-up
+    unlink 'test_esmf.F90', 'test_esmf.o', 'test_esmf', 'Depends', 'Srcfiles';
+
+    return 0;
+}
+
+#-------------------------------------------------------------------------------
+
+sub version {
+# The version is found in CLM's ChangeLog file.
+# $cfgdir is set by the configure script to the name of its directory.
+
+    my ($cfgdir) = @_;
+
+    my $logfile = "$cfgdir/../doc/ChangeLog";
+
+    my $fh = IO::File->new($logfile, '<') or die "** can't open ChangeLog file: $logfile\n";
+
+    while (my $line = <$fh>) {
+
+	if ($line =~ /^Tag name:\s*(\w+)/ ) {
+	    print "$1\n";
+	    exit;
+	}
+    }
+
+}
+
+#-------------------------------------------------------------------------------
+
+sub is_valid_directory {
+#
+# Validate that the input is a valid existing directory.
+# If allowEnv=>1 expand environment variables.
+#
+  my ($dir, %opts) = @_;
+  my $nm = "is_valid_directory";
+
+  my $valid = 0;
+  # Expand environment variables
+  if ( $opts{'allowEnv'} ) {
+     $dir = subst_env_path( $dir );
+  }
+  if ( -d $dir ) { $valid = 1; }
+  return( $valid );
+  
+}
+
+#-------------------------------------------------------------------------------
+
+sub print_hash {
+    my %h = @_;
+    my ($k, $v);
+    while ( ($k,$v) = each %h ) { print "$k => $v\n"; }
+}
+

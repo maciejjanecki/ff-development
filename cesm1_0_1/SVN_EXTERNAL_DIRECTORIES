@@ -1,0 +1,38 @@
+scripts                         https://svn-ccsm-models.cgd.ucar.edu/scripts/branch_tags/cesm1_0_rel_tags/cesm1_0_rel07_scripts4_100809a
+
+models/drv                      https://svn-ccsm-models.cgd.ucar.edu/drv/seq_mct/branch_tags/cesm1_0_rel_tags/cesm1_0_rel03_drvseq3_1_35
+
+models/csm_share                https://svn-ccsm-models.cgd.ucar.edu/csm_share/branch_tags/cesm1_0_rel_tags/cesm1_0_rel03_share3_100802
+
+models/atm/cam                  https://svn-ccsm-models.cgd.ucar.edu/cam1/branch_tags/cesm1_0_rel_tags/cesm1_0_rel_03_cam5_0_13/models/atm/cam
+
+models/lnd/clm                  https://svn-ccsm-models.cgd.ucar.edu/clm2/branch_tags/cesm1_0_rel_tags/cesm1_0_rel_06_clm4_0_10/models/lnd/clm
+
+models/ice/cice                 https://svn-ccsm-models.cgd.ucar.edu/cice/branch_tags/cesm1_0_rel_tags/cesm1_0_rel01_cice4_0_20100611
+
+models/glc/cism                 https://svn-ccsm-models.cgd.ucar.edu/glc/branch_tags/cesm1_0_rel_tags/cesm1_0_rel_00_cism1_100617a
+
+models/ocn/pop2/                https://svn-ccsm-models.cgd.ucar.edu/pop2/branch_tags/cesm1_0_rel_tags/cesm1_0_rel04_ccsm_pop_2_1_20100614a
+
+models/atm/datm                 https://svn-ccsm-models.cgd.ucar.edu/datm7/branch_tags/cesm1_0_rel_tags/cesm1_0_rel04_datm8_100826b
+models/lnd/dlnd                 https://svn-ccsm-models.cgd.ucar.edu/dlnd7/branch_tags/cesm1_0_rel_tags/cesm1_0_rel01_dlnd8_100517
+models/ice/dice                 https://svn-ccsm-models.cgd.ucar.edu/dice7/branch_tags/cesm1_0_rel_tags/cesm1_0_rel01_dice8_100517
+models/ocn/docn                 https://svn-ccsm-models.cgd.ucar.edu/docn7/branch_tags/cesm1_0_rel_tags/cesm1_0_rel01_docn8_100518
+
+models/atm/xatm                 https://svn-ccsm-models.cgd.ucar.edu/dead7/trunk_tags/dead7_4_05/xatm
+models/lnd/xlnd                 https://svn-ccsm-models.cgd.ucar.edu/dead7/trunk_tags/dead7_4_05/xlnd
+models/ice/xice                 https://svn-ccsm-models.cgd.ucar.edu/dead7/trunk_tags/dead7_4_05/xice
+models/ocn/xocn                 https://svn-ccsm-models.cgd.ucar.edu/dead7/trunk_tags/dead7_4_05/xocn
+models/glc/xglc                 https://svn-ccsm-models.cgd.ucar.edu/dead7/trunk_tags/dead7_4_05/xglc
+models/dead_share               https://svn-ccsm-models.cgd.ucar.edu/dead7/trunk_tags/dead7_4_05/dead_share
+
+models/atm/satm                 https://svn-ccsm-models.cgd.ucar.edu/stubs/trunk_tags/stubs1_2_02/satm
+models/lnd/slnd                 https://svn-ccsm-models.cgd.ucar.edu/stubs/trunk_tags/stubs1_2_02/slnd
+models/ice/sice                 https://svn-ccsm-models.cgd.ucar.edu/stubs/trunk_tags/stubs1_2_02/sice
+models/ocn/socn                 https://svn-ccsm-models.cgd.ucar.edu/stubs/trunk_tags/stubs1_2_02/socn
+models/glc/sglc                 https://svn-ccsm-models.cgd.ucar.edu/stubs/trunk_tags/stubs1_2_02/sglc
+
+models/utils/timing             https://svn-ccsm-models.cgd.ucar.edu/timing/trunk_tags/timing_091021
+models/utils/esmf_wrf_timemgr   https://svn-ccsm-models.cgd.ucar.edu/esmf_wrf_timemgr/trunk_tags/esmf_wrf_timemgr_090402
+models/utils/mct                https://svn-ccsm-models.cgd.ucar.edu/mct/trunk_tags/MCT2_7_0_100228
+models/utils/pio                http://parallelio.googlecode.com/svn/trunk_tags/pio1_1_1/pio

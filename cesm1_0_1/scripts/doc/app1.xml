@@ -1,0 +1,20 @@
+<appendix id="supported_compsets">
+<title>Supported Component Sets</title>
+
+<para>
+The following lists the supported component sets.  Note that all the
+component sets currently use the stub GLC component, sglc.
+Run "create_newcase -list" from the scripts directory to view the
+list for the current version of CESM1.
+</para>
+
+<para> For an overview of &cesm; components and component sets see
+<link linkend= "ccsm_components">overview of cesm components</link>. 
+</para>
+
+&compsets_list;
+
+</appendix>
+
+
+

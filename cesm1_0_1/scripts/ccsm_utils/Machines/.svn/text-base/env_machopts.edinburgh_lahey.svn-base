@@ -1,0 +1,33 @@
+#! /bin/csh -f
+
+#===============================================================================
+# Edinburgh machine specific settings
+#===============================================================================
+# WARNING! THE LAHEY COMPILER WILL NOT CURRENTLY COMPILE POP, SO THIS IS VALID
+#          ONLY FOR COMPSETS WITHOUT POP!
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+# Platform-specific software versions/locations
+#-------------------------------------------------------------------------------
+
+setenv LAHEY /usr/local/lf6481
+
+setenv NETCDF_PATH /usr/local/netcdf-3.6.3-gcc-4.1.2-lf95-8.0_x86_64
+setenv INC_NETCDF ${NETCDF_PATH}/include
+setenv LIB_NETCDF ${NETCDF_PATH}/lib
+
+setenv MPICH_PATH /usr/local/mpich-1.2.7p1-gcc-g++-4.1.2-42-lf9581
+setenv INC_MPI ${MPICH_PATH}/include
+setenv LIB_MPI ${MPICH_PATH}/lib
+
+#-------------------------------------------------------------------------------
+# Runtime environment variables
+#-------------------------------------------------------------------------------
+
+setenv PATH ${LAHEY}/bin:${MPICH_PATH}/bin:${PATH}
+setenv LD_LIBRARY_PATH ${LAHEY}/lib64:${LD_LIBRARY_PATH}
+setenv P4_GLOBMEMSIZE 500000000
+
+
+

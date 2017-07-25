@@ -1,0 +1,32 @@
+#! /bin/csh -f
+
+#===============================================================================
+# Edinburgh machine specific settings
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+# Platform-specific software versions/locations
+#-------------------------------------------------------------------------------
+
+setenv PGI /usr/local/pgi-pgcc-pghf-7.2-5
+
+setenv NETCDF_PATH /usr/local/netcdf-3.6.3-pgi-hpf-cc-7.2-5
+setenv INC_NETCDF ${NETCDF_PATH}/include
+setenv LIB_NETCDF ${NETCDF_PATH}/lib
+
+setenv MPICH_PATH /usr/local/mvapich-1.1-pgi-pgcc-7.2-5
+setenv INC_MPI ${MPICH_PATH}/include
+setenv LIB_MPI ${MPICH_PATH}/lib
+
+#-------------------------------------------------------------------------------
+# Runtime environment variables
+#-------------------------------------------------------------------------------
+
+setenv PATH ${PGI}/linux86/bin:${MPICH_PATH}/bin:${PATH}
+setenv LD_LIBRARY_PATH ${PGI}/linux86/lib:/usr/local/mvapich-1.1-pgi-pgcc-7.2-5/lib:/usr/local/mvapich-1.1-pgi-pgcc-7.2-5/lib/shared:${LD_LIBRARY_PATH}
+setenv P4_GLOBMEMSIZE 500000000
+
+
+
+
+

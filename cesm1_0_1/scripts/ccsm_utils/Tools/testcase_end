@@ -1,0 +1,197 @@
+
+#======================================================================
+# All things common to all tests that need to be done at the end of 
+# each test should be put here to avoid duplication.  
+#======================================================================
+
+#======================================================================
+# Generate new baseline for regression testing
+#======================================================================
+set genstatus = "UNDEF"
+
+set CplHistDir = $RUNDIR
+set CplHistFileName = `cd $CplHistDir; ls -1t $CASE.cpl.hi*.nc | head -1 `
+if (${CplHistFileName} == '') then
+  set CplHistDir = $DOUT_S_ROOT/cpl
+  set CplHistFileName = `cd $CplHistDir; ls -1t $CASE.cpl.hi*.nc | head -1 `
+endif
+set CplHistFile = $CplHistDir/$CplHistFileName
+
+if ( $?GENERATE_BASELINE ) then
+  if ($basestatus == "PASS") then
+    set genstatus = "PASS "
+    if ! ( -d $BASELINE_ROOT ) then
+      echo "ERROR in ${0}:  $BASELINE_ROOT does not exist " >>& $TESTSTATUS_LOG
+      set genstatus = "FAIL "
+    else
+      mkdir -p $BASEGEN_DIR || echo "ERROR in ${0}:  could not create directory $BASEGEN_DIR " >>& $TESTSTATUS_LOG && set genstatus = "FAIL "
+      chmod ug+w,a+rx $BASEGEN_DIR
+      chmod ug+w,a+rx $BASEGEN_DIR/..
+      echo "${0}:  Storing new baseline in $BASEGEN_DIR" >>& $TESTSTATUS_LOG
+    endif
+
+    # coupler log file
+    if ( -e $BASEGEN_CPLLOGFILE ) then
+      echo "ERROR in ${0}:  baseline log file $BASEGEN_CPLLOGFILE already exists."
+      set genstatus = "FAIL "
+    else
+      cp $CPLLOG_GENCMP $BASEGEN_CPLLOGFILE || echo "ERROR in ${0}:  could not copy $CPLLOG_GENCMP to $BASEGEN_CPLLOGFILE " >>& $TESTSTATUS_LOG
+      chmod ug+w,a+r $BASEGEN_CPLLOGFILE
+    endif
+
+    # coupler history file
+    if ( -e $BASEGEN_CPLHISTFILE ) then
+      echo "ERROR in ${0}:  baseline history file $BASEGEN_CPLHISTFILE already exists."
+    else
+      cp $CplHistFile $BASEGEN_CPLHISTFILE || echo "ERROR in ${0}:  could not copy $CplHistFile to $BASEGEN_CPLHISTFILE " >>& $TESTSTATUS_LOG
+      chmod ug+w,a+r $BASEGEN_CPLHISTFILE
+    endif
+
+    # coupler timing file
+    if ( -e $BASEGEN_CPLPROFFILE ) then
+      echo "ERROR in ${0}:  baseline timing file $BASEGEN_CPLPROFFILE already exists."
+    else
+      if ($?CPLPROF_GENCMP) then
+        cp $CPLPROF_GENCMP $BASEGEN_CPLPROFFILE || echo "ERROR in ${0}:  could not copy $CPLPROF_GENCMP to $BASEGEN_CPLPROFFILE " >>& $TESTSTATUS_LOG
+        chmod ug+w,a+r $BASEGEN_CPLPROFFILE
+      endif
+    endif
+
+  else
+    set genstatus = "BFAIL"
+  endif
+
+  echo "$genstatus ${CASEBASEID}.generate.${BASEGEN_NAME} " >>& $TESTSTATUS_OUT
+endif
+
+#======================================================================
+# Compare with baseline if this is a regression test
+# NOTE:  "PASS" means both this test AND the regression test passed.  
+#======================================================================
+set compstatus = "UNDEF"
+set bbb2 = ""
+
+if ( $?COMPARE_BASELINE ) then
+  if ! ( -d $BASELINE_ROOT ) then
+    echo "ERROR in ${0}:  $BASELINE_ROOT does not exist " >>& $TESTSTATUS_LOG
+    set genstatus = "BFAIL "
+  endif
+  if ! ( -d $BASECMP_DIR ) then
+    echo "ERROR in ${0}:  $BASECMP_DIR does not exist" >>& $TESTSTATUS_LOG
+    set compstatus = "BFAIL"
+  else
+    if (-e $BASECMP_DIR/TestStatus.out) then
+      set bbb1 = `grep perf $BASECMP_DIR/TestStatus.out | grep CHECK | grep -v baseline`
+      set bbb2 = `echo $bbb1 baseline`
+    endif
+    if ( -e $BASECMP_CPLHISTFILE ) then
+      echo "Comparing hist file with baseline hist file" >>& $TESTSTATUS_LOG
+      $CASETOOLS/hist_compare.csh $CplHistFile $BASECMP_CPLHISTFILE >>& $TESTSTATUS_LOG
+      set pass = `tail -1 $TESTSTATUS_LOG | grep PASS | wc -l`
+      if ( $pass != 0 ) then
+        set compstatus = "PASS "
+      else
+        set compstatus = "FAIL "
+      endif
+      echo "hist file comparison is $compstatus" >>& $TESTSTATUS_LOG
+      echo "$compstatus ${CASEBASEID}.compare_hist.${BASECMP_NAME} " >>& $TESTSTATUS_OUT
+    endif
+    if ( -e $BASECMP_CPLLOGFILE ) then
+      if ( "${CASEBASEID}" =~ ERT* ) then
+         echo "no cpl log file comparison with ${CASEBASEID} test" >>& $TESTSTATUS_LOG
+      else
+         echo "Comparing log file with baseline log file" >>& $TESTSTATUS_LOG
+         $CASETOOLS/check_exactrestart.pl $CPLLOG_GENCMP $BASECMP_CPLLOGFILE >>& $TESTSTATUS_LOG
+         set compstatus =  `tail -1 $TESTSTATUS_LOG `
+         #=== want compstatus to be exactly 5 chars long ===
+         if ($compstatus == "GEN" || $compstatus == "RUN") then
+            set compstatus = "$compstatus  "
+         endif
+         if ($compstatus == "PASS" || $compstatus == "FAIL" || $compstatus == "PEND") then
+            set compstatus = "$compstatus "
+         endif
+      endif
+    else
+      echo "ERROR in ${0}:  $BASECMP_CPLLOGFILE does not exist" >>& $TESTSTATUS_LOG
+      set compstatus = "BFAIL"
+    endif
+  endif
+  echo "$compstatus ${CASEBASEID}.compare.${BASECMP_NAME} " >>& $TESTSTATUS_OUT
+endif
+
+if ( $?CPLLOG_INIT) then
+if (-e $CPLLOG_INIT) then
+   echo " " >>& $TESTSTATUS_LOG
+   echo "=======================" >>& $TESTSTATUS_LOG
+   tail -20 $CPLLOG_INIT >>& $TESTSTATUS_LOG
+   echo "=======================" >>& $TESTSTATUS_LOG
+   echo " " >>& $TESTSTATUS_LOG
+
+   set npes = ""
+   if ( $?TOTALPES) then
+     set npes = `echo $TOTALPES`
+   endif
+   set tag = "unknown"
+   if ( $?CCSM_REPOTAG) then
+     set tag = `echo $CCSM_REPOTAG`
+   endif
+   if ( $?BASEGEN_NAME) then
+     set tag = `echo $BASEGEN_NAME`
+   endif
+   set tput = `grep "# simulated years " $CPLLOG_INIT | cut -c 63-72`
+   set memh = `grep "max memory highwater" $CPLLOG_INIT | cut -c 63-72`
+   set memr = `grep "max memory last usage" $CPLLOG_INIT | cut -c 63-72`
+   echo "$bbb2" >>& $TESTSTATUS_LOG
+   echo "CHECK ${CASEBASEID}.perf npes=$npes tput=$tput memh=$memh memr=$memr tag=$tag" >>& $TESTSTATUS_LOG
+   if ( "${CASEBASEID}" =~ ERT* || "${CASEBASEID}" =~ PFS* ) then
+     if ( "$bbb2" !~ "") then
+        echo "$bbb2" >>& $TESTSTATUS_OUT
+     endif
+     echo "CHECK ${CASEBASEID}.perf npes=$npes tput=$tput memh=$memh memr=$memr tag=$tag" >>& $TESTSTATUS_OUT
+   endif
+   echo " " >>& $TESTSTATUS_LOG
+endif
+endif
+
+
+#======================================================================
+# Clean up
+#======================================================================
+
+if ( $?CLEANUP ) then
+  if ($basestatus == "PASS") then
+    if ($compstatus != "FAIL") then
+#      rm -rf $EXEROOT
+       rm -rf $EXEROOT*/mct       >& /dev/null
+       rm -rf $EXEROOT*/pio       >& /dev/null
+       rm -rf $EXEROOT*/esmf      >& /dev/null
+       rm -rf $EXEROOT*/lib       >& /dev/null
+       rm -f  $EXEROOT*/*.exe*     >& /dev/null
+       rm -f  $EXEROOT*/*/*.exe*   >& /dev/null
+       rm -rf $EXEROOT*/*/*.a     >& /dev/null
+       rm -rf $EXEROOT*/*/obj     >& /dev/null
+       rm -f  $EXEROOT*/*/*.nc     >& /dev/null
+       rm -f  $EXEROOT*/*/*/*.nc   >& /dev/null
+       rm -rf $DOUT_S_ROOT*      >& /dev/null
+       echo "NOTE: Test passed, clean up done."  >>& $TESTSTATUS_LOG
+    else
+       echo "NOTE: Compare test failed, clean up NOT done."  >>& $TESTSTATUS_LOG
+    endif
+  else
+     echo "NOTE: Test failed, clean up NOT done."  >>& $TESTSTATUS_LOG
+  endif
+else
+  echo "NOTE:  At user request, clean up not done.  Use the following" >>& $TESTSTATUS_LOG
+  echo "       commands to clean up by hand:" >>& $TESTSTATUS_LOG
+  echo "         rm -rf $EXEROOT" >>& $TESTSTATUS_LOG
+endif
+
+if ( $?GENERATE_BASELINE ) then
+  if (-e $BASEGEN_DIR) then
+    cp $TESTSTATUS_LOG $BASEGEN_DIR/TestStatus.out
+    chmod ug+w,a+r $BASEGEN_DIR/TestStatus.out
+  endif
+endif
+
+set sdate = `date +"%Y-%m-%d %H:%M:%S"`
+echo "test completed $sdate" >>& CaseStatus

@@ -1,0 +1,113 @@
+#! /bin/csh -f
+
+set mach = prototype_atlas 
+
+#################################################################################
+if ($PHASE == set_batch) then
+#################################################################################
+
+source ./Tools/ccsm_getenv || exit -1
+
+set maxthrds = 0
+@ n = 0
+foreach model ($MODELS)
+  @ n = $n + 1
+  if ($NTHRDS[$n] > $MAX_TASKS_PER_NODE ) then
+     echo "ERROR, NTHRDS maximum is $MAX_TASKS_PER_NODE"
+     echo "you have set NTHRDS = ( $NTHRDS[$n] ) - must reset"
+     exit 1
+  endif   
+  if ($NTHRDS[$n] > $maxthrds) then
+     set maxthrds = $NTHRDS[$n]
+  endif
+end
+
+set npes_tot = `${UTILROOT}/Tools/taskmaker.pl -sumonly`
+
+@ nodes = $npes_tot / $MAX_TASKS_PER_NODE
+@ tmpValue = $nodes * $MAX_TASKS_PER_NODE
+if( $tmpValue < $npes_tot ) then
+  @ nodes = $nodes + 1
+endif
+
+# If tasks must be equivalent to full nodes:
+@ mpp = $npes_tot
+###@ mpp = $nodes * $MAX_TASKS_PER_NODE
+
+
+cat >! ${CASEROOT}/${CASE}.${mach}.run << EOF1
+#! /bin/csh -f
+#==============================================================================
+#  This is a CCSM batch job script for ${mach}
+#==============================================================================
+#MSUB -V
+#PSUB -r ${CASE}
+#PSUB -re
+#PSUB -ro
+#PSUB -mb
+#PSUB -me
+#PSUB -b uhrccs
+#PSUB -tM 1:00
+#PSUB -ln $nodes
+# End of options
+
+limit coredumpsize 1000000
+limit stacksize unlimited
+setenv SLURM_NPROCS $mpp
+setenv SLURM_CPUS_PER_TASK 1
+
+EOF1
+
+
+
+#################################################################################
+else if ($PHASE == set_exe) then
+#################################################################################
+
+
+cat >> ${CASEROOT}/${CASE}.${MACH}.run << EOF1
+
+echo " "
+echo "Here are the environment variables"
+echo " "
+env | sort
+echo " "
+set sleeptime = 10
+echo "Getting read to sleep for \$sleeptime seconds"
+sleep \$sleeptime
+echo "Awakening after \$sleeptime seconds"
+echo " "
+
+# -------------------------------------------------------------------------
+# Run the model
+# -------------------------------------------------------------------------
+
+cd \$RUNDIR
+echo "`date` -- CSM EXECUTION BEGINS HERE" 
+srun ./ccsm.exe >&! ccsm.log.\$LID
+wait
+echo "`date` -- CSM EXECUTION HAS FINISHED" 
+
+EOF1
+
+
+#################################################################################
+else if ($PHASE == set_larch) then
+#################################################################################
+
+   #This is a place holder for a long-term archiving script
+
+#################################################################################
+else
+#################################################################################
+
+    echo "mkscripts.$mach"
+    echo "  PHASE setting of $PHASE is not an accepted value"
+    echo "  accepted values are set_batch, set_exe and set_larch"
+    exit 1
+
+#################################################################################
+endif
+#################################################################################
+ 
+

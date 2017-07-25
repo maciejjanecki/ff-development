@@ -1,0 +1,96 @@
+#! /bin/csh -f
+
+set mach = prototype_ranger
+
+#################################################################################
+if ($PHASE == set_batch) then
+#################################################################################
+
+source ./Tools/ccsm_getenv || exit -1
+
+@ cpu_per_node = $MAX_TASKS_PER_NODE
+
+## Assume sequential execution for now
+@ tasks = $NTASKS[1]
+@ mpp = $NTASKS[1] * $NTHRDS[1]
+
+@ nodes = $mpp / $cpu_per_node
+@ tmpValue = $nodes * $cpu_per_node
+if( $tmpValue < $mpp ) then
+@ nodes = $nodes + 1
+endif
+
+
+cat >! ${CASEROOT}/${CASE}.${mach}.run << EOF1
+#! /bin/csh -x
+#==============================================================================
+#==============================================================================
+#$ -V
+#                         {inherit submission environment}
+#$ -cwd
+#                         {use submission directory}
+#$ -N myCCSM
+#                         {jobname (myCCSM)}
+#$ -j y
+#                         {join stderr and stdout}
+#$ -o $JOB_NAME.o$JOB_ID
+#                         {output name jobname.ojobid
+#$ -pe 16way 64
+#                         {use 16 cores/node, 32 cores total}
+#$ -q normal
+#                         {queue name}
+#$ -l h_rt=01:30:00
+#                         {request 1.5 hours}
+#$ -M user@place.edu 
+#                         {UNCOMMENT & insert Email address}
+#$ -m be
+#                         {UNCOMMENT email at Begin/End of job}
+set echo                  #{echo cmds, use "set echo" in csh}
+#                         {account number}
+#$ -A A-rfUserX            
+
+EOF1
+
+
+
+#################################################################################
+else if ($PHASE == set_exe) then
+#################################################################################
+
+
+cat >> ${CASEROOT}/${CASE}.${MACH}.run << EOF1
+# -------------------------------------------------------------------------
+# Run the model
+# -------------------------------------------------------------------------
+
+cd \$RUNDIR
+echo "\`date\` -- CSM EXECUTION BEGINS HERE" 
+ibrun ./ccsm.exe >&! ccsm.log.\$LID
+wait
+echo "\`date\` -- CSM EXECUTION HAS FINISHED" 
+
+
+EOF1
+
+
+
+#################################################################################
+else if ($PHASE == set_larch) then
+#################################################################################
+
+
+  # this is a place holder for a long term archiving script
+
+
+#################################################################################
+else
+#################################################################################
+
+    echo "mkscripts.$mach"
+    echo "  PHASE setting of $PHASE is not an accepted value"
+    echo "  accepted values are set_batch, set_exe and set_larch"
+    exit 1
+
+#################################################################################
+endif
+#################################################################################

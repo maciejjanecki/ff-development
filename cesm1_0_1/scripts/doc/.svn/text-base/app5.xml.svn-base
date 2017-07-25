@@ -1,0 +1,17 @@
+<appendix id="env_conf_vars">
+<title>env_conf.xml variables</title>
+
+<para>
+The following table lists all the possible environment variables that can be
+set in the env_conf.xml file. Because some of these variables are
+dependent on the components selected, only a subset of these will
+appear in $&CASEROOT;. Default values, where appropriate, are given in
+parentheses.
+</para>
+
+&env_conf_list;
+
+</appendix>
+
+
+

@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/dice/bld
+END
+dice.cpl7.template
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/dice/bld/dice.cpl7.template
+END
+dice.template.streams.xml
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/dice/bld/dice.template.streams.xml
+END

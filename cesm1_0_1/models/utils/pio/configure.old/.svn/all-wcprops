@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old
+END
+Makefile.anlbgp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old/Makefile.anlbgp
+END
+Makefile.tbird
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old/Makefile.tbird
+END
+Makefile.Darwin.gfortran
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old/Makefile.Darwin.gfortran
+END
+Makefile.ncarAIX
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old/Makefile.ncarAIX
+END
+Makefile.ncarbgl
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old/Makefile.ncarbgl
+END
+Makefile.anljazz
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old/Makefile.anljazz
+END
+Makefile.LinuxF7
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old/Makefile.LinuxF7
+END
+Makefile.xt3
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old/Makefile.xt3
+END
+Makefile.anlbgl
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old/Makefile.anlbgl
+END
+Makefile.LinuxLahey
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/utils/pio/configure.old/Makefile.LinuxLahey
+END

@@ -1,0 +1,245 @@
+#===============================================================================
+# The following always need to be set
+# SPMD             Whether to build in SPMD mode or not.  [values TRUE FALSE]
+# SMP              Set to TRUE to enable building in SMP mode (uses OpenMP).  
+# USER_CPPDEFS     CPP definitions (non platform dependent)
+#
+# The following can be optionally set
+# USER_LIB_MPI       Allow user to override the default 
+# USER_LIB_NETCDF    Allow user to override the default 
+# USER_LAPACK_LIBDIR Allow user to override the default 
+# USER_ESMF_LIBDIR   Allos user to override the default
+# USER_LINKER        Allow user to override the default
+#
+# USER_INC_MPI       Allow user to override the default 
+# USER MPI_LIB_NAME  Allow user to override the default
+# USER_INC_NETCDF    Allow user to override the default 
+# USER_MOD_NETCDF    Allow user to override the default 
+# USER_FC            Allow user to override the default Fortran compiler specified in Makefile.
+# USER_CC            Allow user to override the default C compiler specified in Makefile (linux only).
+# USER_CFLAGS        Additional C compiler flags that the user wishes to set.
+# USER_FFLAGS        Additional Fortran compiler flags that the user wishes to set.
+# USER_LDLAGS        Additional load flags that the user wishes to set.
+# F_OPTIMIZATION_OVERRIDE
+#                    Use this to replace default Fortran compiler optimization.  
+#===============================================================================
+# Makefile macros for Compute Node Linux on XT3/XT4 systems, using PGI compilers
+#
+# Notes:  (see pgi man page & user's guide for the details)
+#  -Mextend        => Allow 132-column source lines
+#  -Mfixed         => Assume fixed-format source
+#  -Mfree          => Assume free-format source
+#
+#  -byteswapio     => Swap byte-order for unformatted i/o (big/little-endian)
+# 
+#  -target=linux   => Specifies the target architecture to Compute Node Linux
+#  -fast           => Chooses generally optimal flags for the target platform
+#  -Mnovect        => Disables automatic vector pipelining
+#  -Mvect=nosse    => Don't generate SSE, SSE2, 3Dnow, and prefetch instructions in loops
+#  -Mflushz        => Set SSE to flush-to-zero mode (underflow) loops where possible
+#  -Kieee          => Perform fp ops in strict conformance with the IEEE 754 standard. 
+#                     Some optimizations disabled, slightly slower, more accurate math. 
+#  -mp=nonuma      => Don't use thread/processors affinity (for NUMA architectures)
+#
+#  -g              => Generate symbolic debug information. Turns off optimization.
+#  -gopt           => Generate information for debugger without disabling optimizations
+#  -Mbounds        => Add array bounds checking
+#  -Ktrap=fp       => Determine IEEE Trap conditions fp => inv,divz,ovf
+#                     * inv: invalid operands
+#                     * divz divide by zero
+#                     * ovf: floating point overflow
+#  -Mlist          => Create a listing file
+#  -F              => leaves file.f for each preprocessed file.F file
+#  -time           => Print execution time for each compiler step
+#===============================================================================
+
+# Note that CPPDEFS is set in Macros.cppdefs
+CPPDEFS += -DLINUX -DSEQ_$(FRAMEWORK) -DCATAMOUNT -DFORTRANUNDERSCORE -DNO_SHR_VMATH -D_USE_FLOW_CONTROL
+
+ifeq ($(compile_threaded), true)
+   CPPDEFS += -DTHREADED_OMP
+endif
+
+ifeq ($(strip $(MODEL)),cam)
+  CPPDEFS += -DNO_R16
+endif
+
+# Note that NETCDF_DIR is obtained from invoking modules
+FC            := time ftn
+CC            := time cc
+
+#=====================================================
+# GENERIC_USER
+# The netcdf and mpi paths need to be set somewhere.  In CCSM, this
+# is normally done by setting the NETCDF_PATH and MPI_PATH
+# variables in this Macros file.  But they could also be set in the 
+# default user paths, by an explicit addition to the local path 
+# in the env_mach_specific file, or via setting NETCDF_PATH 
+# and MPI_PATH environment variables in the env_mach_specific file.  
+# Also, review the relative paths of the INC_, LIB_, and MOD_ paths
+# below.  Ignore PNETCDF stuff initially, it's not required.
+
+
+NETCDF_PATH   := $(NETCDF_DIR)
+INC_NETCDF    := $(NETCDF_PATH)/include
+LIB_NETCDF    := $(NETCDF_PATH)/lib
+MOD_NETCDF    := $(NETCDF_PATH)/include
+MPI_PATH      :=
+INC_MPI       := 
+LIB_MPI       := 
+MPI_LIB_NAME  := mpich
+PNETCDF_PATH  := 
+INC_PNETCDF   := 
+LIB_PNETCDF   := 
+LAPACK_LIBDIR := 
+#=====================================================
+
+CFLAGS        := $(CPPDEFS) -target=linux -gopt -DCATAMOUNT -Mlist -time
+FIXEDFLAGS    := -Mfixed
+FREEFLAGS     := -Mfree
+FFLAGS        := $(CPPDEFS) -i4 -target=linux -gopt -Mlist -time -Mextend -byteswapio -Mflushz -Kieee -Ktrap=fp 
+FFLAGS_OPT    := 
+LDFLAGS       := -time -Wl,--allow-multiple-definition
+AR            := ar
+MOD_SUFFIX    := mod
+CONFIG_SHELL  :=
+
+#===============================================================================
+# Override with user settings
+#===============================================================================
+
+ifneq ($(strip $(USER_FC)),)
+   FC := $(USER_FC)
+endif
+ifneq ($(strip $(USER_CC)),)
+   CC := $(USER_CC)
+endif
+ifneq ($(strip $(USER_INC_NETCDF)),)
+   INC_NETCDF := $(USER_INC_NETCDF)
+endif
+ifneq ($(strip $(USER_MOD_NETCDF)),)
+   MOD_NETCDF := $(USER_MOD_NETCDF)  
+endif
+ifneq ($(strip $(USER_INC_PNETCDF)),)
+   INC_PNETCDF := $(USER_INC_PNETCDF)
+endif
+ifneq ($(strip $(USER_INC_MPI)),)
+   INC_MPI := $(USER_INC_MPI)
+endif
+
+#===============================================================================
+# Set include paths (needed after override for any model specific builds below)
+#===============================================================================
+
+INCLDIR := -I. 
+ifneq ($(strip $(INC_NETCDF)),)
+INCLDIR += -I$(INC_NETCDF)
+endif
+ifneq ($(strip $(MOD_NETCDF)),)
+INCLDIR += -I$(MOD_NETCDF)
+endif
+ifneq ($(strip $(INC_MPI)),)
+INCLDIR += -I$(INC_MPI)
+endif 
+ifneq ($(strip $(INC_PNETCDF)),)
+INCLDIR += -I$(INC_PNETCDF)
+endif
+ifeq ($(MODEL),driver)
+   INCLDIR += -I$(EXEROOT)/atm/obj -I$(EXEROOT)/lnd/obj -I$(EXEROOT)/ice/obj -I$(EXEROOT)/ocn/obj -I$(EXEROOT)/glc/obj
+endif
+
+#===============================================================================
+# Set model and other specific options
+# NOTE - all CPPDEFS options must be defined before this point
+#===============================================================================
+
+ifeq ($(MODEL),datm)
+  CFLAGS     += -O2 -Mnovect
+  FFLAGS_OPT += -O2 -Mnovect -Kieee
+endif
+ifeq ($(MODEL),dice)
+  CFLAGS     += -O2 -Mnovect
+  FFLAGS_OPT += -O2 -Mnovect -Kieee
+endif
+ifeq ($(MODEL),dlnd)
+  CFLAGS     += -O2 -Mnovect
+  FFLAGS_OPT += -O2 -Mnovect -Kieee
+endif
+ifeq ($(MODEL),docn)
+  CFLAGS     += -O2 -Mnovect
+  FFLAGS_OPT += -O2 -Mnovect -Kieee
+endif
+
+ifeq ($(strip $(MODEL)),cam)
+  FFLAGS       := $(CPPDEFS) -i4 -target=linux -gopt -Mlist -time -Mextend -byteswapio 
+  FFLAGS_NOOPT := $(FFLAGS)
+  ifneq ($(F_OPTIMIZATION_OVERRIDE),$(null))
+     FFLAGS_OPT := $(F_OPTIMIZATION_OVERRIDE)
+  else
+     CFLAGS     += -O2 -Mvect=nosse 
+     FFLAGS_OPT += -O2 -Mvect=nosse -Kieee
+  endif
+endif
+ifeq ($(MODEL),cice)
+  CFLAGS     += -O2 -Mvect=nosse 
+  FFLAGS_OPT += -O2 -Mvect=nosse -Kieee
+endif
+ifeq ($(MODEL),clm)
+  CFLAGS     += -O2 -Mvect=nosse 
+  FFLAGS_OPT += -O2 -Mvect=nosse -Kieee
+endif
+ifeq ($(MODEL),pop2)
+  CFLAGS     += -O2 -Mvect=nosse 
+  FFLAGS_OPT += -O2 -Mvect=nosse -Kieee
+endif
+
+ifeq ($(DEBUG),TRUE)
+   FFLAGS       += -g -Ktrap=fp -Mbounds -Kieee
+   FFLAGS_NOOPT += -g -Ktrap=fp -Mbounds -Kieee
+else
+   FFLAGS += $(FFLAGS_OPT)
+endif
+
+ifeq ($(compile_threaded), true)
+   FFLAGS       += -mp
+   FFLAGS_NOOPT += -mp
+   CFLAGS       += -mp
+   LDFLAGS      += -mp
+endif
+
+ifeq ($(strip $(MODEL)),cam)
+# These RRTMG files cause a compiler error when using optimization.
+# Until mods are made to read the data from files, just remove optimization from
+# their compilation.
+rrtmg_lw_k_g.o: rrtmg_lw_k_g.f90
+	$(FC) -c $(CPPDEFS) $(INCLDIR) $(INCS) $(FREEFLAGS) $(FFLAGS_NOOPT) $<
+rrtmg_sw_k_g.o: rrtmg_sw_k_g.f90
+	$(FC) -c $(CPPDEFS) $(INCLDIR) $(INCS) $(FREEFLAGS) $(FFLAGS_NOOPT) $<
+endif
+
+CONFIG_ARGS :=
+
+#=====================================================
+# GENERIC_USER
+# Options passed to the mct and pio build are set here
+
+ifeq ($(MODEL),mct)
+        #add arguments for mct configure here
+  CONFIG_ARGS += FC="$(FC)" F90="$(FC)" FFLAGS="$(FFLAGS)" --host=Linux 
+endif
+
+ifeq ($(MODEL),pio)
+  ifneq ($(strip $(PIO_CONFIG_OPTS)),)
+    CONFIG_ARGS += $(PIO_CONFIG_OPTS)
+  endif 
+  CONFIG_ARGS += FC="$(FC)" F90="$(FC)" NETCDF_PATH=$(NETCDF_PATH) FFLAGS="$(FFLAGS)" --enable-filesystem-hints lustre --host=Linux
+endif
+#=====================================================
+
+# Append user defined compiler and load flags to Makefile defaults
+CFLAGS   += $(USER_CFLAGS)
+FFLAGS   += $(USER_FFLAGS)
+LDFLAGS  += $(USER_LDFLAGS)
+
+
+

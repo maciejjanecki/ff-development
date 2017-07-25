@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc
+END
+Depends
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/Depends
+END
+nfwrappers.f90
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/nfwrappers.f90
+END
+prec.f90
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/prec.f90
+END
+gatherstats.f90
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/gatherstats.f90
+END
+ChangeLog
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/ChangeLog
+END
+driver.f90
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/driver.f90
+END
+cntlvars.f90
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/cntlvars.f90
+END
+test.csh
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/test.csh
+END
+utils.f90
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/utils.f90
+END
+specialvalues.f90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/specialvalues.f90
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/README
+END
+netcdfids.f90
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/netcdfids.f90
+END
+cprnc.F90
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/cprnc.F90
+END
+printers.f90
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/printers.f90
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/tools/cprnc/Makefile
+END

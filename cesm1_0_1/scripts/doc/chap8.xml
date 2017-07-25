@@ -1,0 +1,778 @@
+<chapter id="use_case_intro">
+<title>Use Cases</title>
+
+<!-- ======================================================================= -->
+<sect1 id="use_case_basic">
+<title>The basic example</title>
+
+<para> This specifies all the steps necessary to create, configure, build,
+and run a case. The following assumes that $CCSMROOT is /user/ccsmroot.
+</para>
+
+<orderedlist>
+
+<listitem>
+<para> Create a new case named b40.B2000 in the ~/cesm1 directory. Use a
+present-day control compset at 1-degree resolution on bluefire. </para>
+<screen>
+> cd /user/ccsmroot
+> create_newcase -case ~/cesm1/b40.B2000 \
+                 -compset B_2000 \
+                 -res 0.9x1.25_gx1v6 \
+                 -mach bluefire 
+</screen>
+</listitem>
+
+<listitem>
+<para> Go to the $&CASEROOT; directory.  Edit &env_mach_pes.xml; if a
+different pe-layout is desired first. Then configure and build the
+case. </para>
+<screen>
+> cd ~/cesm1/b40.B2000
+> ./configure -case
+> b40.B200.bluefire.build
+</screen>
+</listitem>
+
+<listitem>
+<para>Create a production test.  Go to the test directory. Build the
+test first, then run the test and check the TestStatus (the first word
+should be PASS).</para>
+<screen>
+> ./create_production_test
+> cd ../b40.B2000_ERT
+> b40.B2000_ERT.bluefire.build
+> bsub < b40.B2000_ERT.bluefire.test
+> cat TestStatus 
+</screen>
+</listitem>
+
+<listitem>
+<para>Go back to the case directory, set the job to run 12 model
+months, use an editor to change the time limit in the run file to
+accommodate a 12-month run, and submit the job.</para>
+<screen>
+> cd ../b40.B2000
+> xmlchange -file env_run.xml -id STOP_OPTION -val nmonths
+> xmlchange -file env_run.xml -id STOP_N -val 12
+> # use an editor to change b40.B2000.bluefire.run "#BSUB -W 1:30" to "#BSUB -W 6:00"
+> bsub < b40.B2000.bluefire.run
+</screen>
+</listitem>
+
+<listitem>
+<para>
+Make sure the run succeeded.
+</para>
+<screen>
+> grep "SUCCESSFUL TERMINATION" poe.stdout.*
+</screen>
+</listitem>
+
+<listitem>
+<para>
+Set it to resubmit itself 10 times so that it will run a total of 11
+years (including the initial year), and resubmit the case. (Note that
+a resubmit will automatically change the run to be a continuation run).
+</para>
+<screen>
+> xmlchange -file env_run.xml -id RESUBMIT -val 10
+> bsub < b40.B2000.bluefire.run
+
+</screen>
+</listitem>
+
+</orderedlist>
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="use_case_branch">
+<title>Setting up a branch or hybrid run </title>
+
+<para>
+The section <link linkend="runtype_env">setting the case
+initialization</link> discussed starting a new case as a branch run or
+hybrid run by using data from a previous run. First you need to create
+a new case. Assume that $&CCSMROOT; is set to /user/ccsmroot and that
+$&EXEROOT; is <filename>/ptmp/$user/b40.B2000p</filename>. Finally,
+assume that the branch or hybrid run is being carried out on NCAR's
+IBM system, bluefire.
+</para>
+
+<screen>
+> cd /user/ccsmroot/scripts
+> create_newcase -case ~/cesm1/b40.B2000p \
+                 -compset B_2000 \ 
+                 -res 0.9x1.25_gx1v6 \
+                 -mach bluefire 
+> cd ~/cesm1/b40.B2000p
+</screen>
+
+<para> For a branch run, modify &env_conf.xml; to branch from
+b40.B2000 at year 0001-02-01.  </para>
+<screen>
+> xmlchange -file env_conf.xml -id RUN_TYPE    -val branch
+> xmlchange -file env_conf.xml -id RUN_REFCASE -val b40.B2000
+> xmlchange -file env_conf.xml -id RUN_REFDATE -val 0001-02-01
+</screen>
+
+<para> For a hybrid run, modify &env_conf.xml; to start up from
+b40.B2000 at year 0001-02-01.  </para>
+<screen>
+> xmlchange -file env_conf.xml -id RUN_TYPE    -val hybrid
+> xmlchange -file env_conf.xml -id RUN_REFCASE -val b40.B2000
+> xmlchange -file env_conf.xml -id RUN_REFDATE -val 0001-02-01
+</screen>
+
+<para> For a branch run, &env_conf.xml; for b40.B2000p should be
+identical to b40.B2000, except for the $RUN_TYPE setting. In
+addition, any modifications introduced into
+<filename>~/cesm1/b40.B2000/Buildconf/$component.buildnml.csh</filename>,
+should be re-introduced into b40.B2000p.</para>
+
+<para> Configure and build the case executable.</para>
+<screen>
+> configure -case 
+> b40.B200p.bluefire.build
+</screen>
+
+<para> Prestage the necessary restart/initial data in $RUNROOT
+(assumed to be <filename>/ptmp/$user/b40.B2000p/run</filename>). Note
+that <filename>/ptmp/$user/b40.B2000p/run</filename> was created
+during the build. Assume that the restart/initial data is on the NCAR
+mass store.</para>
+<screen>
+> cd /ptmp/$user/b40.B2000br/run
+> msrcp "mss:/CCSM/csm/b40.B2000/rest/0001-02-01-00000/*" .
+</screen>
+
+<para>It is assumed that you already have a valid load-balanced scenario.
+Go back to the case directory, set the job to run 12 model months, use an
+editor to change the time limit in the run file to accommodate a 12-month
+run, then submit the job.</para>
+<screen>
+> ~/cesm1/b40.B2000p
+> xmlchange -file env_run.xml -id STOP_OPTION -val nmonths
+> xmlchange -file env_run.xml -id STOP_N -val 12
+> # use an editor to change b40.B2000.bluefire.run "#BSUB -W 1:30" to "#BSUB -W 6:00"
+> bsub < b40.B2000p.bluefire.run
+</screen>
+
+<para> Verify that the run succeeded.</para>
+<screen>
+> grep "SUCCESSFUL TERMINATION" poe.stdout.*
+</screen>
+
+<para> Change the run to a continuation run. Set it to resubmit itself
+10 times so that it will run a total of 11 years (including the
+initial year), then resubmit the case.
+</para>
+<screen>
+> xmlchange -file env_run.xml -id CONTINUE_RUN -val TRUE
+> xmlchange -file env_run.xml -id RESUMIT -val 10
+> bsub < b40.B2000p.bluefire.run
+</screen>
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="use_case_pelayout">
+<title>Changing PE layout </title>
+
+<para>
+This example modifies the PE layout for our original run, b40.B2000. We
+now target the model to run on the jaguar supercomputer and modify our
+PE layout to use a common load balance configuration for CESM on large
+CRAY XT5 machines.
+</para>
+
+<para>
+In our original example, b40.B2000, we used 128 pes with each
+component running sequentially over the entire set of processors.
+</para>
+
+<screenshot>
+<screeninfo>Original layout of b40.B2000</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="128pe_layout.jpg" format="JPEG"/></imageobject>
+<caption>
+<para>128-pes/128-tasks layout</para>
+</caption>
+</mediaobject>
+</screenshot>
+
+<para>
+Now we change the layout to use 1728 processors and run the ice, lnd,
+and cpl models concurrently on the same processors as the atm model
+while the ocean model will run on its own set of processors.  The atm
+model will be run on 1664 pes using 832 MPI tasks each threaded 2 ways 
+and starting on global MPI task 0.  The ice model is run using 320 MPI
+tasks starting on global MPI task 0, but not threaded.   The lnd model
+is run on 384 processors using 192 MPI tasks each threaded 2 ways
+ starting at global MPI task 320 and the coupler is run on 320 processors
+using 320 MPI tasks starting at global MPI task 512.  The ocn model uses
+64 MPI tasks starting at global MPI task 832. 
+</para>
+
+<screenshot>
+<screeninfo>New layout of b40.B2000</screeninfo>
+<mediaobject>
+<imageobject><imagedata fileref="896pe_layout.jpg" format="JPEG"/></imageobject>
+<caption>
+<para>1728-pes/896-tasks layout</para>
+</caption>
+</mediaobject>
+</screenshot>
+
+<para>
+Since we will be modifying &env_mach_pes.xml; after
+<filename>configure</filename> was invoked, the following
+needs to be invoked:
+</para>
+
+<screen>
+> configure -cleanmach
+> xmlchange -file env_mach_pes.xml -id NTASKS_ATM -val 832
+> xmlchange -file env_mach_pes.xml -id NTHRDS_ATM -val 2
+> xmlchange -file env_mach_pes.xml -id ROOTPE_ATM -val 0
+> xmlchange -file env_mach_pes.xml -id NTASKS_ICE -val 320
+> xmlchange -file env_mach_pes.xml -id NTHRDS_ICE -val 1
+> xmlchange -file env_mach_pes.xml -id ROOTPE_ICE -val 0
+> xmlchange -file env_mach_pes.xml -id NTASKS_LND -val 192
+> xmlchange -file env_mach_pes.xml -id NTHRDS_LND -val 2
+> xmlchange -file env_mach_pes.xml -id ROOTPE_LND -val 320
+> xmlchange -file env_mach_pes.xml -id NTASKS_CPL -val 320
+> xmlchange -file env_mach_pes.xml -id NTHRDS_CPL -val 1
+> xmlchange -file env_mach_pes.xml -id ROOTPE_CPL -val 512
+> xmlchange -file env_mach_pes.xml -id NTASKS_OCN -val 64
+> xmlchange -file env_mach_pes.xml -id NTHRDS_OCN -val 1
+> xmlchange -file env_mach_pes.xml -id ROOTPE_OCN -val 832
+> configure -mach
+</screen>
+
+<para>
+Note that since env_mach_pes.xml has changed, the model has to be reconfigured and rebuilt.
+</para>
+
+<para> It is interesting to compare the timings from the 128- and
+1728-processor runs. The timing output below shows that the original model
+run on 128 pes cost 851 pe-hours/simulated_year. Running on 1728 pes,
+the model cost more than 5 times as much, but it runs more than two and
+a half times faster.
+</para>
+
+<screen>
+128-processor case:
+Overall Metrics:
+Model Cost: 851.05 pe-hrs/simulated_year (scale= 1.00)
+Model Throughput: 3.61 simulated_years/day
+
+1728-processor case:
+Overall Metrics:
+Model Cost: 4439.16 pe-hrs/simulated_year (scale= 1.00)
+Model Throughput: 9.34 simulated_years/day
+</screen>
+
+<para>
+See <link linkend="running_ccsm_loadbalance">understanding load
+balancing CESM</link> for detailed information on understanding timing
+files.
+</para>
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="use_case_camout">
+<title>Setting CAM output fields </title>
+
+<para>
+In this example, we further modify our b40.B2000p code to set various
+CAM output fields. The variables that we set are listed below. See 
+<ulink url="http://www.cesm.ucar.edu/cgi-bin/eaton/namelist/nldef2html-pub/">CAM Namelist Variables</ulink> for a complete list of CAM namelist variables.
+</para>
+
+<variablelist>
+<varlistentry><term><option>avgflag_pertape</option></term>
+<listitem>
+<para>
+Sets the averaging flag for all variables on a particular history
+file series. Default is to use default averaging flags for each
+variable. Average (A), Instantaneous (I), Maximum (X), and Minimum (M).  
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>nhtfrq</option></term>
+<listitem>
+<para>
+Array of write frequencies for each history files series. 
+</para><para>
+When NHTFRQ(1) = 0, the file will be a monthly average. Only the first
+file series may be a monthly average.
+</para><para>
+When NHTFRQ(i) > 0, frequency is input as number of timesteps. 
+</para><para>
+When NHTFRQ(i) < 0, frequency is input as number of hours.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>mfilt</option></term>
+<listitem>
+<para>
+Array of number of time samples to write to each history file series
+(a time sample is the history output from a given timestep).  
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>ndens</option></term>
+<listitem>
+<para>
+Array specifying output format for each history file series.  Valid values are 1 or 2. '1' implies output real values are 8-byte and '2' implies output real values are 4-byte. Default: 2,2,2,2,2,2
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>fincl1 = 'field1', 'field2', ...</option></term>
+<listitem>
+<para>
+List of fields to add to the primary history file. 
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>fincl[2..6] = 'field1', 'field2', ...</option></term>
+<listitem>
+<para>
+List of fields to add to the auxiliary history file. 
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>fexcl1 = 'field1', 'field2', ...</option></term>
+<listitem>
+<para>
+List of field names to exclude from the default primary history file (default fields on the Master Field List). 
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>fexcl[2..6] = 'field1', 'field2',... </option></term>
+<listitem>
+<para>
+List of the field names to exclude from the auxiliary history files.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>In the <filename>$CASEROOT/Buildconf/cam.buildnml.csh</filename>
+file, namelists are delineated with an ampersand followed by the
+namelist's name. Namelists end with a slash. For example, the first
+namelist might look like this:</para>
+
+<screen>
+&amp; phys_ctl_nl
+atm_dep_flux   = .false.
+deep_scheme    = 'ZM'
+eddy_scheme    = 'HB'
+microp_scheme  = 'RK'
+shallow_scheme = 'Hack'
+srf_flux_avg = 0
+/
+</screen>
+
+<para>Just before the ending slash for the cam_inparm namelist, add the
+following lines:</para>
+
+<screen>
+avgflag_pertape = 'A','I'
+nhtfrq = 0 ,-6
+mfilt  = 1 , 30
+ndens  = 2 , 2
+fincl1 = 'FSN200','FSN200C','FLN200',
+         'FLN200C','QFLX','PRECTMX:X','TREFMXAV:X','TREFMNAV:M',
+         'TSMN:M','TSMX:X'
+fincl2 = 'T','Z3','U','V','PSL','PS','TS','PHIS'
+</screen>
+
+<para><emphasis>avgflag_pertape</emphasis> specifies how the output data
+will be averaged.  In the first output file,
+<filename>b40.2000p.cam2.h0.yyyy-mm.nc</filename>, data will be
+averaged monthly. In the second output file,
+<filename>b40.2000p.cam2.h1.yyyy-mm-dd.nc</filename>, data will be
+instantaneous.</para>
+
+<para><emphasis>nhtfrq</emphasis> sets the frequency of data writes,
+so <filename>b40.2000p.cam2.h0.yyyy-mm.nc</filename> will be written
+as a monthly average, while
+<filename>b40.2000p.cam2.h1.yyyy-mm-dd.nc</filename> will contain time
+slices that are written every 6 hours.</para>
+
+<para><emphasis>mfilt</emphasis> sets the model to write one time sample in
+<filename>b40.2000p.cam2.h0.yyyy-mm.nc</filename> and 30 time samples in
+<filename>b40.2000p.cam2.h1.yyyy-mm-dd.nc</filename>.</para>
+
+<para><emphasis>ndens</emphasis> sets both files to have 32-bit netCDF
+format output files.</para>
+
+<para>
+<emphasis>fincl1</emphasis> sets the output fields for
+b40.2000p.cam2.h0.yyyy-mm.nc. A complete list of the CAM output fields
+appears here. In this example, we've asked for more variables
+than will fit on a Fortran line. As you can see, it is all right to
+split variable lists across lines. Also in this example, we've asked
+for maximum values of TREFMXAV and TSM, and minimum values of TREFMNAV
+and TSMN.</para>
+
+<para><emphasis>fincl2</emphasis> sets the output fields for
+b40.2000p.cam2.h1.yyyy-mm-dd.nc, much the same as fincl1 sets output
+fields for b40.2000p.cam2.h0.yyyy-mm.nc, only in this case, we are
+asking for instantaneous values rather than averaged values, and
+choosing different output fields.</para>
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="use_case_camforc">
+<title>Setting CAM forcings </title>
+
+<para>
+To set the greenhouse gas forcings, we must first understand the
+namelist variables associated with them.  See
+<ulink url="http://www.cesm.ucar.edu/cgi-bin/eaton/namelist/nldef2html-pub/">CAM Namelist Variables</ulink> for a complete list of CAM namelist variables. 
+</para>
+
+<variablelist>
+<varlistentry><term><option>scenario_ghg </option></term>
+<listitem>
+<para>
+Controls treatment of prescribed co2, ch4, n2o, cfc11, cfc12 volume mixing
+ratios.  May be set to 'FIXED' or 'RAMPED' or 'RAMP_CO2_ONLY'.
+</para><para>
+FIXED => volume mixing ratios are fixed and have either default or namelist
+         input values.
+</para><para>
+RAMPED => volume mixing ratios are time interpolated from the dataset
+          specified by bndtvghg.
+</para><para>
+RAMP_CO2_ONLY => only co2 mixing ratios are ramped at a rate determined by
+                 the variables ramp_co2_annual_rate, ramp_co2_cap,
+                 and ramp_co2_start_ymd.
+</para><para>
+Default: FIXED
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>bndtvghg </option></term>
+<listitem>
+<para>
+Full pathname of time-variant boundary dataset for greenhouse gas surface
+values.
+Default: set by build-namelist.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><option>rampyear_ghg </option></term>
+<listitem>
+<para>
+If scenario_ghg is set to "RAMPED" then the greenhouse
+gas surface values are interpolated between the annual average values 
+read from the file specified by bndtvghg.
+In that case, the value of this variable (> 0) fixes the year of the
+lower bounding value (i.e., the value for calendar day 1.0) used in the
+interpolation.  For example, if rampyear_ghg = 1950, then the GHG surface
+values will be the result of interpolating between the values for 1950 and
+1951 from the dataset.
+Default: 0
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+<para>
+To set the following variables to their associated values, edit
+$CASEROOT/Buildconf/cam.buildnml.csh and add the following to the
+cam_inparm namelist:
+</para>
+
+<screen>
+scenario_ghg = 'RAMPED'
+bndtvghg = '$DIN_LOC_ROOT/atm/cam/ggas/ghg_hist_1765-2005_c091218.nc'
+rampyear_ghg = 2000
+</screen>
+
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="use_case_popinit">
+<title>Initializing the ocean model with a spun-up initial condition </title>
+
+<para>
+The recommended method for initializing the CESM active ocean model
+(pop2) in a CESM startup case is to use the default settings; these
+initialize the ocean model from a state of rest. Occasionally,
+however, researchers are interested in initializing the ocean model
+from a "spun up" ocean condition that was generated from an existing
+CESM run. To accommodate their request, a nonstandard method of
+initializing the model was developed. It is called the startup_spunup
+option. The startup_spunup initialization is a research option that is
+designed for use by expert users only.
+</para>
+
+<para>
+Because of the complex interactions between the ocean-model
+parameterizations used to generate the spun-up case, $CASE_SP, and
+those used in the new startup case, it is impossible to provide a
+single recommended spun-up ocean initial condition for all
+cases. Instead, researchers must carefully select an existing solution
+whose case conditions closely match those in the new case. A mismatch
+of options between the spun-up case and the new case can result in
+scientifically invalid solutions.
+</para>
+
+<para>
+When a startup_spunup case is necessary, use this procedure:
+</para>
+
+<orderedlist>
+<listitem>
+<para>
+Create a new case, $CASE. By default, $CASE will be a
+"startup run."
+</para>
+<screen>
+> create_newcase -case ~/cesm1/b40.B2000ocn \
+                 -mach bluefire \
+                 -compset B20TR \ 
+                 -res 0.9x1.25_gx1v6 
+> cd ~/cesm1/b40.B2000ocn
+> configure -case
+</screen>
+</listitem>
+
+<listitem>
+<para>Specify the startup_spunup option in the pop2_in namelist file by editing the 
+$CASE/Buildconf/pop2.buildnml.csh script.  Find the namelist init_ts_nml and change</para> 
+<para><literal>set init_ts_suboption = 'null'</literal> to</para> 
+<para><literal>set init_ts_suboption = 'spunup'.</literal></para>  
+</listitem>
+</orderedlist>
+
+<orderedlist continuation="continues">
+<listitem>
+<para>The ocean restart filename is of the form ${CASE_SP}.pop.r.$date,
+where $date is the model date of your spun-up dataset. If the ocean
+restart files were written in binary format, a companion
+ascii-formatted restart "header" file will also exist. The companion 
+header file will have the same name as the restart file, except that it
+will have the suffix ".hdr" appended at the end of the filename.  You must copy
+both the binary restart file and the header file to your data
+directory.</para>
+</listitem>
+
+<listitem>
+<para>The spun-up ocean restart and restart header files must be available 
+to your new case.  Copy them directly into $RUNDIR. It is critically
+important to copy both the binary restart file and its companion header
+file to the $RUNDIR.</para> 
+<screen>
+> cp ${CASE_SP}.pop.r.$date       $RUNDIR 
+> cp ${CASE_SP}.pop.r.${date}.hdr $RUNDIR
+</screen>
+</listitem>
+
+<listitem>
+<para> Redefine the ocean-model initial-condition dataset by editing 
+$CASE/Buildconf/pop2.buildnml.csh.  Go to the pop2_in namelist section
+and edit the init_ts_nml namelist variable init_ts_file.  Change</para>
+<para><literal>set init_ts_file = '$init_ts_filename'</literal> to</para>
+<para><literal>set init_ts_file = '${CASE_SP}.pop.r.$date'</literal></para>
+<para>Note that the model will automatically look for the ${CASE_SP}.pop.r.${date}.hdr file in 
+$RUNDIR.</para>  
+</listitem>
+
+<listitem>
+<para>Build and run as usual.</para>
+</listitem>
+
+</orderedlist>
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="use_case_takeover">
+<title>Taking a run over from another user</title>
+
+<para>
+If you ever a need to take over a production run from another user,
+follow this procedure:
+</para>
+
+<orderedlist>
+<listitem>
+<para> Create a clone of the production case. The case name
+needs to be the same, but the new filepath needs to be different.
+</para>
+<screen>
+> $CCSMROOT/scripts/create_clone -clone $CASEROOT -case $NEWCASEROOT
+</screen>
+</listitem>
+
+<listitem>
+<para>
+Configure the case for the new user:
+</para>
+<screen>
+> cd $NEWCASEROOT
+> configure -case
+</screen>
+</listitem>
+
+<listitem>
+<para>
+Rebuild for the new user:
+</para>
+<screen>
+> ./$CASE.$MACH.build
+</screen>
+</listitem>
+
+<listitem>
+<para>
+Copy the restart and rpointer files from the original run directory:
+</para>
+<screen>
+> cp $CASEROOT/run/$CASE* $NEWCASEROOT/run/.
+> cp $CASEROOT/run/rpointer* $NEWCASEROOT/run/.
+</screen>
+</listitem>
+
+<listitem>
+<para>
+Copy the archive directory contents:
+</para>
+<screen>
+> cp $ORIGDIR/archive/$CASE $NEWDIR/archive/$CASE
+</screen>
+</listitem>
+
+<listitem>
+<para>
+Submit the run:
+</para>
+<screen>
+> bsub < $CASE.$MACH.run
+</screen>
+</listitem>
+</orderedlist>
+
+<para>Here is an example:</para>
+<screen>
+> $CCSMROOT/scripts/create_clone -clone /user/b40.1850 -case /newuser/b40.B2000
+> cd /newuser/b40.B2000
+> configure -case
+> ./b40.B2000.bluefire.build
+> cp /user/b40.B2000/run/b40.B2000* /newuser/b40.B2000/run/.
+> cp /user/b40.B2000/run/rpointer* /newuser/b40.B2000/run/.
+> cp -r /ptmp/user/archive/b40.B2000/* /ptmp/newuser/archive/b40.B2000/.
+> bsub < b40.B2000.bluefire.run
+</screen>
+</sect1>
+
+<!-- ======================================================================= -->
+<sect1 id="use_case_esmfint">
+<title>Use of an ESMF library and ESMF interfaces</title>
+
+<para>
+CESM supports use of either the CCSM4/CESM1 designed component interfaces
+which is based on MCT datatypes and are used by default in CESM
+or ESMF compliant component interfaces.  In both cases, the driver and
+component models remain fundamentally the same.  The ESMF interface
+implementation exists in CESM to support further development and testing of
+an ESMF driver or ESMF couplers and to allow CESM model components to interact
+with other coupled systems using ESMF coupling standards.  The ESMF implementation
+in CESM1 has been tested with ESMF version 4.0.0rp2. 
+</para>
+
+<para>
+ESMF is NOT required or provided by CESM1.  It must be <ulink 
+url="http://www.earthsystemmodeling.org/download/index.shtml">downloaded</ulink>
+and installed separately.   It is safest to compile ESMF and CESM with identical
+compilers and mpi versions. It may be possible to use versions that are
+different but compatible; however, it is hard to predict which versions will
+be compatible and using different versions can result in problems that are
+difficult to track down. 
+</para>
+
+<para>
+There are three possible modes of interaction between CESM and ESMF.
+<orderedlist>
+<listitem><para> No linking to an external ESMF library. CESM uses a native implementation
+of ESMF timekeeping interfaces (default).
+</para>
+<para>
+To run with the MCT interfaces and the native time manager, set the following env variables
+<screen>
+- cd to your case directory
+- edit env_build.xml
+  - set COMP_INTERFACE to "MCT"
+  - set USE_ESMF_LIB to "FALSE"
+</screen>
+</para>
+</listitem>
+
+<listitem><para> Linking with an ESMF library to use the ESMF time manager but continued
+use of the native CESM component interfaces.
+</para>
+<para>
+To run with the native interfaces and ESMF time manager, set the following env variables
+<screen>
+- cd to your case directory
+- edit env_build.xml
+  - set COMP_INTERFACE to "MCT"
+  - set USE_ESMF_LIB to "TRUE"
+  - set ESMF_LIBDIR to a valid installation directory of ESMF version 4.0.0rp2 
+</screen>
+</para>
+</listitem>
+
+<listitem><para> Linking with an ESMF library in order to use ESMF component interfaces.
+In this mode ESMF timekeeping is also activated.</para>
+<para>
+To run with the ESMF interfaces and ESMF time manager, set the following env variables
+<screen>
+- cd to your case directory
+- edit env_build.xml
+  - set COMP_INTERFACE to "ESMF"
+  - set USE_ESMF_LIB to "TRUE"
+  - set ESMF_LIBDIR to a valid installation directory of ESMF version 4.0.0rp2 
+</screen>
+</para>
+</listitem>
+</orderedlist>
+</para>
+
+<para>
+The ESMF library can be activated in two ways in CCSM.  The primary way is
+via the ESMF_LIBDIR env variable in the env_build.xml file described above.
+The secondary way is via a system environment variable called ESMFMKFILE.
+If this environment variable is set either through a system or module command,
+then the ESMF library will be picked up by the CCSM scripts, but the
+local CCSM variable, ESMF_LIBDIR, will always have precedence.
+</para>
+
+<para>
+To verify the correctness of the ESMF component interfaces in CESM, compute and compare CESM 
+global integrals with identical runs differing only in the use of the MCT and ESMF interfaces.  
+In both cases, the ESMF library should be active to guarantee identical time manager values.
+In both runs, the 'INFO_DBUG' parameter in env_run.xml should be set to 2 which activates the
+global integral diagnostics.  A valid comparison would be a 10 day test from the same initial
+conditions.  The global integrals produced in the cpl log file should be identical in both cases.
+This test can be setup manually as described above or a CME test can be carried out which
+is designed to test this exact capability.
+</para>
+
+</sect1>
+
+</chapter>
+

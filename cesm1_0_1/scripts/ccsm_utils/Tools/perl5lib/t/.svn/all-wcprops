@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t
+END
+datm.streams.txt
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/datm.streams.txt
+END
+ConfigInfo.xml
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/ConfigInfo.xml
+END
+01.t
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/01.t
+END
+namelist_defaults_cam.xml
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/namelist_defaults_cam.xml
+END
+02.t
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/02.t
+END
+03.t
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/03.t
+END
+04.t
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/04.t
+END
+config_cache.xml
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/config_cache.xml
+END
+debug.t
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/debug.t
+END
+config_setup_eul.xml
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/config_setup_eul.xml
+END
+namelist_defaults_clm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/namelist_defaults_clm.xml
+END
+output_test_namelist.nl
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/output_test_namelist.nl
+END
+namelist_definition_cam.xml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/namelist_definition_cam.xml
+END
+datm.ymd.streams.txt
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/datm.ymd.streams.txt
+END
+datm.template.streams.xml
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/datm.template.streams.xml
+END
+config_definition.xml
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/config_definition.xml
+END
+namelist_defaults_usr_files.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/namelist_defaults_usr_files.xml
+END
+namelist_definition_clm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/ccsm_utils/Tools/perl5lib/t/namelist_definition_clm.xml
+END

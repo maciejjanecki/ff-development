@@ -1,0 +1,13 @@
+&camexp
+ restart_option='nsteps'
+ restart_n=3
+ mfilt=1,1,1,1,1,1
+ ndens=1,1,1,1,1,1
+ nhtfrq=3,3,3,3,3,3
+ scenario_ghg='RAMPED'
+ start_tod=82800 
+ start_ymd=19671231 
+ fincl2 = 'PS', 'T', 'U', 'V'
+ fincl2lonlat = '10e:20e_15n:20n','112w_45s'
+
+ /

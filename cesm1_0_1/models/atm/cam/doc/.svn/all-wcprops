@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/doc
+END
+ChangeLog_template
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/doc/ChangeLog_template
+END
+ChangeLog
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/doc/ChangeLog
+END

@@ -1,0 +1,15 @@
+<appendix id="supported_grids">
+<title>Supported Grids</title>
+
+<para>
+The following table lists all the supported grids. 
+Run "create_newcase -list" from the scripts directory to view the
+list for the current version of CESM1.
+ </para>
+
+&grids_list;
+
+</appendix>
+
+
+

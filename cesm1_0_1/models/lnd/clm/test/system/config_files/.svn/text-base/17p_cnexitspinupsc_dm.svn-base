@@ -1,0 +1,7 @@
+-mode ccsm_seq
+-spmd -nosmp
+-exit_spinup on
+-debug
+-maxpft numpft+1
+-bgc cn
+-s

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<config_definition>
+
+<entry id="dyn"       value="fv"                />
+<entry id="hgrid"     value="10x15"             />
+<entry id="chem"      value="trop_mam7" />
+<entry id="cppdefs"   value="-DDUST -DPROGSSLT -DMODAL_AERO -DMODAL_AERO_7MODE" />
+
+</config_definition>

@@ -1,0 +1,221 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system
+END
+TCB.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TCB.sh
+END
+tests_pretag_bluefire
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_pretag_bluefire
+END
+tests_pretag_bluefire_nompi
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_pretag_bluefire_nompi
+END
+TSMncl_tools.sh
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TSMncl_tools.sh
+END
+tests_posttag_spot1
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_posttag_spot1
+END
+TBL.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TBL.sh
+END
+CLM_compare.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/CLM_compare.sh
+END
+tests_pretag_edinburgh
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_pretag_edinburgh
+END
+tests_pretag_jaguar
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_pretag_jaguar
+END
+tests_pretag_edinburgh_nompi
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_pretag_edinburgh_nompi
+END
+tests_posttag_kraken
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_posttag_kraken
+END
+tests_pretag_jaguar_nompi
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_pretag_jaguar_nompi
+END
+README.testnames
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/README.testnames
+END
+tests_posttag_breeze
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_posttag_breeze
+END
+TBR.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TBR.sh
+END
+TCBtools.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TCBtools.sh
+END
+test_driver.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/test_driver.sh
+END
+TER.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TER.sh
+END
+tests_posttag_hybrid_regression
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_posttag_hybrid_regression
+END
+mknamelist
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/mknamelist
+END
+tests_posttag_purempi_regression
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_posttag_purempi_regression
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/Makefile
+END
+TRP.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TRP.sh
+END
+TSMscript_tools.sh
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TSMscript_tools.sh
+END
+gen_test_table.sh
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/gen_test_table.sh
+END
+TSMpergro.sh
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TSMpergro.sh
+END
+TSMcnspinup.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TSMcnspinup.sh
+END
+input_tests_master
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/input_tests_master
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/README
+END
+TSMtools.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TSMtools.sh
+END
+tests_posttag_intrepid
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_posttag_intrepid
+END
+tests_posttag_intrepid_nompi
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_posttag_intrepid_nompi
+END
+tests_posttag_nompi_regression
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/tests_posttag_nompi_regression
+END
+CLM_runcmnd.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/CLM_runcmnd.sh
+END
+TBLtools.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TBLtools.sh
+END
+TSM.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/lnd/clm/test/system/TSM.sh
+END

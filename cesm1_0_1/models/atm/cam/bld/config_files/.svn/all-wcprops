@@ -1,0 +1,107 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files
+END
+defaults_super_fast_llnl.xml
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_super_fast_llnl.xml
+END
+definition.xml
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/definition.xml
+END
+defaults_trop_mam3.xml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_trop_mam3.xml
+END
+defaults_trop_bam.xml
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_trop_bam.xml
+END
+defaults_trop_mam7.xml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_trop_mam7.xml
+END
+defaults_homme.xml
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_homme.xml
+END
+definition.xsl
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/definition.xsl
+END
+horiz_grid.xml
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/horiz_grid.xml
+END
+defaults_trop_ghg.xml
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_trop_ghg.xml
+END
+defaults_super_fast_llnl_mam3.xml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_super_fast_llnl_mam3.xml
+END
+defaults_fv.xml
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_fv.xml
+END
+sys_defaults.xml
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/sys_defaults.xml
+END
+defaults_waccm_ghg.xml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_waccm_ghg.xml
+END
+defaults_trop_mozart.xml
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_trop_mozart.xml
+END
+defaults_sld.xml
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_sld.xml
+END
+defaults_eul.xml
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_eul.xml
+END
+defaults_waccm_mozart.xml
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/config_files/defaults_waccm_mozart.xml
+END

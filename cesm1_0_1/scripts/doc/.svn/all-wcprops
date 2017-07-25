@@ -1,0 +1,233 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc
+END
+rundocbook.csh
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/rundocbook.csh
+END
+896pe_layout.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/896pe_layout.jpg
+END
+grid_descriptions.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/grid_descriptions.jpg
+END
+env_build_list.xml
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/env_build_list.xml
+END
+grids_list.xml
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/grids_list.xml
+END
+tripolegrid.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/tripolegrid.jpg
+END
+stylesheet.dsl
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/stylesheet.dsl
+END
+ug.xml
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/ug.xml
+END
+128pe_layout.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/128pe_layout.jpg
+END
+pe_layout.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/pe_layout.jpg
+END
+machines_list.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/machines_list.xml
+END
+env_mach_pes_list.xml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/env_mach_pes_list.xml
+END
+compsets_list.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/compsets_list.xml
+END
+env_conf_list.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/env_conf_list.xml
+END
+write_docbook_file
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/write_docbook_file
+END
+chap1.xml
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/chap1.xml
+END
+chap2.xml
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/chap2.xml
+END
+chap3.xml
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/chap3.xml
+END
+chap4.xml
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/chap4.xml
+END
+chap5.xml
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/chap5.xml
+END
+app1.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/app1.xml
+END
+chap5a.xml
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/chap5a.xml
+END
+chap6.xml
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/chap6.xml
+END
+app2.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/app2.xml
+END
+chap7.xml
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/chap7.xml
+END
+app3.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/app3.xml
+END
+glossary.xml
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/glossary.xml
+END
+greenland_pole_grid.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/greenland_pole_grid.jpg
+END
+chap8.xml
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/chap8.xml
+END
+app4.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/app4.xml
+END
+chap9.xml
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/chap9.xml
+END
+app5.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/app5.xml
+END
+app6.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/app6.xml
+END
+bookinfo.xml
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/bookinfo.xml
+END
+env_run_list.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/env_run_list.xml
+END
+app7.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/app7.xml
+END
+app8.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/app8.xml
+END
+env_case_list.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/scripts/doc/env_case_list.xml
+END

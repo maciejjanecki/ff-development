@@ -1,0 +1,128 @@
+<informaltable>
+<tgroup cols="2">
+<thead>
+<row>
+<entry>Name</entry>
+<entry>Description</entry>
+</row>
+</thead>
+<tbody>
+ <row>
+ <entry>bluefire</entry>
+ <entry>NCAR IBM p6, os is AIX, 32 pes/node, batch system is LSF</entry>
+ </row>
+ <row>
+ <entry>brutus_po</entry>
+ <entry>Brutus Linux Cluster ETH (pgi/9.0-1 with open_mpi/1.4.1), 16 pes/node, batch system LSF, added by UB</entry>
+ </row>
+ <row>
+ <entry>brutus_pm</entry>
+ <entry>Brutus Linux Cluster ETH (pgi/9.0-1 with mvapich2/1.4rc2), 16 pes/node, batch system LSF, added by UB</entry>
+ </row>
+ <row>
+ <entry>brutus_io</entry>
+ <entry>Brutus Linux Cluster ETH (intel/10.1.018 with open_mpi/1.4.1), 16 pes/node, batch system LSF, added by UB</entry>
+ </row>
+ <row>
+ <entry>brutus_im</entry>
+ <entry>Brutus Linux Cluster ETH (intel/10.1.018 with mvapich2/1.4rc2), 16 pes/node, batch system LSF, added by UB</entry>
+ </row>
+ <row>
+ <entry>edinburgh_lahey</entry>
+ <entry>NCAR CGD Linux Cluster (lahey), 8 pes/node, batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>edinburgh_pgi</entry>
+ <entry>NCAR CGD Linux Cluster (pgi), 8 pes/node, batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>edinburgh_intel</entry>
+ <entry>NCAR CGD Linux Cluster (intel), 8 pes/node, batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>franklin</entry>
+ <entry>NERSC XT4, os is CNL, 4 pes/node, batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>hadley</entry>
+ <entry>UCB Linux Cluster, os is Linux (ia64), batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>hopper</entry>
+ <entry>NERSC XT5, os is CNL, 8 pes/node, batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>intrepid</entry>
+ <entry>ANL IBM BG/P, os is BGP, 4 pes/node, batch system is cobalt</entry>
+ </row>
+ <row>
+ <entry>jaguar</entry>
+ <entry>ORNL XT4, os is CNL, 4 pes/node, batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>jaguarpf</entry>
+ <entry>ORNL XT5, os is CNL, 12 pes/node, batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>kraken</entry>
+ <entry>NICS/UT/teragrid XT5, os is CNL, 12 pes/node</entry>
+ </row>
+ <row>
+ <entry>midnight</entry>
+ <entry>ARSC Sun Cluster, os is Linux (pgi), batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>prototype_atlas</entry>
+ <entry>LLNL Linux Cluster, Linux (pgi), 8 pes/node, batch system is Moab</entry>
+ </row>
+ <row>
+ <entry>prototype_columbia</entry>
+ <entry>NASA Ames Linux Cluster, Linux (ia64), 2 pes/node, batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>prototype_frost</entry>
+ <entry>NCAR IBM BG/L, os is BGL, 8 pes/node, batch system is cobalt</entry>
+ </row>
+ <row>
+ <entry>prototype_nyblue</entry>
+ <entry>SUNY IBM BG/L, os is BGL, 8 pes/node, batch system is cobalt</entry>
+ </row>
+ <row>
+ <entry>prototype_ranger</entry>
+ <entry>TACC Linux Cluster, Linux (pgi), 1 pes/node, batch system is SGE</entry>
+ </row>
+ <row>
+ <entry>prototype_schirra</entry>
+ <entry>NAS (NASA) IBM p5+, os is AIX, 2 pes/node, batch system is PBS</entry>
+ </row>
+ <row>
+ <entry>prototype_ubgl</entry>
+ <entry>LLNL IBM BG/L, os is BGL, 2 pes/node, batch system is Moab</entry>
+ </row>
+ <row>
+ <entry>generic_ibm</entry>
+ <entry>generic ibm power system, os is AIX, batch system is LoadLeveler, user-defined</entry>
+ </row>
+ <row>
+ <entry>generic_xt</entry>
+ <entry>generic CRAY XT, os is CNL, batch system is PBS, user-defined</entry>
+ </row>
+ <row>
+ <entry>generic_linux_pgi</entry>
+ <entry>generic linux (pgi), os is Linux, batch system is PBS, user-defined</entry>
+ </row>
+ <row>
+ <entry>generic_linux_lahey</entry>
+ <entry>generic linux (lahey), os is Linux, batch system is PBS, user-defined</entry>
+ </row>
+ <row>
+ <entry>generic_linux_intel</entry>
+ <entry>generic linux (intel), os is Linux, batch system is PBS, user-defined</entry>
+ </row>
+ <row>
+ <entry>generic_linux_pathscale</entry>
+ <entry>generic linux (pathscale), os is Linux, batch system is PBS, user-defined</entry>
+ </row>
+</tbody>
+</tgroup>
+</informaltable>

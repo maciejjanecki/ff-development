@@ -1,0 +1,2196 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet type="text/xsl" href="config_definition.xsl" ?>
+
+<config_definition>
+
+<!-- ======================================================================= -->
+<!-- env_case.xml                                                            -->
+<!-- ======================================================================= -->
+
+<entry id="CASE" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="case_def"
+ sdesc="case name"
+ ldesc="case name"
+></entry>
+
+<entry id="CASEROOT" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="case_def"
+ sdesc="full path of case"
+ ldesc="full path of case" 
+></entry> 
+
+<entry id="CCSMROOT" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="case_def"
+ sdesc="ccsm source root directory"
+ ldesc="ccsm source root directory"
+></entry> 
+
+<entry id="GRID" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="case_def"
+ sdesc="CCSM grid"
+ ldesc="CCSM grid"
+></entry>
+
+<entry id="CCSM_COMPSET" 
+ type="char"
+ valid_values="" 
+ value="UNSET"  
+ group="case_def"
+ sdesc="CCSM component set"
+ ldesc="CCSM component set"
+></entry>
+
+<entry id="MACH" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="case_def"
+ sdesc="current machine name"
+ ldesc="current machine name"
+></entry>
+
+<entry id="PTS_MODE" 
+ type="logical"
+ valid_values="TRUE,FALSE" 
+ value="FALSE" 
+ group="case_def"
+ sdesc="Operate on only a single point of the global grid"
+ ldesc="Points mode logical for single point"
+></entry>
+
+<entry id="CCSMUSER" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="case_desc"
+ sdesc="case user name"
+ ldesc="case user name"
+></entry> 
+
+<entry id="CASETOOLS" 
+ type="char"
+ valid_values="" 
+ value="$CASEROOT/Tools" 
+ group="case_desc"
+ sdesc="Case Tools directory location"
+ ldesc="Case Tools directory location"
+></entry>
+
+<entry id="CASEBUILD" 
+ type="char"
+ valid_values="" 
+ value="$CASEROOT/Buildconf" 
+ group="case_desc"
+ sdesc="Buildconf directory location"
+ ldesc="Buildconf directory location"
+></entry>
+
+<entry id="SCRIPTSROOT" 
+ type="char"
+ valid_values="" 
+ value="$CCSMROOT/scripts" 
+ group="case_desc"
+ sdesc="CCSM source scripts directory location"
+ ldesc="CCSM source scripts directory location"
+></entry>
+
+<entry id="UTILROOT" 
+ type="char"
+ valid_values="" 
+ value="$CCSMROOT/scripts/ccsm_utils" 
+ group="case_desc"
+ sdesc="CCSM source scripts utils directory location"
+ ldesc="CCSM source scripts utils directory location"
+></entry>
+
+<entry id="BLDROOT" 
+ type="char"
+ valid_values="" 
+ value="$CCSMROOT/scripts/ccsm_utils/Build" 
+ group="case_desc"
+ sdesc="CCSM source scripts build directory location"
+ ldesc="CCSM source scripts build directory location"
+></entry>
+
+<entry id="CODEROOT" 
+ type="char"
+ valid_values="" 
+ value="$CCSMROOT/models" 
+ group="case_desc"
+ sdesc="CCSM source models directory location"
+ ldesc="CCSM source models directory location"
+></entry>
+
+<entry id="SHAREROOT" 
+ type="char"
+ valid_values="" 
+ value="$CCSMROOT/models/csm_share" 
+ group="case_desc"
+ sdesc="CCSM source models share code location"
+ ldesc="CCSM source models share code location"
+></entry>
+
+<entry id="COMP_ATM" 
+ type="char"
+ valid_values="cam,datm,xatm,satm" 
+ value="cam"  
+ group="case_comp"
+ sdesc="Name of atmospheric component "
+ ldesc="Name of atmospheric component "
+></entry>
+
+<entry id="COMP_LND" 
+ type="char"
+ valid_values="clm,dlnd,xlnd,slnd" 
+ value="clm"  
+ group="case_comp"
+ sdesc="Name of land component"
+ ldesc="Name of land component"
+></entry>
+
+<entry id="COMP_ICE" 
+ type="char"
+ valid_values="cice,dice,xice,sice" 
+ value="cice"  
+ group="case_comp" 
+ sdesc="Name of sea ice component"
+ ldesc="Name of sea ice component"
+></entry>
+
+<entry id="COMP_GLC" 
+ type="char"
+ valid_values="xglc,sglc,cism" 
+ value="sglc"  
+ group="case_comp" 
+ sdesc="Name of land ice component"
+ ldesc="Name of land ice component"
+></entry>
+
+<entry id="COMP_OCN" 
+ type="char"
+ valid_values="pop2,docn,xocn,socn,camdom" 
+ value="pop2"  
+ group="case_comp"
+ sdesc="Name of ocean component"
+ ldesc="Name of ocean component"
+></entry>
+
+<entry id="COMP_CPL" 
+ type="char"
+ valid_values="cpl" 
+ value="cpl"  
+ group="case_comp"
+ sdesc="Name of coupling component"
+ ldesc="Name of coupling component"
+></entry>
+
+<entry id="ATM_GRID" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="case_grid"
+ sdesc="atmosphere grid"
+ ldesc="atmosphere grid"
+></entry>
+
+<entry id="LND_GRID" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="case_grid"
+ sdesc="land grid"
+ ldesc="land grid"
+></entry>
+
+<entry id="OCN_GRID" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="case_grid"
+ sdesc="ocn grid"
+ ldesc="ocn grid"
+></entry>
+
+<entry id="ICE_GRID" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="case_grid"
+ sdesc="ice grid (must equal ocn grid)"
+ ldesc="ice grid (must equal ocn grid)"
+></entry>
+
+<entry id="ATM_NX" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_grid"
+ sdesc="number of atmosphere cells in i direction"
+ ldesc="number of atmosphere cells in i direction"
+></entry>
+
+<entry id="ATM_NY" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_grid"
+ sdesc="number of atmosphere cells in j direction"
+ ldesc="Number of atmosphere cells in j direction"
+></entry>
+
+<entry id="LND_NX" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_grid"
+ sdesc="number of land cells in i direction"
+ ldesc="Number of land cells in i direction"
+></entry>
+
+<entry id="LND_NY" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_grid"
+ sdesc="number of land cells in j direction"
+ ldesc="number of land cells in j direction"
+></entry>
+
+<entry id="GLC_NX" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_grid"
+ sdesc="number of glc cells in i direction"
+ ldesc="number of glc cells in i direction"
+></entry>
+
+<entry id="GLC_NY" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_grid"
+ sdesc="number of glc cells in j direction"
+ ldesc="number of glc cells in j direction"
+></entry>
+
+<entry id="ICE_NX" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_grid"
+ sdesc="number of ice cells in i direction"
+ ldesc="number of ice cells in i direction"
+></entry>
+
+<entry id="ICE_NY" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_grid"
+ sdesc="number of ice cells in j direction"
+ ldesc="number of ice cells in j direction"
+></entry>
+
+<entry id="OCN_NX" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_grid"
+ sdesc="number of ocn cells in i direction"
+ ldesc="number of ocn cells in i direction"
+></entry>
+
+<entry id="OCN_NY" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_grid"
+ sdesc="number of ocn cells in j direction"
+ ldesc="number of ocn cells in j direction"
+></entry>
+
+<entry id="OS" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="case_mach"
+ sdesc="operating system"
+ ldesc="operating system"
+></entry>
+
+<entry id="CCSM_LCOMPSET" 
+ type="char"
+ valid_values="" 
+ value="UNSET"  
+ group="case_last"
+ sdesc="CCSM component set, longname"
+ ldesc="CCSM component set, longname"
+></entry>
+
+<entry id="CCSM_SCOMPSET" 
+ type="char"
+ valid_values="" 
+ value="UNSET"  
+ group="case_last"
+ sdesc="CCSM component set, shortname"
+ ldesc="CCSM component set, shortname"
+></entry>
+
+<entry id="CCSM_CCOST" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_last"
+ sdesc="relative cost of compset where B is 1 (DO NOT EDIT)"
+ ldesc="2**n relative cost of compset B is 1 (DO NOT EDIT)"
+></entry>
+
+<entry id="CCSM_GCOST" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_last"
+ sdesc="relative cost of grid where f19_g15 is 1 (DO NOT EDIT)"
+ ldesc="2**n relative cost of grid f19_g15 is 1 (DO NOT EDIT)"
+></entry>
+
+<entry id="CCSM_MCOST" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="case_last"
+ sdesc="relative cost of machine (DO NOT EDIT)"
+ ldesc="2**n relative cost of machine (DO NOT EDIT)"
+></entry>
+
+<entry id="XMLMODE"
+ type="char"
+ valid_values="normal,expert"  
+ value="normal" 
+ group="case_last"
+ sdesc="xml format option, expert removes extra comments from env xml files"
+ ldesc="xml format option, expert removes extra comments from env xml files"
+></entry>
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - drv                                                      -->
+<!-- ======================================================================= -->
+
+<entry id="RUN_TYPE" 
+ type="char"
+ valid_values="startup,hybrid,branch" 
+ value="startup" 
+ group="conf_def"
+ sdesc="Run initialization type"
+ ldesc="Run initialization type"
+></entry>
+
+<entry id="RUN_STARTDATE" 
+ type="char"
+ valid_values="" 
+ value="0001-01-01" 
+ group="conf_def"
+ sdesc="Run start date (yyyy-mm-dd). Only used for startup or hybrid runs"
+ ldesc="Run start date (yyyy-mm-dd). Only used for startup or hybrid runs
+        Ignored for branch runs. "
+></entry>
+
+<entry id="RUN_REFCASE" 
+ type="char"
+ valid_values="" 
+ value="case.std" 
+ group="conf_def"
+ sdesc="Reference case for hybrid or branch runs"
+ ldesc="Reference case for hybrid or branch runs"
+></entry>
+
+<entry id="RUN_REFDATE" 
+ type="char"
+ valid_values="" 
+ value="0001-01-01" 
+ group="conf_def"
+ sdesc="Reference date for hybrid or branch runs (yyyy-mm-dd)"
+ ldesc="Reference date for hybrid or branch runs (yyyy-mm-dd).
+        Used to determine the component dataset that the model starts from.
+        Ignored for startup runs "
+></entry>
+
+<entry id="BRNCH_RETAIN_CASENAME" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE"
+ group="conf_def"
+ sdesc="allow same branch casename as reference casename"
+ ldesc="allow same branch casename as reference casename"
+></entry> 
+
+<entry id="GET_REFCASE" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE"
+ group="conf_def"
+ sdesc="flag for automatically prestaging the refcase restart dataset"
+ ldesc="flag for automatically prestaging the refcase restart dataset"
+></entry> 
+
+<entry id="USE_MPISERIAL" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="conf_def"
+ sdesc="TRUE implies code will be built using mpiserial lib"
+ ldesc="TRUE implies code is built using the mpiserial library.
+        If TRUE, the MPISERIAL_SUPPORT must also be TRUE.
+        FALSE (default) implies that code is built with a real MPI library.
+        If a job uses only one MPI task (e.g. single-column CAM and CLM), 
+        the mpiserial lib may be an alternative to real mpi lib"
+></entry> 
+
+<entry id="MPISERIAL_SUPPORT" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="conf_def"
+ sdesc="TRUE implies this machine supports the use of the mpiserial lib"
+ ldesc="TRUE implies this machine supports the use of the mpiserial lib.
+        Not all machines support the use of the mpiserial lib"
+></entry> 
+
+<entry id="MAP_A2OF_FILE" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="atm to ocn flux mapping file for fluxes"
+ ldesc="atm to ocn flux mapping file for fluxes (currently first order conservative)"
+></entry>
+
+<entry id="MAP_A2OS_FILE" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="atm to ocn state mapping file for states"
+ ldesc="atm to ocn state mapping file for states (currently bilinear)"
+></entry>
+
+<entry id="MAP_O2AF_FILE" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="ocn to atm mapping file for fluxes"
+ ldesc="ocn to atm mapping file for fluxes (currently first order conservative)"
+></entry>
+
+<entry id="MAP_O2AS_FILE" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="ocn to atm mapping file for states"
+ ldesc="ocn to atm mapping file for states"
+></entry>
+
+<entry id="MAP_A2LF_FILE" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="atm to land mapping file for fluxes"
+ ldesc="atm to land mapping file for fluxes"
+></entry>
+
+<entry id="MAP_A2LS_FILE" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="atm to land mapping file for states"
+ ldesc="atm to land mapping file for states"
+></entry>
+
+<entry id="MAP_L2AF_FILE" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="land to atm mapping file for fluxes"
+ ldesc="land to atm mapping file for fluxes"
+></entry>
+
+<entry id="MAP_L2AS_FILE" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="land to atm mapping file for states"
+ ldesc="land to atm mapping file for states"
+></entry>
+
+<entry id="MAP_R2O_FILE_R05" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="runoff (.5 degree) to ocn mapping file"
+ ldesc="runoff (.5 degree) to ocn mapping file"
+></entry>
+
+<entry id="MAP_R2O_FILE_R19" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="runoff (19 basin) to ocn mapping file"
+ ldesc="runoff (19 basin) to ocn mapping file"
+></entry>
+
+<entry id="MAP_R2O_FILE_RX1" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="conf_map"
+ sdesc="runoff (1 degree) to ocn mapping file"
+ ldesc="runoff (1 degree) to ocn mapping file"
+></entry>
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - ccsm                                                     -->
+<!-- ======================================================================= -->
+
+<entry id="CPL_EPBAL" 
+ type="char"
+ valid_values="off,ocn" 
+ value="off" 
+ group="conf_ccsm"
+ sdesc="Only used for C,G compsets: if ocn, ocn provides EP balance factor for precip"
+ ldesc="Only used for C,G compsets: if ocn, ocn provides EP balance factor for precip"
+></entry>
+
+<entry id="CPL_ALBAV" 
+ type="logical"
+ valid_values="true,false" 
+ value="false" 
+ group="conf_ccsm"
+ sdesc="Only used for C,G compsets: if true, compute albedos to work with daily avg SW down"
+ ldesc="Only used for C,G compsets: if true, compute albedos to work with daily avg SW down"
+></entry>
+
+<entry id="CCSM_BGC" 
+ type="char"
+ valid_values="none,CO2A,CO2B,CO2C,CO2_DMSA"  
+ value="none" 
+ group="conf_ccsm"
+ sdesc="BGC flag"
+ ldesc="BGC flag"
+></entry> 
+
+<entry id="CCSM_VOC" 
+ type="char"
+ valid_values="TRUE,FALSE"
+ value="FALSE" 
+ group="conf_ccsm"
+ sdesc="Only used for B,E,F,I compsets: if true will pass VOC fields from lnd to atm"
+ ldesc="Only used for B,E,F,I compsets: if true will pass VOC fields from lnd to atm"
+></entry> 
+
+<entry id="CCSM_CO2_PPMV" 
+ type="real"
+ valid_values=""
+ value="379.000" 
+ group="conf_ccsm"
+ sdesc="CO2 ppmv" 
+ ldesc="CO2 ppmv"
+></entry> 
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - cam                                                      -->
+<!-- ======================================================================= -->
+
+
+<entry id="CAM_CONFIG_OPTS" 
+ type="char"
+ valid_values=""
+ value="" 
+ group="conf_cam"
+ sdesc="CAM configure options, see CAM configure utility for details"
+ ldesc="CAM configure options, see CAM configure utility for details"
+></entry>
+
+<entry id="CAM_NML_USE_CASE" 
+ type="char"
+ valid_values=""
+ value="UNSET" 
+ group="conf_cam"
+ sdesc="CAM namelist use_case"
+ ldesc="CAM namelist use_case"
+></entry>
+
+<entry id="CAM_NAMELIST_OPTS"
+ type="char"
+ valid_values=""
+ value=""
+ group="conf_cam"
+ sdesc="CAM specific namelist settings for -namelist option"
+ ldesc="CAM specific namelist settings for -namelist option"
+></entry>
+
+<entry id="CAM_DYCORE" 
+ type="char"
+ valid_values="eul,fv,homme" 
+ value="fv" 
+ group="conf_cam"
+ sdesc="CAM dynamical core"
+ ldesc="CAM dynamical core"
+></entry>
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - clm                                                      -->
+<!-- ======================================================================= -->
+
+<entry id="CLM_CONFIG_OPTS" 
+ type="char"
+ valid_values=""  
+ value="" 
+ group="conf_clm"
+ sdesc="CLM configure options"  
+ ldesc="Options to send to CLM configure (see models/lnd/clm/bld/configure -h for list of options)"
+></entry> 
+
+<entry id="CLM_BLDNML_OPTS" 
+ type="char"
+ valid_values=""  
+ value="" 
+ group="conf_clm"
+ sdesc="CLM build-namelist options"  
+ ldesc="Options to send to CLM build-namelist (see models/lnd/clm/bld/build-namelist -h for list of options)"
+></entry> 
+
+<entry id="CLM_NML_USE_CASE" 
+ type="char"
+ valid_values=""
+ value="UNSET" 
+ group="conf_clm"
+ sdesc="CLM namelist use_case"
+ ldesc="CLM namelist use_case
+        (for a list see models/lnd/clm/bld/build-namelist -use_case list)"
+></entry>
+
+<entry id="CLM_NAMELIST_OPTS"
+ type="char"
+ valid_values=""
+ value=""
+ group="conf_clm"
+ sdesc="CLM specific namelist settings"
+ ldesc="Namelist settings to add to the clm_inparm namelist 
+        Note, use &apos; around character values, as XML parser can't handle quotes
+inside strings.
+        (list of item=value settings, see models/lnd/clm/bld/namelist_files/namelist_definition.xml)"
+></entry>
+
+<entry id="CLM_CO2_TYPE" 
+ type="char"
+ valid_values="constant,diagnostic,prognostic"  
+ list="1"
+ value="constant" 
+ group="conf_clm"
+ sdesc="clm co2 type"
+ ldesc="clm CO2 type, constant means value in CLM namelist, diagnostic or prognostic mean use the value sent from the atmosphere model"
+></entry> 
+
+<entry id="CLM_FORCE_COLDSTART" 
+ type="char"
+ valid_values="on,off"  
+ value="off" 
+ group="conf_clm"
+ sdesc="Force CLM model to do a cold-start"
+ ldesc="Value of 'on' forces model to spinup from a cold-start (arbitrary initial conditions)"
+></entry> 
+
+<entry id="CLM_PT1_NAME" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="conf_clm"
+ sdesc="CLM Single point name"
+ ldesc="Name of single point resolution dataset to be used in I compset only
+        (for a list see models/lnd/clm/bld/build-namelist -res list)"
+></entry> 
+
+<entry id="CLM_USRDAT_NAME" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="conf_clm"
+ sdesc="My Data ID"
+ ldesc="Data identifier name for CLM user-created datasets (see Quickstart.userdatasets)"
+></entry> 
+
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - cice                                                     -->
+<!-- ======================================================================= -->
+
+<entry id="CICE_MODE" 
+ type="char"
+ valid_values="prognostic,prescribed,thermo_only"
+ value="prognostic" 
+ group="conf_cice"
+ sdesc="valid values: prognostic,prescribed,thermo_only"
+ ldesc="cice mode"
+></entry> 
+
+<entry id="CICE_CONFIG_OPTS" 
+ type="char"
+ valid_values=""
+ value=" "
+ group="conf_cice"
+ sdesc="CICE configure options, see CICE configure utility for details"
+ ldesc="CICE configure options, see CICE configure utility for details"
+></entry>
+
+<entry id="CICE_NAMELIST_OPTS"
+ type="char"
+ valid_values=""
+ value=""
+ group="conf_cice"
+ sdesc="CICE specific namelist settings for -namelist option"
+ ldesc="CICE specific namelist settings for -namelist option"
+></entry>
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - pop                                                      -->
+<!-- ======================================================================= -->
+
+<entry id="OCN_COUPLING" 
+ type="char"
+ valid_values="full,partial"  
+ value="full" 
+ group="conf_pop2"
+ sdesc="surface heat and freshwater forcing, partial is consistent with coupling to a data atm model"
+ ldesc="surface heat and freshwater forcing, partial is consistent with coupling to a data atm model"
+></entry> 
+
+<entry id="OCN_ICE_FORCING" 
+ type="char"
+ valid_values="active,inactive"  
+ value="active" 
+ group="conf_pop2"
+ sdesc="under ice forcing, inactive is consistent with coupling to a data ice model"
+ ldesc="under ice forcing, inactive is consistent with coupling to a data ice model"
+></entry> 
+
+<entry id="OCN_CHL_TYPE" 
+ type="char"
+ valid_values="diagnostic,prognostic"  
+ value="diagnostic" 
+ group="conf_pop2"
+ sdesc="provenance of surface Chl for radiative penetration computations"
+ ldesc="provenance of surface Chl for radiative penetration computations"
+></entry> 
+
+<entry id="OCN_CO2_TYPE" 
+ type="char"
+ valid_values="constant,prognostic,diagnostic"  
+ value="constant" 
+ group="conf_pop2"
+ sdesc="provenance of atmospheric CO2 for gas flux computation"
+ ldesc="provenance of atmospheric CO2 for gas flux computation"
+></entry> 
+
+<entry id="OCN_CO2_FLUX_OCMIP_BUG_FIX" 
+ type="char"
+ valid_values="TRUE,FALSE"
+ value="TRUE" 
+ group="conf_pop2"
+ sdesc="TRUE implies using fix to pH scale of carbon thermodynamic constants"
+ ldesc="TRUE implies using fix to pH scale of carbon thermodynamic constants"
+></entry> 
+
+<entry id="OCN_TRANSIENT" 
+ type="char"
+ valid_values="unset,1850-2000"  
+ value="unset" 
+ group="conf_pop2"
+ sdesc="specification of transient forcing datasets"
+ ldesc="specification of transient forcing datasets"
+></entry> 
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - cism                                                     -->
+<!-- ======================================================================= -->
+
+<entry id="GLC_GRID" 
+ type="char"
+ valid_values="gland20,gland10,gland5"  
+ value="gland20" 
+ group="conf_cism"
+ sdesc=" "
+ ldesc=" "
+></entry> 
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - datm                                                     -->
+<!-- ======================================================================= -->
+
+<entry id="DATM_MODE" 
+ type="char"
+ valid_values="CORE2_NYF,CLM_QIAN,CLM1PT"
+ value="CORE2_NYF" 
+ group="conf_datm"
+ sdesc="DATM mode"
+ ldesc="DATM mode"
+></entry> 
+
+<entry id="DATM_PRESAERO" 
+ type="char"
+ valid_values="none,clim_1850,clim_2000,trans_1850-2000,rcp2.6,rcp4.5,rcp8.5,pt1_pt1"  
+ value="none" 
+ group="conf_datm"
+ sdesc="DATM prescribed aerosol forcing"
+ ldesc="DATM prescribed aerosol forcing"
+></entry> 
+
+<entry id="DATM_CLMNCEP_YR_ALIGN" 
+ type="integer"
+ valid_values="" 
+ value="1" 
+ group="conf_datm"
+ sdesc="year align"
+ ldesc="year align (simulation year corresponding to starting year) for CLM_QIAN mode"
+></entry> 
+
+<entry id="DATM_CLMNCEP_YR_START" 
+ type="integer"
+ valid_values="" 
+ value="2002" 
+ group="conf_datm"
+ sdesc="starting year to loop data over"
+ ldesc="starting year to loop data over for CLM_QIAN mode"
+></entry> 
+
+<entry id="DATM_CLMNCEP_YR_END" 
+ type="integer"
+ valid_values="" 
+ value="2004" 
+ group="conf_datm"
+ sdesc="ending year to loop data over"
+ ldesc="ending year to loop data over for CLM_QIAN mode"
+></entry> 
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - dice                                                     -->
+<!-- ======================================================================= -->
+
+<entry id="DICE_MODE" 
+ valid_values="ssmi" 
+ type="char"
+ value="ssmi"
+ group="conf_dice"
+ sdesc="DICE mode"
+ ldesc="DICE mode"
+></entry> 
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - docn                                                     -->
+<!-- ======================================================================= -->
+
+<entry id="DOCN_MODE" 
+ type="char"
+ valid_values="prescribed,som" 
+ value="prescribed"
+ group="conf_docn"
+ sdesc="DOCN mode"
+ ldesc="DOCN mode"
+></entry> 
+
+<entry id="DOCN_SSTDATA_FILENAME" 
+ type="char"
+ valid_values=""
+ value="UNSET" 
+ group="conf_docn"
+ sdesc="Sets sst/ice_cov filename for amip runs, only used in F compset"
+ ldesc="Sets sst/ice_cov filename for amip runs, only used in F compset"
+></entry> 
+
+<entry id="DOCN_SSTDATA_YEAR_START" 
+ type="integer"
+ valid_values=""
+ value="-999" 
+ group="conf_docn"
+ sdesc="Sets year start of sst/ice_cov for amip runs, only used in F compset"
+ ldesc="Sets year start of sst/ice_cov for amip runs, only used in F compset"
+></entry> 
+
+<entry id="DOCN_SSTDATA_YEAR_END" 
+ type="integer"
+ valid_values=""
+ value="-999" 
+ group="conf_docn"
+ sdesc="Sets year end of sst/ice_cov for amip runs, only used in F compset"
+ ldesc="Sets year end of sst/ice_cov for amip runs, only used in F compset"
+></entry> 
+
+<!-- ======================================================================= -->
+<!-- env_conf.xml - dlnd                                                     -->
+<!-- ======================================================================= -->
+
+<entry id="DLND_MODE" 
+ type="char"
+ valid_values="CPLHIST,NULL" 
+ value="NULL" 
+ group="conf_dlnd"
+ sdesc="valid values: CPLHIST,NULL" 
+ ldesc="DLND mode"
+></entry> 
+
+<entry id="DLND_RUNOFF_MODE" 
+ type="char"
+ valid_values="CPLHIST,RX1,NULL" 
+ value="RX1" 
+ group="conf_dlnd"
+ sdesc="valid values: CPLHIST,RX1,NULL" 
+ ldesc="DLND runoff mode"
+></entry> 
+
+<!-- ======================================================================= -->
+<!-- env_mach_pes.xml                                                        -->
+<!-- ======================================================================= -->
+
+<entry id="NTASKS_ATM" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_atm"
+ sdesc="number of atmosphere tasks"
+ ldesc="number of atmosphere tasks"
+></entry>
+
+<entry id="NTHRDS_ATM" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_atm"
+ sdesc="number of atmosphere threads"
+ ldesc="number of atmosphere threads"
+></entry>
+
+<entry id="ROOTPE_ATM" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_atm"
+ sdesc="root atm mpi task"
+ ldesc="root atm mpi task"
+></entry>
+
+<entry id="NTASKS_LND" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_lnd"
+ sdesc="number of land mpi tasks"
+ ldesc="number of land mpi tasks"
+></entry>
+
+<entry id="NTHRDS_LND" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_lnd"
+ sdesc="number of land mpi threads"
+ ldesc="number of land mpi threads"
+></entry>
+
+<entry id="ROOTPE_LND" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_lnd"
+ sdesc="root lnd mpi task"
+ ldesc="root lnd mpi task"
+></entry>
+
+<entry id="NTASKS_ICE" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_ice"
+ sdesc="number of ice mpi tasks"
+ ldesc="number of ice mpi tasks"
+></entry>
+
+<entry id="NTHRDS_ICE" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_ice"
+ sdesc="number of ice mpi threads"
+ ldesc="number of ice mpi threads"
+></entry>
+
+<entry id="ROOTPE_ICE" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_ice"
+ sdesc="root ice mpi task"
+ ldesc="root ice mpi task"
+></entry>
+
+<entry id="NTASKS_OCN" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_ocn"
+ sdesc="number of ocean mpi tasks"
+ ldesc="number of ocean mpi tasks"
+></entry>
+
+<entry id="NTHRDS_OCN" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_ocn"
+ sdesc="number of ocean mpi threads"
+ ldesc="number of ocean mpi threads"
+></entry>
+
+<entry id="ROOTPE_OCN" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_ocn"
+ sdesc="root ocn mpi task"
+ ldesc="root ocn mpi task"
+></entry>
+
+<entry id="NTASKS_CPL" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_cpl"
+ sdesc="number of coupler mpi tasks"
+ ldesc="number of coupler mpi tasks"
+></entry>
+
+<entry id="NTHRDS_CPL" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_cpl"
+ sdesc="number of coupler mpi threads"
+ ldesc="number of coupler mpi threads"
+></entry>
+
+<entry id="ROOTPE_CPL" 
+ type="char"
+ valid_values=""
+ value="0" 
+ group="mach_pes_cpl"
+ sdesc="root cpl mpi task"
+ ldesc="root cpl mpi task"
+></entry>
+
+<entry id="NTASKS_GLC" 
+ type="char"
+ valid_values=""
+ value="0"
+ group="mach_pes_glc"
+ sdesc="number of glc mpi tasks"
+ ldesc="number of glc mpi tasks"
+></entry>
+
+<entry id="NTHRDS_GLC" 
+ type="char"
+ valid_values=""
+ value="0"
+ group="mach_pes_glc"
+ sdesc="number of glc mpi threads"
+ ldesc="number of glc mpi threads"
+></entry>
+
+<entry id="ROOTPE_GLC" 
+ type="char"
+ valid_values=""
+ value="0"
+ group="mach_pes_glc"
+ sdesc="root glc mpi task"
+ ldesc="root glc mpi task"
+></entry>
+
+<entry id="PSTRID_ATM"
+ type="integer"
+ valid_values="1"
+ value="1"
+ group="mach_pes_stride"
+ sdesc="stride of mpi tasks for atm comp - currently should always be set to 1"
+ ldesc="stride of mpi tasks for atm comp - currently should always be set to 1"
+></entry>
+
+<entry id="PSTRID_LND"
+ type="integer"
+ valid_values="1"
+ value="1"
+ group="mach_pes_stride"
+ sdesc="stride of mpi tasks for lnd comp - currently should always be set to 1"
+ ldesc="stride of mpi tasks for lnd comp - currently should always be set to 1"
+></entry>
+
+<entry id="PSTRID_ICE"
+ type="integer"
+ valid_values="1"
+ value="1"
+ group="mach_pes_stride"
+ sdesc="stride of mpi tasks for ice comp - currently should always be set to 1"
+ ldesc="stride of mpi tasks for ice comp - currently should always be set to 1"
+></entry>
+
+<entry id="PSTRID_OCN"
+ type="integer"
+ valid_values="1"
+ value="1"
+ group="mach_pes_stride"
+ sdesc="stride of mpi tasks for ocn comp - currently should always be set to 1"
+ ldesc="stride of mpi tasks for ocn comp - currently should always be set to 1"
+></entry>
+
+<entry id="PSTRID_CPL"
+ type="integer"
+ valid_values="1"
+ value="1"
+ group="mach_pes_stride"
+ sdesc="stride of mpi tasks for cpl comp - currently should always be set to 1"
+ ldesc="stride of mpi tasks for cpl comp - currently should always be set to 1"
+></entry>
+
+<entry id="PSTRID_GLC"
+ type="integer"
+ valid_values="1"
+ value="1"
+ group="mach_pes_stride"
+ sdesc="stride of mpi tasks for glc comp - currently should always be set to 1"
+ ldesc="stride of mpi tasks for glc comp - currently should always be set to 1"
+></entry>
+
+<entry id="TOTALPES"
+ type="integer"
+ valid_values=""
+ value="0"
+ group="mach_pes_last"
+ sdesc="total number of pes (derived automatically - DO NOT EDIT)"
+ ldesc="total number of pes (derived automatically - DO NOT EDIT)"
+></entry>
+
+<entry id="PES_LEVEL"
+ type="char"
+ valid_values=""
+ value="UNSET"
+ group="mach_pes_last"
+ sdesc="pes level determined by automated initialization (DO NOT EDIT)"
+ ldesc="pes level determined by automated initialization (DO NOT EDIT)"
+></entry>
+
+<entry id="MAX_TASKS_PER_NODE" 
+ type="integer"
+ valid_values="" 
+ value="UNSET" 
+ group="mach_pes_last"
+ sdesc="maximum number of mpi tasks per node"
+ ldesc="maximum number of mpi tasks per node"
+></entry>
+
+<entry id="PES_PER_NODE" 
+ type="char"
+ valid_values="" 
+ value="$MAX_TASKS_PER_NODE" 
+ group="mach_pes_last"
+ sdesc="pes per node for cost scaling"
+ ldesc="pes per node for cost scaling"
+></entry>
+
+<entry id="BATCH_PES" 
+ type="integer"
+ valid_values="" 
+ value="0"
+ group="mach_pes_last"
+ sdesc="pes requested at batch runtime"
+ ldesc="pes requested at batch runtime"
+></entry>
+
+<entry id="CCSM_PCOST"
+ type="integer"
+ valid_values=""
+ value="0"
+ group="mach_pes_last"
+ sdesc="cost relative to 64 pes (DO NOT EDIT)"
+ ldesc="cost relative to 64 pes (DO NOT EDIT)"
+></entry>
+
+<entry id="CCSM_TCOST" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="mach_pes_last"
+ sdesc="relative cost of test where ERS is 1 (DO NOT EDIT)"
+ ldesc="2**n relative cost of test where ERS is 1 (DO NOT EDIT)"
+></entry>
+
+<entry id="CCSM_ESTCOST" 
+ type="integer"
+ valid_values="" 
+ value="0" 
+ group="mach_pes_last"
+ sdesc="relative total cost of case (DO NOT EDIT)"
+ ldesc="2**n relative cost of case (DO NOT EDIT)"
+></entry>
+
+<entry id="CICE_AUTO_DECOMP"
+ type="logical"
+ valid_values="true,false"
+ value="true"
+ group="mach_pes_cice"
+ sdesc="if false, user must set the CICE decomp, otherwise configure sets it"
+ ldesc="if false, user must set the CICE decomp, otherwise configure sets it"
+></entry>
+
+<entry id="POP_AUTO_DECOMP"
+ type="logical"
+ valid_values="true,false"
+ value="true"
+ group="mach_pes_pop2"
+ sdesc="if false, user must set the POP decomp, otherwise configure sets it"
+ ldesc="if false, user must set the POP decomp, otherwise configure sets it"
+></entry>
+
+<!-- ======================================================================= -->
+<!-- env_build.xml                                                           -->
+<!-- ======================================================================= -->
+
+<entry id="EXEROOT" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="build_def"
+ sdesc="executable root directory"
+ ldesc="executable root directory"
+></entry> 
+
+<entry id="COMP_INTERFACE" 
+ type="char"
+ valid_values="MCT,ESMF" 
+ value="MCT" 
+ group="build_def"
+ sdesc="use MCT or ESMF component interfaces"
+ ldesc="use MCT or ESMF component interfaces"
+></entry>
+
+<entry id="ESMF_LIBDIR" 
+ type="char"
+ valid_values="" 
+ value="" 
+ group="build_def"
+ sdesc="directory of esmf.mk in pre-built ESMF library"
+ ldesc="directory of esmf.mk in pre-built ESMF library"
+></entry>
+
+<entry id="USE_ESMF_LIB" 
+ type="char"
+ valid_values="TRUE,FALSE" 
+ value="FALSE" 
+ group="build_def"
+ sdesc="TRUE implies using the ESMF library specified by ESMF_LIBDIR or ESMFMKFILE"
+ ldesc="TRUE implies using the ESMF library specified by ESMF_LIBDIR or ESMFMKFILE"
+></entry>
+
+<entry id="DEBUG" 
+ type="logical"
+ valid_values="TRUE,FALSE" 
+ value="FALSE" 
+ group="build_def"
+ sdesc="TRUE implies turning on run and compile time debugging"
+ ldesc="TRUE implies turning on run and compile time debugging"
+></entry> 
+
+<entry id="BUILD_THREADED" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="build_def"
+ sdesc="TRUE implies always build model for openmp capability"
+ ldesc="TRUE implies always build model for openmp capability
+   If FALSE, build model with openmp capability only if THREAD is greater than 1"
+></entry> 
+
+<entry id="HIRES" 
+ type="logical"
+ valid_values="true,false"  
+ value="false" 
+ group="build_def"
+ sdesc="true implies compile with HIRES CPP options"
+ ldesc="true implies compile with HIRES CPP options.
+   Primarily used by POP to determine physics changes for the eddy-resolving ocean resolution.
+   This is a value that is set by the grid resolution. The user should not edit this"
+></entry> 
+
+<entry id="PIO_CONFIG_OPTS" 
+ type="char"
+ valid_values=""
+ value=" --disable-mct --disable-timing "  
+ group="build_def"
+ sdesc="PIO configure options, see PIO configure utility for details"
+ ldesc="PIO configure options, see PIO configure utility for details"
+></entry>
+
+<entry id="GLC_NEC" 
+ type="integer"
+ valid_values="0,3,5,10" 
+ value="0" 
+ group="build_def"
+ sdesc="GLC land ice model number of elevation classes" 
+ ldesc="GLC land ice model number of elevation classes"
+></entry>
+
+<entry id="GMAKE_J" 
+ type="integer"
+ valid_values="" 
+ value="UNSET" 
+ group="build_def"
+ sdesc="Number of processors for gmake"
+ ldesc="Number of processors for gmake"
+></entry>
+
+<entry id="RUNDIR" 
+ type="char"
+ valid_values="" 
+ value="$EXEROOT/run" 
+ group="build_desc"
+ sdesc="case run directory"
+ ldesc="case run directory"
+></entry>
+
+<entry id="OBJROOT" 
+ type="char"
+ valid_values="" 
+ value="$EXEROOT" 
+ group="build_desc"
+ sdesc="case build directory"
+ ldesc="case build directory"
+></entry>
+
+<entry id="LIBROOT" 
+ type="char"
+ valid_values="" 
+ value="$EXEROOT/lib" 
+ group="build_desc"
+ sdesc="case lib directory"
+ ldesc="case lib directory"
+></entry>
+
+<entry id="INCROOT" 
+ type="char"
+ valid_values="" 
+ value="$EXEROOT/lib/include" 
+ group="build_desc"
+ sdesc="case lib include directory"
+ ldesc="case lib include directory"
+></entry>
+
+<entry id="CICE_BLCKX"
+ type="integer"
+ valid_values=""
+ value="0"
+ group="build_cice"
+ sdesc="Size of cice block in first horiz dimension"
+ ldesc="Size of cice block in first horiz dimension.
+    Value set by generate_cice_decomp.pl (called by configure).
+    Only expert users should edit this"
+></entry>
+
+<entry id="CICE_BLCKY"
+ type="integer"
+ valid_values=""
+ value="0"
+ group="build_cice"
+ sdesc="Size of cice block in second horiz dimension"
+ ldesc="Size of cice block in second horiz dimension.
+    Value set by generate_cice_decomp.pl (called by configure).
+    Only expert users should edit this"
+></entry>
+
+<entry id="CICE_MXBLCKS"
+ type="integer"
+ valid_values=""
+ value="0"
+ group="build_cice"
+ sdesc="Max number of cice blocks per processor"
+ ldesc="Max number of cice blocks per processor.
+    Value set by generate_cice_decomp.pl (called by configure).
+    Only expert users should edit this"
+></entry>
+
+<entry id="CICE_DECOMPTYPE"
+ type="char"
+ valid_values=""
+ value="0"
+ group="build_cice"
+ sdesc="cice block distribution type"
+ ldesc="cice block distribution type.
+    Value set by generate_cice_decomp.pl (called by configure).
+    Only expert users should edit this"
+></entry>
+
+<entry id="OCN_TRACER_MODULES" 
+ type="char"
+ valid_values="" 
+ value="iage" 
+ group="build_pop2"
+ sdesc="Optional ocean tracers.  Any combination of: iage cfc ecosys"
+ ldesc="Optional ocean tracers.  Any combination of: iage cfc ecosys"
+></entry>
+
+<entry id="OCN_TAVG_TRACER_BUDGET"
+ type="char"
+ valid_values="TRUE,FALSE"
+ value="FALSE"
+ group="run_pop2"
+ sdesc="tavg output control for tracer-budget terms"
+ ldesc="tavg output control for tracer-budget terms"
+></entry>
+
+<entry id="OCN_TAVG_HIFREQ"
+ type="char"
+ valid_values="TRUE,FALSE"
+ value="FALSE"
+ group="run_pop2"
+ sdesc="tavg output control for high-frequency output"
+ ldesc="tavg output control for high-frequency output"
+></entry>
+
+<entry id="POP_BLCKX"
+ type="integer"
+ valid_values=""
+ value="0"
+ group="build_pop2"
+ sdesc="Size of pop block in first horiz dimension"
+ ldesc="Size of pop block in first horiz dimension.
+    Value determined by generate_pop_decomp.pl which is called by configure.
+    Only expert users should edit this"
+></entry>
+
+<entry id="POP_BLCKY"
+ type="integer"
+ valid_values=""
+ value="0"
+ group="build_pop2"
+ sdesc="Size of pop block in second horiz dimension"
+ ldesc="Size of pop block in second horiz dimension.
+    Value determined by generate_pop_decomp.pl which is called by configure.
+    Only expert users should edit this"
+></entry>
+
+<entry id="POP_MXBLCKS"
+ type="integer"
+ valid_values=""
+ value="0"
+ group="build_pop2"
+ sdesc="Max number of pop blocks per processor"
+ ldesc="Max number of pop blocks per processor.
+    Value determined by generate_pop_decomp.pl which is called by configure.
+    Only expert users should edit this"
+></entry>
+
+<entry id="POP_DECOMPTYPE"
+ type="char"
+ valid_values=""
+ value="0"
+ group="build_pop2"
+ sdesc="pop block distribution type"
+ ldesc="pop block distribution type. 
+    Value determined by generate_pop_decomp.pl which is called by configure"
+></entry>
+
+<entry id="BUILD_COMPLETE" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="build_last"
+ sdesc="If TRUE, models have been built successfully. (DO NOT EDIT)"
+ ldesc="If TRUE, models have been built successfully. (DO NOT EDIT)"
+></entry> 
+
+<entry id="SMP_BUILD" 
+ type="char"
+ valid_values=""  
+ value="0" 
+ group="build_last"
+ sdesc="smp status of previous build, coded string. (DO NOT EDIT)"  
+ ldesc="smp status of previous build, coded string. (DO NOT EDIT)"
+></entry> 
+
+<entry id="SMP_VALUE" 
+ type="char"
+ valid_values=""  
+ value="0" 
+ group="build_last"
+ sdesc="smp status of current setup, coded string (DO NOT EDIT)"  
+ ldesc="smp status of current setup, coded string (DO NOT EDIT)"
+></entry> 
+
+<entry id="BUILD_STATUS" 
+ type="integer"
+ valid_values=""  
+ value="0" 
+ group="build_last"
+ sdesc="Status of prior build. (DO NOT EDIT)"
+ ldesc="Status of prior build. (DO NOT EDIT)"
+></entry> 
+
+<!-- ======================================================================= -->
+<!-- env_run.xml - drv                                                       -->
+<!-- ======================================================================= -->
+
+<entry id="CONTINUE_RUN" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="run_def"
+ sdesc="A setting of TRUE implies a continuation run"
+ ldesc="A continue run extends an existing CCSM run exactly.                 
+        A setting of TRUE implies a continuation run"
+></entry>
+
+<entry id="RESUBMIT" 
+ type="integer"
+ valid_values=""  
+ value="0" 
+ group="run_def"
+ sdesc="if RESUBMIT is greater than 0, then case will automatically resubmit"
+ ldesc="if RESUBMIT is greater than 0, then case will automatically resubmit 
+        if that feature is supported in the run script"
+></entry>
+
+<entry id="PTS_LAT" 
+ type="real(1)"
+ valid_values="" 
+ value="-999.99" 
+ group="run_def_pts"
+ sdesc="Latitude to find nearest points for points mode"
+ ldesc="Points mode nearest latitudes"
+></entry>
+
+<entry id="PTS_LON" 
+ type="real(1)"
+ valid_values="" 
+ value="-999.99" 
+ group="run_def_pts"
+ sdesc="Longitude to find nearest points for points mode"
+ ldesc="Points mode nearest longitudes"
+></entry>
+
+<entry id="CCSM_REPOTAG" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="run_desc"
+ sdesc="CCSM tag"
+ ldesc="CCSM tag"
+></entry> 
+
+<entry id="CASESTR" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="run_desc"
+ sdesc="case description"
+ ldesc="case description"
+></entry>
+
+<entry id="CALENDAR" 
+ type="char"
+ valid_values="NO_LEAP,GREGORIAN"  
+ value="NO_LEAP" 
+ group="run_flags"
+ sdesc="calendar type"
+ ldesc="calendar type"
+></entry>
+
+<entry id="BUDGETS" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="run_flags"
+ sdesc="logical that turns on diagnostic budgets"
+ ldesc="logical that turns on diagnostic budgets
+        FALSE means budgets will never be written"
+></entry>
+
+<entry id="DRV_THREADING" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="run_flags"
+ sdesc="Turns on component varying thread control in the driver"
+ ldesc="Turns on component varying thread control in the driver"
+></entry>
+
+<entry id="BFBFLAG" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="run_flags"
+ sdesc="turns on bit-for-bit reproducibility with varying pe counts in coupler"
+ ldesc="turns on bit-for-bit reproducibility with varying pe counts 
+       in the driver and coupler, performance will likely be reduced"
+></entry>
+
+<entry id="CHECK_TIMING" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="TRUE" 
+ group="run_flags"
+ sdesc="logical to diagnose model timing at the end of the run"
+ ldesc="logical to diagnose model timing at the end of the run"
+></entry>
+
+<entry id="INFO_DBUG" 
+ type="integer"
+ valid_values="0,1,2,3"  
+ value="1" 
+ group="run_flags"
+ sdesc="level of debug output, 0=minimum, 1=normal, 2=more, 3=too much"
+ ldesc="level of debug output, 0=minimum, 1=normal, 2=more, 3=too much"
+></entry> 
+
+<entry id="TIMING_BARRIER" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="run_flags"
+ sdesc="if TRUE, turns on the timing barrier calls in the model"
+ ldesc="if TRUE, turns on the timing barrier calls in the model"
+></entry>
+
+<entry id="TIMER_LEVEL" 
+ type="integer"
+ valid_values="1,2,3,4,5,6,7,8,9,10"  
+ value="4" 
+ group="run_flags"
+ sdesc="timer output depth"
+ ldesc="timer output depth"
+></entry>
+
+<entry id="ATM_NCPL" 
+ type="char"
+ valid_values="" 
+ value="24" 
+ group="run_cpl"
+ sdesc="number of atm coupling intervals per day"
+ ldesc="number of atm coupling intervals per day"
+></entry>
+
+<entry id="LND_NCPL" 
+ type="char"
+ valid_values="" 
+ value="$ATM_NCPL" 
+ group="run_cpl"
+ sdesc="number of land coupling intervals per day (integer)"
+ ldesc="number of land coupling intervals per day (integer)"
+></entry>
+
+<entry id="ICE_NCPL" 
+ type="char"
+ valid_values="" 
+ value="$ATM_NCPL" 
+ group="run_cpl"
+ sdesc="number of ice coupling intervals per day (integer)"
+ ldesc="number of ice coupling intervals per day (integer)"
+></entry>
+
+<entry id="OCN_NCPL" 
+ type="char"
+ valid_values="" 
+ value="1" 
+ group="run_cpl"
+ sdesc="number of ocn coupling intervals per day (integer)"
+ ldesc="number of ocn coupling intervals per day (integer)"
+></entry>
+
+<entry id="OCN_TIGHT_COUPLING" 
+ type="logical"
+ valid_values="TRUE,FALSE" 
+ value="FALSE" 
+ group="run_cpl"
+ sdesc="if TRUE, treats ocean model like lnd/ice in coupling"
+ ldesc="if TRUE, treats ocean model like lnd/ice in coupling and
+       removes 1 coupling period lag at the cost of concurrency"
+></entry>
+
+<entry id="GLC_NCPL" 
+ type="integer"
+ valid_values="" 
+ value="1" 
+ group="run_cpl"
+ sdesc="number of glc coupling intervals per day (integer)"
+ ldesc="number of glc coupling intervals per day (integer)"
+></entry>
+
+<entry id="LOGDIR" 
+ type="char"
+ valid_values=""  
+ value="$CASEROOT/logs" 
+ group="run_dout"
+ sdesc="directory where log files should be copied"
+ ldesc="directory where log files should be copied
+       in addition to archiving"
+></entry> 
+
+<entry id="BATCHQUERY" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="run_mach"
+ sdesc="command used to query batch system"
+ ldesc="command used to query batch system"
+></entry>
+
+<entry id="BATCHSUBMIT" 
+ type="char"
+ valid_values="" 
+ value="UNSET" 
+ group="run_mach"
+ sdesc="command used to submit to batch system"
+ ldesc="command used to submit to batch system"
+></entry>
+
+<entry id="DIN_LOC_ROOT_CSMDATA" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="run_din"
+ sdesc="general ccsm inputdata directory"
+ ldesc="general ccsm inputdata directory"
+></entry> 
+
+<entry id="DIN_LOC_ROOT_CLMQIAN" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="run_din"
+ sdesc="general ccsm inputdata directory for CLM QIAN datm forcing files"
+ ldesc="general ccsm inputdata directory for CLM QIAN datm forcing files"
+></entry> 
+
+<entry id="DIN_LOC_ROOT" 
+ type="char"
+ valid_values=""  
+ value="$DIN_LOC_ROOT_CSMDATA"
+ group="run_din"
+ sdesc="local inputdata directory for CCSM prestaged data"
+ ldesc="local inputdata directory for CCSM prestaged data"
+></entry> 
+
+<entry id="DOUT_S" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="TRUE" 
+ group="run_dout"
+ sdesc="logical to turn on short term archiving"
+ ldesc="logical to turn on short term archiving"
+></entry>
+
+<entry id="DOUT_S_ROOT" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="run_dout"
+ sdesc="local short term archiving root directory"
+ ldesc="local short term archiving root directory"
+></entry> 
+
+<entry id="DOUT_S_SAVE_INT_REST_FILES" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="run_dout"
+ sdesc="logical to archive all interim restart files, not just those at eor"
+ ldesc="logical to archive all interim restart files, not just those at end of run"
+></entry> 
+
+<entry id="DOUT_L_MS" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="run_dout"
+ sdesc="logical to turn on long term archiving (if DOUT_S is also TRUE)"
+ ldesc="logical to turn on long term archiving (if DOUT_S is also TRUE)"
+></entry>
+
+<entry id="DOUT_L_MSROOT" 
+ type="char"
+ valid_values=""  
+ value="UNSET" 
+ group="run_dout"
+ sdesc="local long term archiving root directory"
+ ldesc="local long term archiving root directory"
+></entry> 
+
+<entry id="DOUT_L_HTAR" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="run_dout"
+ sdesc="logical to tar up long term archiver history files"
+ ldesc="logical to tar up long term archiver history files"
+></entry> 
+
+<entry id="EPS_FRAC" 
+ type="real"
+ valid_values=""  
+ value="1.0e-02" 
+ group="run_flags"
+ sdesc="error tolerance for differences in fractions in domain checking"
+ ldesc="error tolerance for differences in fractions in domain checking"
+></entry>
+
+<entry id="EPS_AMASK" 
+ type="real"
+ valid_values=""  
+ value="1.0e-13" 
+ group="run_flags"
+ sdesc="error tolerance for differences in atm/land masks in domain checking"
+ ldesc="error tolerance for differences in atm/land masks in domain checking"
+></entry>
+
+<entry id="EPS_AGRID" 
+ type="real"
+ valid_values=""  
+ value="1.0e-12" 
+ group="run_flags"
+ sdesc="error tolerance for differences in atm/land lon/lat in domain checking"
+ ldesc="error tolerance for differences in atm/land lon/lat in domain checking"
+></entry>
+
+<entry id="EPS_AAREA" 
+ type="real"
+ valid_values=""  
+ value="9.0e-07" 
+ group="run_flags"
+ sdesc="error tolerance for differences in atm/land areas in domain checking"
+ ldesc="error tolerance for differences in atm/land areas in domain checking"
+></entry>
+
+<entry id="EPS_OMASK" 
+ type="real"
+ valid_values=""  
+ value="1.0e-06" 
+ group="run_flags"
+ sdesc="error tolerance for differences in ocean/ice masks in domain checking"
+ ldesc="error tolerance for differences in ocean/ice masks in domain checking"
+></entry>
+
+<entry id="EPS_OGRID" 
+ type="real"
+ valid_values=""  
+ value="1.0e-02" 
+ group="run_flags"
+ sdesc="error tolerance for differences in ocean/ice lon/lat in domain checking"
+ ldesc="error tolerance for differences in ocean/ice lon/lat in domain checking"
+></entry>
+
+<entry id="EPS_OAREA" 
+ type="real"
+ Valid_values=""  
+ value="1.0e-01" 
+ group="run_flags"
+ sdesc="error tolerance for differences in ocean/ice areas in domain checking"
+ ldesc="error tolerance for differences in ocean/ice areas in domain checking"
+></entry>
+
+<entry id="SHR_MAP_DOPOLE" 
+ type="logical"
+ Valid_values="TRUE,FALSE"  
+ value="TRUE" 
+ group="run_flags"
+ sdesc="invoke pole averaging corrections in shr_map_mod weights generation"
+ ldesc="invoke pole averaging corrections in shr_map_mod weights generation"
+></entry>
+
+<entry id="NPFIX" 
+ type="logical"
+ Valid_values="TRUE,FALSE"  
+ value="TRUE" 
+ group="run_flags"
+ sdesc="invoke pole vector corrections in map_atmocn"
+ ldesc="invoke pole vector corrections in map_atmocn"
+></entry>
+
+<entry id="AOFLUX_GRID" 
+ type="char"
+ Valid_values="ocn,atm"  
+ value="ocn" 
+ group="run_flags"
+ sdesc="grid for atm ocn flux calc (atm currently not supported)"
+ ldesc="grid for atm ocn flux calc (atm currently not supported)"
+></entry>
+
+<entry id="CCSM_BASELINE" 
+ type="char"
+ valid_values=""  
+ value="/UNSET" 
+ group="run_dout"
+ sdesc="standard ccsm baselines directory for testing"
+ ldesc="standard ccsm baselines directory for testing"
+></entry> 
+
+<entry id="CCSM_CPRNC" 
+ type="char"
+ valid_values=""  
+ value="/UNSET" 
+ group="run_dout"
+ sdesc="standard location of the cprnc tool"
+ ldesc="standard location of the cprnc tool"
+></entry> 
+
+<entry id="STOP_OPTION" 
+ type="char"
+ valid_values="none,never,nsteps,nstep,nseconds,nsecond,nminutes,nminute,nhours,nhour,ndays,nday,nmonths,nmonth,nyears,nyear,date,ifdays0,end"
+ value="ndays" 
+ group="run_stop"
+ sdesc="sets the run length with STOP_N and STOP_DATE"
+ ldesc="sets the run length with STOP_N and STOP_DATE
+        STOP_OPTION alarms are:
+        [none/never], turns option off
+        [nstep/s]   , stops every STOP_N nsteps  , relative to current run start time
+        [nsecond/s] , stops every STOP_N nseconds, relative to current run start time
+        [nminute/s] , stops every STOP_N nminutes, relative to current run start time
+        [nhour/s]   , stops every STOP_N nhours  , relative to current run start time
+        [nday/s]    , stops every STOP_N ndays   , relative to current run start time
+        [nmonth/s]  , stops every STOP_N nmonths , relative to current run start time
+        [nyear/s]   , stops every STOP_N nyears  , relative to current run start time
+        [date]      , stops at STOP_DATE value
+        [ifdays0]   , stops at STOP_N calendar day value and seconds equal 0
+        [end]       , stops at end"
+></entry>
+
+<entry id="STOP_N" 
+ type="integer"
+ valid_values=""  
+ value="5" 
+ group="run_stop"
+ sdesc="sets the run length with STOP_OPTION and STOP_DATE"
+ ldesc="sets the run length with STOP_OPTION and STOP_DATE"
+></entry>
+
+<entry id="STOP_DATE" 
+ type="integer"
+ valid_values="" 
+ value="-999" 
+ group="run_stop"
+ sdesc="date in yyyymmdd format, sets the run length with STOP_OPTION and STOP_N"
+ ldesc="date in yyyymmdd format, sets the run length with STOP_OPTION and STOP_N,
+        can be in addition to STOP_OPTION and STOP_N, negative value implies off"
+></entry>
+
+<entry id="REST_OPTION" 
+ type="char"
+ valid_values=""  
+ value="$STOP_OPTION" 
+ group="run_rest"
+ sdesc="sets frequency of model restart writes (same options as STOP_OPTION)"
+ ldesc="sets frequency of model restart writes (same options as STOP_OPTION)
+        with REST_N and REST_DATE"
+></entry>
+
+<entry id="REST_N" 
+ type="char"
+ valid_values=""  
+ value="$STOP_N" 
+ group="run_rest"
+ sdesc="sets model restart writes with REST_OPTION and REST_DATE"
+ ldesc="sets model restart writes with REST_OPTION and REST_DATE
+       (same options as STOP_N)"
+></entry>
+
+<entry id="REST_DATE" 
+ type="char"
+ valid_values=""  
+ value="$STOP_DATE" 
+ group="run_rest"
+ sdesc="date in yyyymmdd format, sets model restart write date with REST_OPTION and REST_N"
+ ldesc="date in yyyymmdd format, sets model restart write date with REST_OPTION and REST_N"
+></entry>
+
+<entry id="AVGHIST_OPTION" 
+ type="char"
+ valid_values=""  
+ value="never" 
+ group="run_cplhist"
+ sdesc="sets coupler time-average history file frequency (like REST_OPTION)"
+ ldesc="sets coupler time-average history file frequency (like REST_OPTION)"
+></entry>
+
+<entry id="AVGHIST_N" 
+ type="char"
+ valid_values=""  
+ value="-999" 
+ group="run_cplhist"
+ sdesc="sets coupler time-average history file frequency (like REST_N)"
+ ldesc="sets coupler time-average history file frequency (like REST_N)"
+></entry>
+
+<entry id="AVGHIST_DATE" 
+ type="integer"
+ valid_values=""  
+ value="-999" 
+ group="run_cplhist"
+ sdesc="yyyymmdd format, sets coupler time-average history date (like REST_DATE)"
+ ldesc="yyyymmdd format, sets coupler time-average history date (like REST_DATE)"
+></entry>
+
+<entry id="HISTINIT" 
+ type="logical"
+ valid_values="TRUE,FALSE"  
+ value="FALSE" 
+ group="run_cplhist"
+ sdesc="logical to write an extra initial coupler history file"
+ ldesc="logical to write an extra initial coupler history file"
+></entry> 
+
+<entry id="HIST_OPTION" 
+ type="char"
+ valid_values=""  
+ value="never" 
+ group="run_cplhist"
+ sdesc="sets coupler snapshot history file frequency (like REST_OPTION)"
+ ldesc="sets coupler snapshot history file frequency (like REST_OPTION)"
+></entry>
+
+<entry id="HIST_N" 
+ type="char"
+ valid_values=""  
+ value="-999" 
+ group="run_cplhist"
+ sdesc="sets coupler snapshot history file frequency (like REST_N)"
+ ldesc="sets coupler snapshot history file frequency (like REST_N)"
+></entry>
+
+<entry id="HIST_DATE" 
+ type="integer"
+ valid_values=""  
+ value="-999" 
+ group="run_cplhist"
+ sdesc="yyyymmdd format, sets coupler snapshot history date (like REST_DATE)"
+ ldesc="yyyymmdd format, sets coupler snapshot history date (like REST_DATE)"
+></entry>
+
+<entry id="TPROF_OPTION" 
+ type="char"
+ valid_values=""  
+ value="never" 
+ group="run_diag"
+ sdesc="sets timing output file frequency (like REST_OPTION but relative to run start date)"
+ ldesc="sets timing output file frequency (like REST_OPTION but relative to run start date)"
+></entry>
+
+<entry id="TPROF_N" 
+ type="char"
+ valid_values=""  
+ value="-999" 
+ group="run_diag"
+ sdesc="sets timing output file frequency (like REST_N)"
+ ldesc="sets timing output file frequency (like REST_N)"
+></entry>
+
+<entry id="TPROF_DATE" 
+ type="integer"
+ valid_values=""  
+ value="-999" 
+ group="run_diag"
+ sdesc="yyyymmdd format, sets timing output file date (like REST_DATE)"
+ ldesc="yyyymmdd format, sets timing output file date (like REST_DATE)"
+></entry>
+
+<entry id="BUDGET_INST" 
+ type="integer"
+ valid_values="0,1,2,3"  
+ value="0" 
+ group="run_cplhist"
+ sdesc="output level for instantaneous budget diagnostics"
+ ldesc="output level for instantaneous budget diagnostics,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm"
+></entry>
+
+<entry id="BUDGET_DAILY" 
+ type="integer"
+ valid_values="0,1,2,3"  
+ value="0" 
+ group="run_cplhist"
+ sdesc="output level for daily average budget diagnostics"
+ ldesc="output level for daily average budget diagnostics,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm"
+></entry>
+
+<entry id="BUDGET_MONTHLY" 
+ type="integer"
+ valid_values="0,1,2,3"  
+ value="1" 
+ group="run_cplhist"
+ sdesc="output level for monthly average budget diagnostics"
+ ldesc="output level for monthly average budget diagnostics,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm"
+></entry>
+
+<entry id="BUDGET_ANNUAL" 
+ type="integer"
+ valid_values="0,1,2,3"  
+ value="1" 
+ group="run_cplhist"
+ sdesc="output level for annual average budget diagnostics"
+ ldesc="output level for annual average budget diagnostics,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm"
+></entry>
+
+<entry id="BUDGET_LONGTERM_EOY" 
+ type="integer"
+ valid_values="0,1,2,3"  
+ value="1" 
+ group="run_cplhist"
+ sdesc="output level for longterm average budget diagnostics written at end of year"
+ ldesc="output level for longterm average budget diagnostics written at end of year,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm"
+></entry>
+
+<entry id="BUDGET_LONGTERM_STOP" 
+ type="integer"
+ valid_values="0,1,2,3"  
+ value="0" 
+ group="run_cplhist"
+ sdesc="output level for longterm average budget diagnostics written at end of run"
+ ldesc="output level for longterm average budget diagnostics written at end of run,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm"
+></entry>
+
+
+</config_definition>

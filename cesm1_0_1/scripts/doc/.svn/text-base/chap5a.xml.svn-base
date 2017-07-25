@@ -1,0 +1,35 @@
+<chapter id="post_processing_ccsm">
+<title>Post Processing CESM Output</title>
+
+<para> A completed run of CESM1.0 will produce a large number of
+files, each with many variables. Post processing these files presents
+several unique challenges. Various techniques and tools have been
+developed to meet these challenges. Each component maintains its own
+post-processing utility suite that can be accessed from the <ulink
+url="https://svn-ccsm-release.cgd.ucar.edu/model_diagnostics">release
+code repository</ulink>.  Component post-processing utilities are
+currently provided only as a service to the community. Informal
+community support is provided via the <ulink
+url="http://bb.cgd.ucar.edu/">CCSM bulletin board</ulink>. General
+questions should be submitted to this bulletin board; however, any
+bugs found in the packages should be reported to the appropriate
+working group liaison.  </para>
+
+<para> Once approval is granted for access to the release repository,
+users may freely download the diagnostic packages.  Users are urged to
+'export' the packages from the repository rather than checking them
+out. For example: </para>
+
+<screen>
+> svn export https://svn-ccsm-release.cgd.ucar.edu/model_diagnostics/atm/cam/amwg_diag2.5
+</screen>
+
+<para>
+will result in the user obtaining the post processing utilities
+"amwg_diag2.5". For more details on utilizing the release repository,
+please see <link linkend="download_ccsm">Downloading CESM</link> for
+more details.
+</para>
+
+<!-- ======================================================================= -->
+</chapter>

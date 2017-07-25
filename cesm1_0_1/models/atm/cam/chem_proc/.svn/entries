@@ -1,0 +1,83 @@
+10
+
+dir
+221
+https://svn-ccsm-release.cgd.ucar.edu/model_versions/cesm1_0_1/models/atm/cam/chem_proc
+https://svn-ccsm-release.cgd.ucar.edu
+
+
+
+2010-09-17T17:11:29.676270Z
+25
+mvr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6ec7379f-1bbc-4938-b9b9-58fa9e6a5fe1
+
+output
+dir
+
+tmp
+dir
+
+inputs
+dir
+
+bkend
+dir
+
+procfiles
+dir
+
+src
+dir
+
+bin
+dir
+
+README
+file
+
+
+
+
+2015-11-09T12:06:22.773780Z
+dd5059bee47655cc262891c36478dd86
+2010-09-17T17:11:29.676270Z
+25
+mvr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1081
+

@@ -1,0 +1,252 @@
+
+The getTiming tool provides a summary of performance and load
+balance for a CCSM run.  To invoke the tool,
+
+  > setenv T_CASEROOT caseroot
+  > setenv T_TIMEROOT timeroot
+  > setenv T_SEARCH1  search1
+  > getTiming.csh -mach machine_name -lid yymmdd-hhmmss
+
+For example
+
+  > setenv T_CASEROOT ~/ccsm3_0/scripts/b30.001
+  > setenv T_TIMEROOT ~/ccsm3_0/scripts/ccsm_utils/Tools/timing
+  > $T_TIMEROOT/getTiming.csh -mach bluesky -lid 060125-102031
+  > cat b30.001.060125-102031.timing
+
+or
+
+  > cd  ~/ccsm3_0/scripts/b30.001
+  > ../ccsm_utils/Tools/timing/getTiming.csh -mach bluesky -lid 060125-102031
+  > cat b30.001.060125-102031.timing
+
+Generally
+  - T_TIMEROOT is the path where the timing scripts are located.  this
+    variable defaults to $UTILROOT/Tools/timing in the script.
+  - T_CASEROOT is the path where the case is located.  this variable
+    defaults to "." in the script.
+  - T_SEARCH1 is the path where the timing logs are located.  this
+    variable is generally not needed as the information can be 
+    determined from the ccsm scripts.
+  - machine_name is the name of the machine
+  - lid is the timestamp associated with the log files
+  - run this tool on the same machine as the ccsm run
+  - no timing information may be available for "data" models
+  - the user running the case should run the scripts.  otherwise,
+    the user should invoke setenv T_SEARCH1 to set the path for
+    the location of the log files.
+  - the tool produces output in the current local directory
+  - the tool produces a directory ($CASE.$lid) and an output file
+    ($CASE.$lid.timing).
+  - use this tool either at the end of a run from the ccsm scripts
+    or on the most recent run for a run that is stopped.  the cam
+    and clm timing files are not kept between ccsm runs.
+  - the timing output provided is an aid to the user and is based on 
+    typical ccsm runs on common machines.  the analysis is limited
+    by the amount of information provided by the models.  it's the
+    user's responsibility to understand the limitations of the output.
+  - contact the CCSM CSEG group with questions or for additional help.
+
+To change task and thread settings in CCSM, see the CCSM Users Guide.
+In general, the procedure is to
+
+  > cd $CASEROOT
+  > edit env_mach.bluesky, set tasks and threads at "setenv NTASKS_ATM"
+    and the next 10 lines of code.  Setting them here overrides the defaults.
+  > ./configure -cleanmach bluesky
+  > ./configure -mach bluesky
+  > $CASE.build
+  > llsubmit $CASE.run
+
+A "line-by-line" guide to the output file is provided next.  The output file
+produced by the tool has a filename like b30.001.yymmdd-hhmmss.timing.  This 
+is a text file with a summary of ccsm timing data.
+
+CCSM TIMING PROFILE
+  The first section summarizes the case analyzed.  This information is
+  extracted from the environment and the case setup at the time the
+  timing tool is invoked.  Most of the output in this section is 
+  straightforward.  
+
+  "lid" is the timestamp associated with the ccsm run and is part
+        of the filename for the ccsm log files.
+  "date" is the timestamp at the time the timing tool was run.
+   A summary of the components and their pes is provided.  Generally,
+        the pes set in CCSM are expressed as the number of MPI Tasks
+        by the number of OpenMP Threads (MPI x OpenMP).  The total
+        is the product of these two numbers.
+
+ANALYSIS
+  This section provides an overview of the CCSM timing and contains a 
+  summary of several critical regions in CCSM.  The source of these 
+  numbers is described below in the details section.  Users are 
+  encouraged to review the load balance chart to verify the comparisons
+  provided below are applicable.  Letters (ie. E+F) reference sections
+  in the load balance chart.
+
+  1. Overall Metrics
+     Model Throughput is the number of years of simulation that could
+         be produced if the model ran continuously for one day.
+     Model Cost is the cost in pe-hrs for this case to run one
+         simulated year.  Lower cost is better.
+     Avg PE Utilization is the pe weighted average of the pe 
+         utilization for each component.  In other words, it's the
+         average percent of time the pes are working.  Because of
+         CCSM's complex coupling and the relative inflexibility of 
+         some components to run or scale to arbitrary pe numbers,
+         this number is never 100%.  Based on experience, values greater 
+         than 80% are good, values less than 65% are not so good.
+
+  2. Component PE Utilization
+     This section summarizes the pe utilization for each component
+       separately.  For this analysis, pes are assumed to working 100% 
+       unless they are waiting for a coupling communication, so these 
+       numbers are indicative of the percent of time not idle due to ccsm 
+       blocked communication.  Generally, to use the resources most 
+       effectively, components with high pe counts should have the highest 
+       utilization.  These five numbers weighted by pe count are used to 
+       generate the Avg PE Utilization above.
+     Ideally, each component would run at 100% utilization.  Generally,
+       users will want to decrease the pe count for components with
+       lower utilization.
+
+  3. ATM send to recv balance with land/ice/cpl recv to send
+     This section summarizes one aspect of CCSM load balance, the
+       time associated with land and ice recv to send.  It compares
+       those times to the atm work going on in parallel and the coupler
+       time.  This section is generally part of the critical path in CCSM.
+     Ideally, these times would all be identical.  Generally, users
+       will want to decrease the pe count for components with lower
+       times or increase the pe count for components with higher times.
+
+  4. ATM send to recv balance with critical path
+     This section summarizes one aspect of CCSM load balance, the
+       overall time of the first phase of CCSM (A-I) encompassing the
+       land, ice, and cpl critical path time compared to the atm recv 
+       to send time.  
+     Ideally, these times would all be identical.  If the "cpl"
+       time is greater than the atm time, this generally means the
+       cpl/lnd/ice path is holding up the atm at J.  If the "cpl"
+       time is less than the atm time, then the first phase of
+       CCSM is paced by the atm alone.
+
+  5. ATM recv to send balance with land/ice/cpl send to recv
+     This section summarizes one aspect of CCSM load balance, the
+       time associated with atm recv to send as compared to the
+       time the lnd, ice, and cpl are working in parralel.  Normally,
+       in the fully coupled model, this is where the lnd, atm, and
+       cpl are largely idle.
+     Ideally, these times would all be identical.  Generally, users
+       will want to decrease the pe count for components with lower
+       times or increase the pe count for components with higher times.
+
+  6. OCN recv to send balance with all components
+     This section summarizes one aspect of CCSM load balance, the
+       ocn run time compared to all other components.  This basically
+       compares all components working time and removes the time
+       components are idle.  In that sense, it's consistent with
+       the average pe utilization of (2) above.  Normally, the
+       ocean model should be in close balance with the largest
+       next component.
+     Ideally, these times would all be identical.  Generally, users
+       will want to decrease the pe count for components with lower
+       times or increase the pe count for components with higher times.
+
+  Based on the information above, the user can change the pe allocation
+  for components to try to improve the throughput, efficiency, and/or
+  pe utilization.  This timing tool will provide output to compare
+  different pe allocations fairly.  There is no way to optimize all
+  the parameters at the same time.  Users should target the "sweet
+  spots" for the case they're running to optimize efficiency while
+  getting reasonable throughput.
+
+  When choosing pe allocations for components, keep in mind
+    - some components won't run on arbitrary pe numbers
+    - some components won't scale well on arbitrary pe numbers
+    - components may or may not run better with mixed MPI/OpenMP
+    - some machines charge by node, not pe.  In that case, users
+      get no benefit from having idle pes on a node
+
+DETAILS
+  CCSM is a complex system.  Four tightly coupled physical components are
+  running concurrently.  They communicate via the fifth component, the
+  coupler.  The communication pattern is largely set by science requirements.
+
+  As the hub, the coupler, in practice, controls the interaction of the
+  different components.  Each physical component sends and receives data
+  once each coupling period and computes in-between.  The timing for each
+  physical component is most simply summarized by four numbers, the
+  time to send, the compute time between the send and receive, the time
+  to receive, and the compute time between the receive and the send.
+  The coupler, on the other hand, sends and receives to each physical
+  component once each coupling period and may compute in-between the
+  communication, so the coupler communicates as much as all the other
+  four components combined.
+
+  All sends and receives in CCSM are blocking.  Communication is only
+  via the coupler.  So unless a communication is perfectly timed, either
+  the coupler or the component will be waiting.  In general, the 
+  communication time can be best estimated by taking the minimum time
+  of any pairwise communication.  This represents the time spent for
+  communication  by the non-waiting component.  Because of subtleties
+  associated with blocking, waiting, and timer calls, this estimate
+  may be off by a factor of two or three.
+
+  Load Balance Chart:
+    The load balance chart summarizes the interactions and timings.
+    The vertical axis consists of the 5 components and the second
+    column is the number of processors for that component.  The horizontal
+    axis schematically represents a timestep in the coupler and
+    the order of interactions.  All numbers in the chart are time
+    in seconds for the entire run, and they may have been scaled for
+    clarity.  If any scaling has been done, that will be stated in
+    the notes for this section. 
+
+    The notes will also indicate whether ocean timers have been 
+    adjusted to take into account the fact that the ocean does not
+    run on the first day or a startup or hybrid run.  The atm s2r
+    and r2s min and max are also shown in the notes.  This is 
+    indicative of the internal load balance in CAM but it's outside
+    the scope of this analysis to address specific component performance.
+    Overall run total are also summarized in the notes.
+
+    Each of the 14 columns (A-N) represents a specific interaction.  
+    The vertical lines (arrows) in the chart represent communication 
+    and the direction of flow of the data.  For instance, "A"
+    is communication from the coupler to the ocean; a send on the
+    coupler side and a receive on the ocean side.  On each side of
+    the arrow is a time.  The larger time generally indicates the waiting
+    component while the smaller time is an estimate of the communication
+    time for each component in this communication pair. 
+
+    Each physical component has four times associated with it.  One
+    each for send and receive.  One each for the time spent computing
+    between communication.  The compute time for the physical components
+    has been arbitrarily placed in a column, but in practice the
+    computation occurs for the entire time between the physical 
+    component's send and receive or receive and send.
+
+    Numbers from this chart lead directly to the analysis in the
+    previous section.  There are several critical overlaps of
+    work.  Because of the communication pattern and timing
+    of components in the system, several unique aspects of the
+    timing need to be considered with respect to CCSM load balance.
+    The typical critical regions are summarized above in the analysis
+    section.  However, the critical regions can be highly case
+    dependent.
+
+    Some of the things to identify in the chart are
+    - for each communication, which component is waiting and how much
+    - for each component, how much of the total time is spent computing
+    - for the different comonents, which one is least idle
+    - are components using lots of pes waiting a lot
+    - are components using few pes holding the system up
+    - the timing in C-G (excluding the ocean model) is a critical
+      load balance area
+    
+env_conf
+  Appended at the end of each timing file is a copy of the 
+  case env_conf file.  This generally provides addition insights
+  into various modes or other physics that might have been
+  turned on during the run.  These can have a large bearing
+  on the timing of a run. 

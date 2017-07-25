@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+
+<config_ccsmtest>
+
+<ccsmtest NAME="APT"
+          DESC="auto promotion test (5 day)"
+          RUN_TYPE="startup"
+          INFO_DBUG="2"
+          CCSM_TCOST="0"
+          DOUT_S="FALSE" />
+          
+<ccsmtest NAME="SEQ"
+          DESC="sequencing bfb test (10 day seq,conc tests)"
+          RUN_TYPE="startup"
+          INFO_DBUG="2"
+          STOP_OPTION="ndays"
+          STOP_N="10"
+          REST_OPTION="never"
+          CCSM_TCOST="0"
+          DOUT_S="FALSE" />
+
+<ccsmtest NAME="PEA"
+          DESC="single pe bfb test (5 day tests)"
+          RUN_TYPE="startup"
+          INFO_DBUG="2"
+          USE_MPISERIAL="FALSE"
+          STOP_OPTION="ndays"
+          STOP_N="5"
+          REST_OPTION="never"
+          CCSM_TCOST="2"
+          DOUT_S="FALSE" />
+
+<ccsmtest NAME="PEM"
+          DESC="pes counts mpi bfb test (5 day seq tests)"
+          RUN_TYPE="startup"
+          INFO_DBUG="2"
+          BFBFLAG="TRUE"
+          STOP_OPTION="ndays"
+          STOP_N="5"
+          REST_OPTION="never"
+          CCSM_TCOST="1"
+          DOUT_S="FALSE" />
+
+<ccsmtest NAME="PET"
+          DESC="openmp bfb test (5 day seq tests)"
+          RUN_TYPE="startup"
+          INFO_DBUG="2"
+          BFBFLAG="TRUE"
+          BUILD_THREADED="TRUE"
+          STOP_OPTION="ndays"
+          STOP_N="5"
+          REST_OPTION="never"
+          CCSM_TCOST="1"
+          DOUT_S="FALSE" />
+
+<ccsmtest NAME="PST"
+          DESC="small pes counts mpi/openmp bfb test (5 day seq tests)"
+          RUN_TYPE="startup"
+          INFO_DBUG="2"
+          BFBFLAG="TRUE"
+          BUILD_THREADED="TRUE"
+          DRV_THREADING="TRUE"
+          STOP_OPTION="ndays"
+          STOP_N="5"
+          REST_OPTION="never"
+          CCSM_TCOST="1"
+          DOUT_S="FALSE" />
+
+<ccsmtest NAME="PMT"
+          DESC="medium pes counts mpi/openmp bfb test (5 day seq tests)"
+          RUN_TYPE="startup"
+          INFO_DBUG="2"
+          BFBFLAG="TRUE"
+          BUILD_THREADED="TRUE"
+          DRV_THREADING="TRUE"
+          STOP_OPTION="ndays"
+          STOP_N="5"
+          REST_OPTION="never"
+          CCSM_TCOST="1"
+          DOUT_S="FALSE" />
+
+<ccsmtest NAME="ERS"
+          DESC="exact restart from startup (10 init, restart at 5)"
+          RUN_TYPE="startup"
+          INFO_DBUG="2"
+          CCSM_TCOST="0"
+          DOUT_S="FALSE" />
+          
+<ccsmtest NAME="ERP"
+          DESC="exact restart from startup (2 mons init, rest at 1 month)"
+          RUN_TYPE="startup"
+          INFO_DBUG="2"
+          STOP_OPTION="nmonths"
+          STOP_N="2"
+          REST_OPTION="date"
+          DOUT_S="FALSE" 
+          CCSM_TCOST="4"
+          DOUT_L_MS="FALSE" />
+          
+<ccsmtest NAME="ERB"
+          DESC="branch/exact restart test (15b, 9, c at 5)"
+          RUN_TYPE="branch"
+	  RUN_REFCASE="$CASE.ref"
+          GET_REFCASE="FALSE"
+          INFO_DBUG="2"
+          CCSM_TCOST="1"
+          DOUT_S="TRUE" />
+          
+<ccsmtest NAME="ERI"
+          DESC="hybrid/branch/exact restart test (5h, 15b, 9, c at 5)"
+          INFO_DBUG="2"
+          CCSM_TCOST="1"
+          DOUT_S="TRUE" />
+          
+<ccsmtest NAME="ERH"
+          DESC="hybrid/exact restart test (7 h at 10 c at 5)"
+          RUN_TYPE="hybrid"
+	  RUN_REFCASE="$CASE.ref"
+          GET_REFCASE="FALSE"
+          INFO_DBUG="2"
+          CCSM_TCOST="1"
+          DOUT_S="TRUE" />
+          
+<ccsmtest NAME="ERT"
+          DESC="exact restart from startup, hist file test (2 month init, restart at 1 month)"
+          RUN_TYPE="startup" 
+          REST_OPTION="date" 
+          REST_N="-999" 
+          INFO_DBUG="1" 
+          CONTINUE_RUN="FALSE" 
+          HIST_OPTION="date"
+          HIST_N="-999"
+          STOP_OPTION="nmonths" 
+          STOP_N="2" 
+          DOUT_S="FALSE" 
+          CCSM_TCOST="4"
+          DOUT_L_MS="FALSE" />
+
+<ccsmtest NAME="ERU"
+          DESC="exact restart from arbitary initial conditions, hist file test (2 month init, restart at 1 month)"
+          REST_OPTION="date" 
+          REST_N="-999" 
+          INFO_DBUG="1" 
+          CONTINUE_RUN="FALSE" 
+          HIST_OPTION="date"
+          HIST_N="-999"
+          STOP_OPTION="nmonths" 
+          STOP_N="2" 
+          DOUT_S="FALSE" 
+          CCSM_TCOST="4"
+          DOUT_L_MS="FALSE" />
+
+<ccsmtest NAME="LAR"
+          DESC="long term archive test"
+          RUN_TYPE="startup"
+          INFO_DBUG="1"
+          STOP_OPTION="nmonths"
+          STOP_N="2"
+          DOUT_S="TRUE" 
+          CCSM_TCOST="4"
+          DOUT_L_MS="TRUE" />
+          
+<ccsmtest NAME="PFS"
+          DESC="performance test setup"
+          RUN_TYPE="startup"
+          INFO_DBUG="1"
+          STOP_OPTION="ndays"
+          STOP_N="20"
+          REST_OPTION="none"
+          CCSM_TCOST="0"
+          DOUT_S="FALSE" />
+          
+<ccsmtest NAME="SMS"
+          DESC="smoke startup test (5 days)"
+          RUN_TYPE="startup"
+          INFO_DBUG="2"
+          CCSM_TCOST="-1"
+          DOUT_S="FALSE" />
+          
+<ccsmtest NAME="CME"
+          DESC="compare mct and esmf interfaces (10 days)"
+          COMP_INTERFACE="MCT"
+          USE_ESMF_LIB="TRUE"
+          STOP_OPTION="ndays"
+          STOP_N="10"
+          REST_OPTION="none"
+          INFO_DBUG="2"
+          CCSM_TCOST="0"
+          DOUT_S="FALSE" />
+          
+<ccsmtest NAME="P4A"
+          DESC="production branch test b40.1850.track1.1deg.006 year 301"
+          RUN_TYPE="branch"
+	  RUN_REFCASE="b40.1850.track1.1deg.006"
+	  RUN_REFDATE="0301-01-01"
+	  RUN_STARTDATE="0301-01-01"
+          GET_REFCASE="TRUE"
+          STOP_OPTION="nmonths"
+          STOP_N="1"
+          HIST_OPTION="nmonths"
+          HIST_N="1"
+          INFO_DBUG="2"
+          CCSM_TCOST="1"
+          DOUT_S="FALSE" />
+
+</config_ccsmtest>

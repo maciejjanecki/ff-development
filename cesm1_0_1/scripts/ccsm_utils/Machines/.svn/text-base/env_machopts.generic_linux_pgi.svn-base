@@ -1,0 +1,35 @@
+#! /bin/csh -f
+
+#-------------------------------------------------------------------------------
+# GENERIC_USER
+# Platform-specific software versions/locations are set here.  This
+# might be done via modules or updates to the user PATH.  Some env
+# variables might also be set here for use in the Macros file.  Some
+# of the things that might be important here are compiler versions or
+# mpi and netcdf paths.  Samples are commented out below.
+#-------------------------------------------------------------------------------
+
+#--- set modules
+#source /usr/Modules/init/csh
+#module purge
+#module load openmpi/1.2.8-pgi
+#module load netcdf/4.0-pgi
+#module list
+
+#--- set paths
+#setenv PGI_PATH /usr/local/pgi-pgcc-pghf-7.2-5
+#setenv MPICH_PATH /usr/local/mpich-1.2.7p1-pgi-hpf-cc-7.2-5
+#setenv PATH ${PGI}/linux86/bin:${MPICH_PATH}/bin:${PATH}
+#setenv LD_LIBRARY_PATH ${PGI}/linux86/lib:${LD_LIBRARY_PATH}
+
+#--- set env variables for Macros if needed
+#setenv NETCDF_PATH something
+
+#-------------------------------------------------------------------------------
+# GENERIC_USER
+# Machine specific environment variables are set here.  This might be needed
+# to set MPI, core file, IO,  memory or many other things.  
+#-------------------------------------------------------------------------------
+
+#setenv P4_GLOBMEMSIZE 500000000
+

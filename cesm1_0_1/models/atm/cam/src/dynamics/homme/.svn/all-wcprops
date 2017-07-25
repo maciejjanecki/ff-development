@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme
+END
+pmgrid.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/pmgrid.F90
+END
+dycore.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/dycore.F90
+END
+io_dist.F90
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/io_dist.F90
+END
+trunc.F90
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/trunc.F90
+END
+dyn_grid.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/dyn_grid.F90
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/README
+END
+initcom.F90
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/initcom.F90
+END
+dp_coupling.F90
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/dp_coupling.F90
+END
+stepon.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/stepon.F90
+END
+inidat.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/inidat.F90
+END
+dyn_comp.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/dyn_comp.F90
+END
+restart_dynamics.F90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/restart_dynamics.F90
+END
+commap.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/commap.F90
+END
+spmd_dyn.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/spmd_dyn.F90
+END
+inital.F90
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/src/dynamics/homme/inital.F90
+END

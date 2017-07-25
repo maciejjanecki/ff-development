@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld
+END
+run-pc.csh
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/run-pc.csh
+END
+configure
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/configure
+END
+run-scam.csh
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/run-scam.csh
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/Makefile.in
+END
+mkSrcfiles
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/mkSrcfiles
+END
+run-darwin.csh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/run-darwin.csh
+END
+run-ibm.csh
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/run-ibm.csh
+END
+build-namelist
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/build-namelist
+END
+mkDepends
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/mkDepends
+END
+run-cray.csh
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/run-cray.csh
+END
+cam.cpl7.template
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/models/atm/cam/bld/cam.cpl7.template
+END

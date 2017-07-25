@@ -1,0 +1,54 @@
+--------------------------------------------------------------------------------
+                            CESM1.0 README
+
+For both a quick start as well as a detailed summary of creating and running 
+a CESM model case, see the CESM1.0 User's Guide at
+http://www.cesm.ucar.edu/models/cesm1.0
+
+IMPORTANT INFORMATION ABOUT SCIENTIFIC VALIDATION
+
+   CESM1.0 has the flexibility to configure cases with many different 
+   combinations of component models, grids, and model settings, but this 
+   version of CESM has only been validated scientifically for the following 
+   fully active configurations:
+
+      1.9x2.5_gx1v6   B_1850_CN
+      1.9x2.5_gx1v6   B_1850_RAMPCO2_CN
+      1.9x2.5_gx1v6   B_1850-2000_CN
+
+      1.9x2.5_gx1v6   B_1850_CAM5
+
+      0.9x1.25_gx1v6  B_1850_CN
+      0.9x1.25_gx1v6  B_1850_RAMPCO2_CN
+      0.9x1.25_gx1v6  B_1850-2000_CN
+
+      0.9x1.25_gx1v6  B_1850_BGC-BPRP
+      0.9x1.25_gx1v6  B_1850_BGC-BDRD
+      0.9x1.25_gx1v6  B_1850-2000_BGC-BPRP
+      0.9x1.25_gx1v6  B_1850-2000_BGC-BDRD
+
+      0.9x1.25_gx1v6  B_1850_CN_CHEM 
+      0.9x1.25_gx1v6  B_1850-2000_CN_CHEM
+
+      1.9x2.5_gx1v6   B_1850_WACCM_CN
+      1.9x2.5_gx1v6   B_1850-2000_WACCM_CN
+
+   If the user is interested in running a "stand-alone" component configuration, 
+   the following model configurations have been validated scientifically and 
+   have associated diagnostic output as part of the release:
+
+      1.9x2.5_1.9x2.5    F_2000_WACCM
+      1.9x2.5_1.9x2.5    F_AMIP_CAM5
+      1.9x2.5_1.9x2.5    F_AMIP_CN
+      0.9x1.25_0.9x1.25  F_AMIP_CN
+
+      0.9x1.25_gx1v6  I_2000
+      0.9x1.25_gx1v6  I_2000_CN
+
+      T62_gx1v6       C_NORMAL_YEAR
+
+   For more information regarding alternative component configurations, 
+   please refer to the individual component web pages at
+   http://www.cesm.ucar.edu/models/cesm1.0
+
+--------------------------------------------------------------------------------

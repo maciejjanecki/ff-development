@@ -1,0 +1,455 @@
+<table><title>env_run.xml variables</title>
+<tgroup cols="4">
+<thead>
+<row> 
+<entry>Name</entry>
+<entry>Type</entry>
+<entry>Default</entry>
+<entry>Description [Valid Values]</entry>
+</row> 
+</thead>
+<tbody>
+<row> 
+<entry>AOFLUX_GRID</entry>
+<entry>char</entry>
+<entry>ocn</entry>
+<entry>grid for atm ocn flux calc (atm currently not supported)</entry>
+</row>
+<row> 
+<entry>ATM_NCPL</entry>
+<entry>char</entry>
+<entry>24</entry>
+<entry>number of atm coupling intervals per day</entry>
+</row>
+<row> 
+<entry>AVGHIST_DATE</entry>
+<entry>integer</entry>
+<entry>-999</entry>
+<entry>yyyymmdd format, sets coupler time-average history date (like REST_DATE)</entry>
+</row>
+<row> 
+<entry>AVGHIST_N</entry>
+<entry>char</entry>
+<entry>-999</entry>
+<entry>sets coupler time-average history file frequency (like REST_N)</entry>
+</row>
+<row> 
+<entry>AVGHIST_OPTION</entry>
+<entry>char</entry>
+<entry>never</entry>
+<entry>sets coupler time-average history file frequency (like REST_OPTION)</entry>
+</row>
+<row> 
+<entry>BATCHQUERY</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>command used to query batch system</entry>
+</row>
+<row> 
+<entry>BATCHSUBMIT</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>command used to submit to batch system</entry>
+</row>
+<row> 
+<entry>BFBFLAG</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>turns on bit-for-bit reproducibility with varying pe counts 
+       in the driver and coupler, performance will likely be reduced [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>BUDGETS</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>logical that turns on diagnostic budgets
+        FALSE means budgets will never be written [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>BUDGET_ANNUAL</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>output level for annual average budget diagnostics,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3] </entry>
+</row>
+<row> 
+<entry>BUDGET_DAILY</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>output level for daily average budget diagnostics,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3] </entry>
+</row>
+<row> 
+<entry>BUDGET_INST</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>output level for instantaneous budget diagnostics,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3] </entry>
+</row>
+<row> 
+<entry>BUDGET_LONGTERM_EOY</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>output level for longterm average budget diagnostics written at end of year,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3] </entry>
+</row>
+<row> 
+<entry>BUDGET_LONGTERM_STOP</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>output level for longterm average budget diagnostics written at end of run,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3] </entry>
+</row>
+<row> 
+<entry>BUDGET_MONTHLY</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>output level for monthly average budget diagnostics,
+        written only if BUDGETS variable is TRUE,
+        0=none, 1=net summary, 2=+detailed surface, 3=+detailed atm [0,1,2,3] </entry>
+</row>
+<row> 
+<entry>CALENDAR</entry>
+<entry>char</entry>
+<entry>NO_LEAP</entry>
+<entry>calendar type [NO_LEAP,GREGORIAN] </entry>
+</row>
+<row> 
+<entry>CASESTR</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>case description</entry>
+</row>
+<row> 
+<entry>CCSM_BASELINE</entry>
+<entry>char</entry>
+<entry>/UNSET</entry>
+<entry>standard ccsm baselines directory for testing</entry>
+</row>
+<row> 
+<entry>CCSM_CPRNC</entry>
+<entry>char</entry>
+<entry>/UNSET</entry>
+<entry>standard location of the cprnc tool</entry>
+</row>
+<row> 
+<entry>CCSM_REPOTAG</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>CCSM tag</entry>
+</row>
+<row> 
+<entry>CHECK_TIMING</entry>
+<entry>logical</entry>
+<entry>TRUE</entry>
+<entry>logical to diagnose model timing at the end of the run [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>CONTINUE_RUN</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>A continue run extends an existing CCSM run exactly.                 
+        A setting of TRUE implies a continuation run [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>DIN_LOC_ROOT</entry>
+<entry>char</entry>
+<entry>$DIN_LOC_ROOT_CSMDATA</entry>
+<entry>local inputdata directory for CCSM prestaged data</entry>
+</row>
+<row> 
+<entry>DIN_LOC_ROOT_CLMQIAN</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>general ccsm inputdata directory for CLM QIAN datm forcing files</entry>
+</row>
+<row> 
+<entry>DIN_LOC_ROOT_CSMDATA</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>general ccsm inputdata directory</entry>
+</row>
+<row> 
+<entry>DOUT_L_HTAR</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>logical to tar up long term archiver history files [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>DOUT_L_MS</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>logical to turn on long term archiving (if DOUT_S is also TRUE) [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>DOUT_L_MSROOT</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>local long term archiving root directory</entry>
+</row>
+<row> 
+<entry>DOUT_S</entry>
+<entry>logical</entry>
+<entry>TRUE</entry>
+<entry>logical to turn on short term archiving [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>DOUT_S_ROOT</entry>
+<entry>char</entry>
+<entry>UNSET</entry>
+<entry>local short term archiving root directory</entry>
+</row>
+<row> 
+<entry>DOUT_S_SAVE_INT_REST_FILES</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>logical to archive all interim restart files, not just those at end of run [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>DRV_THREADING</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>Turns on component varying thread control in the driver [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>EPS_AAREA</entry>
+<entry>real</entry>
+<entry>9.0e-07</entry>
+<entry>error tolerance for differences in atm/land areas in domain checking</entry>
+</row>
+<row> 
+<entry>EPS_AGRID</entry>
+<entry>real</entry>
+<entry>1.0e-12</entry>
+<entry>error tolerance for differences in atm/land lon/lat in domain checking</entry>
+</row>
+<row> 
+<entry>EPS_AMASK</entry>
+<entry>real</entry>
+<entry>1.0e-13</entry>
+<entry>error tolerance for differences in atm/land masks in domain checking</entry>
+</row>
+<row> 
+<entry>EPS_FRAC</entry>
+<entry>real</entry>
+<entry>1.0e-02</entry>
+<entry>error tolerance for differences in fractions in domain checking</entry>
+</row>
+<row> 
+<entry>EPS_OAREA</entry>
+<entry>real</entry>
+<entry>1.0e-01</entry>
+<entry>error tolerance for differences in ocean/ice areas in domain checking</entry>
+</row>
+<row> 
+<entry>EPS_OGRID</entry>
+<entry>real</entry>
+<entry>1.0e-02</entry>
+<entry>error tolerance for differences in ocean/ice lon/lat in domain checking</entry>
+</row>
+<row> 
+<entry>EPS_OMASK</entry>
+<entry>real</entry>
+<entry>1.0e-06</entry>
+<entry>error tolerance for differences in ocean/ice masks in domain checking</entry>
+</row>
+<row> 
+<entry>GLC_NCPL</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>number of glc coupling intervals per day (integer)</entry>
+</row>
+<row> 
+<entry>HISTINIT</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>logical to write an extra initial coupler history file [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>HIST_DATE</entry>
+<entry>integer</entry>
+<entry>-999</entry>
+<entry>yyyymmdd format, sets coupler snapshot history date (like REST_DATE)</entry>
+</row>
+<row> 
+<entry>HIST_N</entry>
+<entry>char</entry>
+<entry>-999</entry>
+<entry>sets coupler snapshot history file frequency (like REST_N)</entry>
+</row>
+<row> 
+<entry>HIST_OPTION</entry>
+<entry>char</entry>
+<entry>never</entry>
+<entry>sets coupler snapshot history file frequency (like REST_OPTION)</entry>
+</row>
+<row> 
+<entry>ICE_NCPL</entry>
+<entry>char</entry>
+<entry>$ATM_NCPL</entry>
+<entry>number of ice coupling intervals per day (integer)</entry>
+</row>
+<row> 
+<entry>INFO_DBUG</entry>
+<entry>integer</entry>
+<entry>1</entry>
+<entry>level of debug output, 0=minimum, 1=normal, 2=more, 3=too much [0,1,2,3] </entry>
+</row>
+<row> 
+<entry>LND_NCPL</entry>
+<entry>char</entry>
+<entry>$ATM_NCPL</entry>
+<entry>number of land coupling intervals per day (integer)</entry>
+</row>
+<row> 
+<entry>LOGDIR</entry>
+<entry>char</entry>
+<entry>$CASEROOT/logs</entry>
+<entry>directory where log files should be copied
+       in addition to archiving</entry>
+</row>
+<row> 
+<entry>NPFIX</entry>
+<entry>logical</entry>
+<entry>TRUE</entry>
+<entry>invoke pole vector corrections in map_atmocn</entry>
+</row>
+<row> 
+<entry>OCN_NCPL</entry>
+<entry>char</entry>
+<entry>1</entry>
+<entry>number of ocn coupling intervals per day (integer)</entry>
+</row>
+<row> 
+<entry>OCN_TAVG_HIFREQ</entry>
+<entry>char</entry>
+<entry>FALSE</entry>
+<entry>tavg output control for high-frequency output [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>OCN_TAVG_TRACER_BUDGET</entry>
+<entry>char</entry>
+<entry>FALSE</entry>
+<entry>tavg output control for tracer-budget terms [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>OCN_TIGHT_COUPLING</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>if TRUE, treats ocean model like lnd/ice in coupling and
+       removes 1 coupling period lag at the cost of concurrency [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>PTS_LAT</entry>
+<entry>real(1)</entry>
+<entry>-999.99</entry>
+<entry>Points mode nearest latitudes</entry>
+</row>
+<row> 
+<entry>PTS_LON</entry>
+<entry>real(1)</entry>
+<entry>-999.99</entry>
+<entry>Points mode nearest longitudes</entry>
+</row>
+<row> 
+<entry>REST_DATE</entry>
+<entry>char</entry>
+<entry>$STOP_DATE</entry>
+<entry>date in yyyymmdd format, sets model restart write date with REST_OPTION and REST_N</entry>
+</row>
+<row> 
+<entry>REST_N</entry>
+<entry>char</entry>
+<entry>$STOP_N</entry>
+<entry>sets model restart writes with REST_OPTION and REST_DATE
+       (same options as STOP_N)</entry>
+</row>
+<row> 
+<entry>REST_OPTION</entry>
+<entry>char</entry>
+<entry>$STOP_OPTION</entry>
+<entry>sets frequency of model restart writes (same options as STOP_OPTION)
+        with REST_N and REST_DATE</entry>
+</row>
+<row> 
+<entry>RESUBMIT</entry>
+<entry>integer</entry>
+<entry>0</entry>
+<entry>if RESUBMIT is greater than 0, then case will automatically resubmit 
+        if that feature is supported in the run script</entry>
+</row>
+<row> 
+<entry>SHR_MAP_DOPOLE</entry>
+<entry>logical</entry>
+<entry>TRUE</entry>
+<entry>invoke pole averaging corrections in shr_map_mod weights generation</entry>
+</row>
+<row> 
+<entry>STOP_DATE</entry>
+<entry>integer</entry>
+<entry>-999</entry>
+<entry>date in yyyymmdd format, sets the run length with STOP_OPTION and STOP_N,
+        can be in addition to STOP_OPTION and STOP_N, negative value implies off</entry>
+</row>
+<row> 
+<entry>STOP_N</entry>
+<entry>integer</entry>
+<entry>5</entry>
+<entry>sets the run length with STOP_OPTION and STOP_DATE</entry>
+</row>
+<row> 
+<entry>STOP_OPTION</entry>
+<entry>char</entry>
+<entry>ndays</entry>
+<entry>sets the run length with STOP_N and STOP_DATE
+        STOP_OPTION alarms are:
+        [none/never], turns option off
+        [nstep/s]   , stops every STOP_N nsteps  , relative to current run start time
+        [nsecond/s] , stops every STOP_N nseconds, relative to current run start time
+        [nminute/s] , stops every STOP_N nminutes, relative to current run start time
+        [nhour/s]   , stops every STOP_N nhours  , relative to current run start time
+        [nday/s]    , stops every STOP_N ndays   , relative to current run start time
+        [nmonth/s]  , stops every STOP_N nmonths , relative to current run start time
+        [nyear/s]   , stops every STOP_N nyears  , relative to current run start time
+        [date]      , stops at STOP_DATE value
+        [ifdays0]   , stops at STOP_N calendar day value and seconds equal 0
+        [end]       , stops at end [none,never,nsteps,nstep,nseconds,nsecond,nminutes,nminute,nhours,nhour,ndays,nday,nmonths,nmonth,nyears,nyear,date,ifdays0,end] </entry>
+</row>
+<row> 
+<entry>TIMER_LEVEL</entry>
+<entry>integer</entry>
+<entry>4</entry>
+<entry>timer output depth [1,2,3,4,5,6,7,8,9,10] </entry>
+</row>
+<row> 
+<entry>TIMING_BARRIER</entry>
+<entry>logical</entry>
+<entry>FALSE</entry>
+<entry>if TRUE, turns on the timing barrier calls in the model [TRUE,FALSE] </entry>
+</row>
+<row> 
+<entry>TPROF_DATE</entry>
+<entry>integer</entry>
+<entry>-999</entry>
+<entry>yyyymmdd format, sets timing output file date (like REST_DATE)</entry>
+</row>
+<row> 
+<entry>TPROF_N</entry>
+<entry>char</entry>
+<entry>-999</entry>
+<entry>sets timing output file frequency (like REST_N)</entry>
+</row>
+<row> 
+<entry>TPROF_OPTION</entry>
+<entry>char</entry>
+<entry>never</entry>
+<entry>sets timing output file frequency (like REST_OPTION but relative to run start date)</entry>
+</row>
+</tbody>
+</tgroup>
+</table>

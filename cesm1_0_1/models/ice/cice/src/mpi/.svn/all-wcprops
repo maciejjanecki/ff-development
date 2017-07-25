@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/mpi
+END
+ice_broadcast.F90
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/mpi/ice_broadcast.F90
+END
+ice_boundary.F90
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/mpi/ice_boundary.F90
+END
+ice_timers.F90
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/mpi/ice_timers.F90
+END
+ice_communicate.F90
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/mpi/ice_communicate.F90
+END
+ice_exit.F90
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/mpi/ice_exit.F90
+END
+ice_gather_scatter.F90
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/mpi/ice_gather_scatter.F90
+END
+ice_global_reductions.F90
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/25/model_versions/cesm1_0_1/models/ice/cice/src/mpi/ice_global_reductions.F90
+END

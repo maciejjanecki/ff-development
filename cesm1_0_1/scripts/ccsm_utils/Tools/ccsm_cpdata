@@ -1,0 +1,41 @@
+#! /bin/csh -f
+
+#------------------------------------------------------------------
+# Copy files using either cp or scp
+# "Usage: ccsm_cpdata [machine:][dir/]file [machine:][dir/][file]"
+#------------------------------------------------------------------
+
+#------------------------------------------------------------------
+# Check input variables, f1 is input, f2 is output.
+# If f2 is not input, set it to the filename associated with f1
+#------------------------------------------------------------------
+if ("$#argv" == 2) then
+   set f1 = $argv[1]
+   set f2 = $argv[2]
+else
+if ("$#argv" == 1) then
+   set f1 = $argv[1]
+   set f2 = `${UTILROOT}/Tools/ccsm_splitdf -f ${f1}`
+else
+   echo "Usage: ccsm_cpdata [machine:][dir/]file [machine:][dir/][file]"
+   exit 1
+endif
+endif
+
+#------------------------------------------------------------------
+# Determine whether to use cp or scp
+#------------------------------------------------------------------
+set cptype = cp
+if ( "${f1}" =~ *:* ) set cptype = scp
+if ( "${f2}" =~ *:* ) set cptype = scp
+
+#------------------------------------------------------------------
+# Execute copy
+#------------------------------------------------------------------
+
+if (-f ${f1}) then
+  echo "${cptype} ${f1} to ${f2}"
+  ${cptype} ${f1} ${f2}
+endif
+
+exit

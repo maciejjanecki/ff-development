@@ -1,0 +1,336 @@
+#!/usr/bin/env perl
+#-----------------------------------------------------------------------------------------------
+#
+# write_docbook_file
+#
+# This utility allows the CCSM user to specify configuration
+# options via a commandline interface.
+#
+#-----------------------------------------------------------------------------------------------
+
+use strict;
+use Cwd;
+use English;
+use Getopt::Long;
+use IO::File;
+use IO::Handle;
+#-----------------------------------------------------------------------------------------------
+
+sub usage {
+    die <<EOF;
+SYNOPSIS
+     write_docbook_file [options]
+OPTIONS
+     -silent [or -s]      Turns on silent mode - only fatal messages issued (optional).
+     -verbose [or -v]     Turn on verbose echoing of settings made by create_newcase (optional).
+EOF
+}
+
+#-----------------------------------------------------------------------------------------------
+# Setting autoflush (an IO::Handle method) on STDOUT helps in debugging.  It forces the test
+# descriptions to be printed to STDOUT before the error messages start.
+
+*STDOUT->autoflush();                  
+
+#-----------------------------------------------------------------------------------------------
+my $cwd = getcwd();                    # current working directory
+my $cfgdir;                            # absolute pathname of directory that contains this script
+$cfgdir = $cwd;
+
+#-----------------------------------------------------------------------------------------------
+# Parse command-line options.
+my %opts = (
+	    );
+GetOptions(
+    "h|help"                    => \$opts{'help'},
+    "s|silent"                  => \$opts{'silent'},
+    "v|verbose"                 => \$opts{'verbose'},
+)  or usage();
+
+# Give usage message.
+usage() if $opts{'help'};
+
+# Check for unparsed argumentss
+if (@ARGV) {
+    print "ERROR: unrecognized arguments: @ARGV\n";
+    usage();
+}
+
+# Check for manditory case input if not just listing valid values
+
+my $xmlmode;
+# Define 3 print levels:
+# 0 - only issue fatal error messages
+# 1 - only informs what files are created (default)
+# 2 - verbose
+my $print = 1;
+if ($opts{'silent'})  { $print = 0; }
+if ($opts{'verbose'}) { $print = 2; }
+my $eol = "\n";
+
+my %cfg = ();           # build configuration
+
+#-----------------------------------------------------------------------------------------------
+
+# Check for the configuration definition file.
+my $config_def_file = "config_definition.xml";
+(-f "$cfgdir/../ccsm_utils/Case.template/$config_def_file")  or  die <<"EOF";
+** Cannot find configuration definition file \"$config_def_file\" in directory 
+    \"$cfgdir/ccsm_utils/Case.template/$config_def_file\" **
+EOF
+
+# Grid definition file.
+my $grid_file = 'config_grid.xml';
+(-f "$cfgdir/../ccsm_utils/Case.template/$grid_file")  or  die <<"EOF";
+** Cannot find grid parameters file \"$grid_file\" in directory 
+    \"$cfgdir/../ccsm_utils/Case.template/\" **
+EOF
+
+# Compset definition file.
+my $compset_file = 'config_compsets.xml';
+(-f "$cfgdir/../ccsm_utils/Case.template/$compset_file")  or  die <<"EOF";
+** Cannot find compset parameters file \"$compset_file\" in directory 
+    \"$cfgdir/../ccsm_utils/Case.template\" **
+EOF
+
+# Machines definition file.
+my $machine_file = 'config_machines.xml';
+(-f "$cfgdir/../ccsm_utils/Machines/$machine_file")  or  die <<"EOF";
+** Cannot find machine parameters file \"$machine_file\" in directory 
+    \"$cfgdir/../ccsm_utils/Machines\" **
+EOF
+
+# The XML::Lite module is required to parse the XML configuration files.
+(-f "$cfgdir/../ccsm_utils/Tools/perl5lib/XML/Lite.pm")  or  die <<"EOF";
+** Cannot find perl module \"XML/Lite.pm\" in directory 
+    \"$cfgdir/../ccsm_utils/Tools/perl5lib\" **
+EOF
+
+
+#-----------------------------------------------------------------------------------------------
+my @dirs = (  $cfgdir, "$cfgdir/../", "$cfgdir/../ccsm_utils/Case.template", "$cfgdir/../ccsm_utils/Tools/perl5lib");
+unshift @INC, @dirs;
+require XML::Lite;
+require ConfigCase;
+
+#-----------------------------------------------------------------------------------------------
+my $cfg_ref = ConfigCase->new("$cfgdir/../ccsm_utils/Case.template/$config_def_file"); 
+$cfg_ref->write_docbook_master("env_case_list.xml");
+$cfg_ref->write_docbook_master("env_conf_list.xml");
+$cfg_ref->write_docbook_master("env_mach_pes_list.xml");
+$cfg_ref->write_docbook_master("env_build_list.xml");
+$cfg_ref->write_docbook_master("env_run_list.xml");
+print_grids   ("$cfgdir/../ccsm_utils/Case.template/config_grid.xml");
+print_compsets("$cfgdir/../ccsm_utils/Case.template/config_compsets.xml");
+print_machines("$cfgdir/../ccsm_utils/Machines/config_machines.xml");
+if ($print>=2) { print "finished listing valid values, now exiting $eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# FINNISHED ####################################################################################
+#-----------------------------------------------------------------------------------------------
+
+sub print_grids
+{
+    # Print all currently supported valid grids
+
+    my ($grid_file) = @_;
+    my $xml = XML::Lite->new( $grid_file );
+    my $root = $xml->root_element();
+
+    my $filename;
+    $filename = "grids_list.xml";
+    if ( -f $filename ) { unlink( $filename ); }
+    my $fh;
+    $fh = IO::File->new($filename, '>' ) or die "can't open file: $filename\n";
+
+    print $fh "<table><title>supported grids</title>\n";
+    print $fh "<tgroup cols=\"7\">\n";
+
+    print $fh "<thead>\n";
+    print $fh "<row>\n";
+    print $fh "<entry> Grid (Shortname) </entry>\n";
+    print $fh "<entry>atm_grid</entry>\n";
+    print $fh "<entry>lnd_grid</entry>\n";
+    print $fh "<entry>ice_grid</entry>\n";
+    print $fh "<entry>ocn_grid</entry>\n";
+    print $fh "<entry>atm_grid type</entry>\n";
+    print $fh "<entry>ocn_grid type</entry>\n";
+    print $fh "</row>\n";
+    print $fh "</thead>\n";
+    print $fh "<tbody>\n";
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_horiz_grid" or die
+	"file $grid_file is not a horizontal grid parameters file\n";
+
+    # Read the grid parameters from $grid_file.
+
+    my @e = $xml->elements_by_name( "horiz_grid" );
+    my %a = ();
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if (defined($a{'SHORTNAME'})) { 
+        print $fh "<row>\n";
+        print $fh "<entry>$a{'GRID'} ($a{'SHORTNAME'})</entry>\n";
+        print $fh "<entry>$a{'ATM_GRID'}   </entry>\n";
+        print $fh "<entry>$a{'LND_GRID'}   </entry>\n";
+        print $fh "<entry>$a{'ICE_GRID'}   </entry>\n";
+        print $fh "<entry>$a{'OCN_GRID'}   </entry>\n";
+	my $cam_grid;
+	if ($a{'GRID'} =~ "pt1") {	    
+	    print $fh "<entry> NA </entry>\n";
+	    $cam_grid = "NA";
+	} elsif ($a{'CAM_DYCORE'} =~ "fv") {
+	    print $fh "<entry> finite volume </entry>\n";
+	    $cam_grid = "finite volume";
+	} elsif ($a{'CAM_DYCORE'} =~ "eul") {
+	    print $fh "<entry> spectral </entry>\n";
+	    $cam_grid = "spectral";
+	} elsif ($a{'CAM_DYCORE'} =~ "homme") {
+	    print $fh "<entry> cubed sphere  </entry>\n";
+	    $cam_grid = "cubed sphere";
+	}
+
+	if ($a{'GRID'} =~ "gx") {
+	    print $fh "<entry> displaced pole </entry>\n";
+	} elsif ($a{'GRID'} =~ "tx") {
+	    print $fh "<entry> triple pole </entry>\n";
+	} else {
+	    print $fh "<entry> $cam_grid </entry>\n";
+	} 	    
+	print $fh "</row>\n";
+    }
+    }
+    print $fh "</tbody>\n";
+    print $fh "</tgroup>\n";
+    print $fh "</table>\n";
+}
+
+#-------------------------------------------------------------------------------
+
+sub print_compsets
+{
+    # Print all currently supported valid grids
+
+    my ($compset_file) = @_;
+    my $xml = XML::Lite->new( $compset_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_compset" or die
+	"file $compset_file is not a compset parameters file\n";
+
+    my $filename;
+    $filename = "compsets_list.xml";
+    if ( -f $filename ) { unlink( $filename ); }
+    my $fh;
+    $fh = IO::File->new($filename, '>' ) or die "can't open file: $filename\n";
+
+    print $fh "<table><title>Component Sets</title>\n";
+    print $fh "<tgroup cols=\"2\">\n";
+    print $fh "<thead>\n";
+    print $fh "<row>\n";
+    print $fh "<entry>Compset (Shortname)</entry>\n";
+    print $fh "<entry>Details</entry>\n";
+    print $fh "</row>\n";
+    print $fh "</thead>\n";
+    print $fh "<tbody>\n";
+    
+    # Read the compset parameters from $compset_file.
+    my @e = $xml->elements_by_name( "compset" );
+    my %a = ();
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ($a{GRID_MATCH}) {
+	    # do nothing
+	} else {
+	    print $fh "<row> \n";
+	    print $fh "<entry morerows=\"1\" valign=\"middle\">$a{'NAME'} ($a{'SHORTNAME'})</entry>\n";
+	    print $fh "<entry>Components: $a{'COMP_ATM'},$a{'COMP_LND'},$a{'COMP_ICE'},$a{'COMP_OCN'},$a{'COMP_GLC'}</entry>\n";
+	    print $fh "</row>\n";
+	    print $fh "<row>\n";
+	    print $fh "<entry>Description: $a{'DESC'}</entry>\n";
+	    print $fh "</row>\n";
+	}
+    }
+    print $fh "</tbody>\n";
+    print $fh "</tgroup>\n";
+    print $fh "</table>\n";
+}
+
+#-------------------------------------------------------------------------------
+
+sub print_machines
+{
+    # Print all currently supported machines
+
+    my ($machine_file) = @_;
+    my $xml = XML::Lite->new( $machine_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_machines" or die
+	"file $machine_file is not a machine parameters file\n";
+
+    my $filename;
+    $filename = "machines_list.xml";
+    if ( -f $filename ) { unlink( $filename ); }
+    my $fh;
+    $fh = IO::File->new($filename, '>' ) or die "can't open file: $filename\n";
+
+    print $fh "<informaltable>\n";
+    print $fh "<tgroup cols=\"2\">\n";
+    print $fh "<thead>\n";
+    print $fh "<row>\n";
+    print $fh "<entry>Name</entry>\n";
+    print $fh "<entry>Description</entry>\n";
+    print $fh "</row>\n";
+    print $fh "</thead>\n";
+    print $fh "<tbody>\n";
+    
+    # Read the machine parameters 
+    my @e = $xml->elements_by_name( "machine" );
+    my %a = ();
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+
+	print $fh " <row>\n";
+	print $fh " <entry>$a{'MACH'}</entry>\n";
+	print $fh " <entry>$a{'DESC'}</entry>\n";
+	print $fh " </row>\n";
+    }
+    print $fh "</tbody>\n";
+    print $fh "</tgroup>\n";
+    print $fh "</informaltable>\n";   
+}
+
+#-------------------------------------------------------------------------------
+
+sub print_tests
+{
+    # Print all currently supported tests
+
+    my ($test_file) = @_;
+    my $xml = XML::Lite->new( $test_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_ccsmtest" or die
+	"file $test_file is not a ccsmtest parameters file\n";
+
+    print ("  \n");
+    print ("  TESTS:  name (description) \n");
+    
+    my @e = $xml->elements_by_name( "ccsmtest" );
+    my %a = ();
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if (defined($a{'DESC'})) { 
+	    print "    $a{'NAME'} ($a{'DESC'}) \n";
+	}
+    }
+}

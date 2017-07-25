@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<config_definition>
+
+<entry id="dyn"       value="fv"           />
+<entry id="hgrid"     value="1.9x2.5"        />
+<entry id="chem"      value="super_fast_llnl_mam3"  />
+<entry id="cppdefs"   value="-DDUST -DPROGSSLT -DMODAL_AERO -DMODAL_AERO_3MODE" />
+
+</config_definition>

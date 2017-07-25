@@ -1,0 +1,51 @@
+#! /bin/csh -f
+
+# -------------------------------------------------------------------------
+# ubgl machine specific settings
+# -------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------
+# General machine specific environment variables - edit before the initial build
+# -------------------------------------------------------------------------
+
+setenv INC_NETCDF /usr/local/tools/netcdf/netcdf-3.6.0-p1/include
+setenv LIB_NETCDF /usr/local/tools/netcdf/netcdf-3.6.0-p1/lib
+setenv INC_MPI 
+setenv LIB_MPI 
+
+# -------------------------------------------------------------------------
+# Environment variables for longer term output storage - edit anytime during run
+# -------------------------------------------------------------------------
+
+setenv DOUT_L_MSNAME       `echo $CCSMUSER | tr '[a-z]' '[A-Z]'`
+setenv DOUT_L_MSPWD        $DOUT_L_MSNAME                    
+setenv DOUT_L_MSRPD        3650                              
+setenv DOUT_L_MSPRJ        00000000                          
+
+# ----------------------------
+# Local Environment variables
+# ----------------------------
+ 
+# -------------------------------------------------------------------------
+# Build and runtime environment variables - edit before the initial build 
+# -------------------------------------------------------------------------
+
+#ulimit -d unlimited;  #ulimit -s unlimited
+
+ limit datasize  unlimited    
+ setenv OBJECT_MODE 32
+ setenv OMP_DYNAMIC FALSE     
+ setenv AIXTHREAD_SCOPE S
+ setenv MALLOCMULTIHEAP TRUE  
+#setenv SPINLOOPTIME 100000
+#setenv YIELDLOOPTIME 40000
+
+if (${OBJECT_MODE} == 64) then
+  setenv XLSMPOPTS "stack=256000000"
+else
+  setenv XLSMPOPTS "stack=86000000"
+endif
+setenv MPI_TYPE_MAX 100000 
+
+
+

@@ -1,0 +1,1542 @@
+#!/usr/bin/env perl
+#-----------------------------------------------------------------------------------------------
+#
+# create_newcase
+#
+# This utility allows the CCSM user to specify configuration
+# options via a commandline interface.
+#
+#-----------------------------------------------------------------------------------------------
+
+use strict;
+#use warnings;
+#use diagnostics;
+
+use Cwd;
+use English;
+use Getopt::Long;
+use IO::File;
+use IO::Handle;
+#-----------------------------------------------------------------------------------------------
+
+if ($#ARGV == -1) {
+    print "Invoke create_newcase -help [or -h] for usage\n";
+    exit;
+}
+
+#-----------------------------------------------------------------------------------------------
+
+sub usage {
+    die <<EOF;
+SYNOPSIS
+     create_newcase [options]
+OPTIONS
+     User supplied values are denoted in angle brackets (<>).  Any value that contains
+     white-space must be quoted.  Long option names may be supplied with either single
+     or double leading dashes.  A consequence of this is that single letter options may
+     NOT be bundled.
+
+     -case <name>         Specifies the case name (required).
+     -compset <name>      Specify a CCSM compset (required).
+     -res <name>          Specify a CCSM grid resolution (required).
+     -mach <name>         Specify a CCSM machine (required).
+     -pecount <name>      Value of S,M,L,X1,X2 (optional). (default is M).
+     -pes_file <name>     Full pathname of pes setup file to use (will overwrite default settings) (optional).
+     -compset_file <name> Full pathname of compset setup file to use. (optional)
+
+     -help [or -h]        Print usage to STDOUT (optional).
+     -list                Only list valid values for compset, grid settings and machines (optional).
+     -silent [or -s]      Turns on silent mode - only fatal messages issued (optional).
+     -verbose [or -v]     Turn on verbose echoing of settings made by create_newcase (optional).
+     -xmlmode <name>      Sets format of xml files; normal or expert (optional). (default is normal) 
+
+     The following arguments are required for a generic machine. Otherwise, they will be ignored. 
+
+     -scratchroot <name>           ccsm executable directory (EXEROOT will be scratchroot/CASE) (char)
+     -din_loc_root_csmdata <name>  ccsm input data root directory (char)
+     -max_tasks_per_node <value>   maximum mpi tasks per machine node (integer)
+
+     The following two arguments turn on single point mode. 
+     If one is given -- both MUST be given.
+
+     -pts_lat <value>     Latitude of single point to operate on (optional)
+     -pts_lon <value>     Longitude of single point to operate on (optional)
+
+
+EOF
+}
+
+#-----------------------------------------------------------------------------------------------
+# Setting autoflush (an IO::Handle method) on STDOUT helps in debugging.  It forces the test
+# descriptions to be printed to STDOUT before the error messages start.
+
+*STDOUT->autoflush();                  
+
+#-----------------------------------------------------------------------------------------------
+# Set the directory that contains the CCSM configuration scripts.  If the create_newcase command was
+# issued using a relative or absolute path, that path is in $ProgDir.  Otherwise assume the
+# command was issued from the current working directory.
+
+(my $ProgName = $0) =~ s!(.*)/!!;      # name of this script
+my $ProgDir = $1;                      # name of directory containing this script -- may be a
+                                       # relative or absolute path, or null if the script is in
+                                       # the user's PATH
+my $cwd = getcwd();                    # current working directory
+my $cfgdir;                            # absolute pathname of directory that contains this script
+if ($ProgDir) { 
+    $cfgdir = absolute_path($ProgDir);
+} else {
+    $cfgdir = $cwd;
+}
+
+my $ccsmroot = absolute_path("$cfgdir/..");
+(-d "$ccsmroot")  or  die <<"EOF";
+** Cannot find ccsmroot directory \"$ccsmroot\" **
+EOF
+
+#-----------------------------------------------------------------------------------------------
+# Save commandline
+my $commandline = "create_newcase @ARGV";
+
+#-----------------------------------------------------------------------------------------------
+# Parse command-line options.
+my %opts = (
+              pts_lat => undef,
+              pts_lon => undef,
+	    );
+GetOptions(
+    "case=s"                    => \$opts{'case'},
+    "compset=s"                 => \$opts{'compset'},
+    "res=s"                     => \$opts{'res'},
+    "h|help"                    => \$opts{'help'},
+    "list"                      => \$opts{'list'},
+    "mach=s"                    => \$opts{'mach'},
+    "pecount=s"                 => \$opts{'pecount'},
+    "pes_file=s"                => \$opts{'pes_file'}, 
+    "compset_file=s"            => \$opts{'compset_file'},
+    "s|silent"                  => \$opts{'silent'},
+    "testname=s"                => \$opts{'testname'},
+    "testlist"                  => \$opts{'testlist'},
+    "v|verbose"                 => \$opts{'verbose'},
+    "xmlmode=s"                 => \$opts{'xmlmode'},
+    "pts_lat=s"                 => \$opts{'pts_lat'},
+    "pts_lon=s"                 => \$opts{'pts_lon'},
+    "scratchroot=s"             => \$opts{'scratchroot'},
+    "din_loc_root_csmdata=s"    => \$opts{'din_loc_root_csmdata'},
+    "max_tasks_per_node=s"      => \$opts{'max_tasks_per_node'},
+)  or usage();
+
+# Give usage message.
+usage() if $opts{'help'};
+
+# Check for unparsed argumentss
+if (@ARGV) {
+    print "ERROR: unrecognized arguments: @ARGV\n";
+    usage();
+}
+
+# Check that points mode is set correctly
+if ( defined($opts{'pts_lat'}) && ! defined(($opts{'pts_lon'}) ) ) {
+    print "ERROR: if pts_lat set -- pts_lon must also be set:  @ARGV\n";
+    usage();
+}
+if ( defined($opts{'pts_lon'}) && ! defined(($opts{'pts_lat'}) ) ) {
+    print "ERROR: if pts_lon set -- pts_lat must also be set:  @ARGV\n";
+    usage();
+}
+
+# Check for manditory case input if not just listing valid values
+
+my $case;
+my $caseroot;
+my $compset;
+my $grid;
+my $mach;
+my $testname;
+my $pecount;
+my $xmlmode;
+if (!$opts{'list'}) {
+    # Check for manditory case input
+    if ($opts{'case'}) {
+	$case = $opts{'case'};
+    } else {
+	die "ERROR: create_newcase must include the input argument, -case \n";
+    }
+    $caseroot = absolute_path("$case");
+    if (-d $caseroot) {
+	die "Caseroot directory $caseroot already exists \n";
+    }
+    my @dirs = split "/", $caseroot, -1;  # The -1 prevents split from stripping trailing nulls
+    my $num = scalar @dirs;
+    $case = $dirs[$num-1];
+
+    # Check for manditory compset input
+    if ($opts{'compset'}) {
+	$compset = $opts{'compset'};
+    } else {
+	die "ERROR: create_newcase must include the input argument, -compset\n";
+    }
+    
+    # Check for manditory grid input
+    if ($opts{'res'}) {
+	$grid = $opts{'res'};
+    } else {
+	die "ERROR: create_newcase must include the input argument, -res\n";
+    }
+
+    # Check for manditory machine input
+    if ($opts{'mach'}) {
+	$mach = $opts{'mach'};
+        if ($mach =~ "generic") {
+           if (!$opts{'scratchroot'}) {
+              die "ERROR: create_newcase must include the argument -scratchroot for a generic machines \n";
+           }
+           if (!$opts{'din_loc_root_csmdata'}) {
+	       die "ERROR: create_newcase must include the argument -din_loc_root_csmdata for a generic machines \n";
+	   }
+           if (!$opts{'max_tasks_per_node'}) {
+              die "ERROR: create_newcase must include the argument -max_tasks_per_node for a generic machines \n";
+           }
+	   my $din_loc_root_csmdata = $opts{'din_loc_root_csmdata'};
+	   (-d "$din_loc_root_csmdata")  or  die "Cannot find din_loc_root_csmdata directory $din_loc_root_csmdata";
+       }
+    } else {
+	die "ERROR: create_newcase must include the input argument, -mach \n";
+    }
+
+    # Check for pecount setting
+    $pecount = 'M';
+    if ($opts{'pecount'}) {
+	$pecount = $opts{'pecount'};
+    }
+
+    # Check for xmlmode setting
+    $xmlmode = 'normal';
+    if ($opts{'xmlmode'}) {
+	$xmlmode = $opts{'xmlmode'};
+    }
+
+}
+
+# Define 3 print levels:
+# 0 - only issue fatal error messages
+# 1 - only informs what files are created (default)
+# 2 - verbose
+my $print = 1;
+if ($opts{'silent'})  { $print = 0; }
+if ($opts{'verbose'}) { $print = 2; }
+my $eol = "\n";
+
+my %cfg = ();           # build configuration
+
+#-----------------------------------------------------------------------------------------------
+# Make sure we can find required perl modules and configuration files.
+# Look for them in the directory that contains the create_newcase script.
+
+# Check for the configuration definition file.
+my $config_def_file = "config_definition.xml";
+(-f "$cfgdir/ccsm_utils/Case.template/$config_def_file")  or  die <<"EOF";
+** Cannot find configuration definition file \"$config_def_file\" in directory 
+    \"$cfgdir/ccsm_utils/Case.template/$config_def_file\" **
+EOF
+
+# Grid definition file.
+my $grid_file = 'config_grid.xml';
+(-f "$cfgdir/ccsm_utils/Case.template/$grid_file")  or  die <<"EOF";
+** Cannot find grid parameters file \"$grid_file\" in directory 
+    \"$cfgdir/ccsm_utils/Case.template\" **
+EOF
+
+# Compset definition file.
+my $compset_file="";
+if (defined $opts{'compset_file'}){
+  $compset_file = $opts{'compset_file'};
+  (-f $compset_file)  or  die <<"EOF";
+  ** Cannot find compset parameters file \"$compset_file\"  **
+EOF
+} else {
+  $compset_file = "$cfgdir/ccsm_utils/Case.template/config_compsets.xml";
+  (-f $compset_file)  or  die <<"EOF";
+  ** Cannot find compset parameters file \"$compset_file\"  **
+EOF
+}
+
+
+# Machines definition file.
+my $machine_file = 'config_machines.xml';
+(-f "$cfgdir/ccsm_utils/Machines/$machine_file")  or  die <<"EOF";
+** Cannot find machine parameters file \"$machine_file\" in directory 
+    \"$cfgdir/ccsm_utils/Machines\" **
+EOF
+
+# Tests file
+my $tests_file = 'config_tests.xml';
+(-f "$cfgdir/ccsm_utils/Testcases/$tests_file")  or  die <<"EOF";
+** Cannot find test parameters file \"$tests_file\" in directory 
+    \"$cfgdir/ccsm_utils/Testcases\" **
+EOF
+
+# The XML::Lite module is required to parse the XML configuration files.
+(-f "$cfgdir/ccsm_utils/Tools/perl5lib/XML/Lite.pm")  or  die <<"EOF";
+** Cannot find perl module \"XML/Lite.pm\" in directory 
+    \"$cfgdir/ccsm_utils/Tools/perl5lib\" **
+EOF
+
+# The ConfigCase module provides utilities to store and manipulate the configuration.
+(-f "$cfgdir/ccsm_utils/Case.template/ConfigCase.pm")  or  die <<"EOF";
+** Cannot find perl module \"ConfigCase.pm\" in directory 
+    \"$cfgdir/ccsm_utils/Case.template\" **
+EOF
+
+if ($print>=2) { print "Setting configuration directory to $cfgdir$eol"; }
+
+
+#-----------------------------------------------------------------------------------------------
+# Add $cfgdir/perl5lib to the list of paths that Perl searches for modules
+my @dirs = (  $cfgdir, "$cfgdir/ccsm_utils/Case.template", "$cfgdir/ccsm_utils/Tools/perl5lib");
+unshift @INC, @dirs;
+require XML::Lite;
+require ConfigCase;
+
+#-----------------------------------------------------------------------------------------------
+# If just listing valid values then exit after completion of lists
+if ($opts{'testlist'}) {
+    print_tests("$cfgdir/ccsm_utils/Testcases/config_tests.xml");
+}
+if ($opts{'list'}) {
+    print_grids("$cfgdir/ccsm_utils/Case.template/config_grid.xml");
+    print_compsets($compset_file);
+    print_machines("$cfgdir/ccsm_utils/Machines/config_machines.xml");
+    if ($print>=2) { print "finished listing valid values, now exiting $eol"; }
+    exit;
+}
+
+#-----------------------------------------------------------------------------------------------
+# print README/disclaimer file in scripts dir
+
+my $readme;
+$readme = `cat $cfgdir/README`;
+print $readme;
+
+#-----------------------------------------------------------------------------------------------
+# Create new config object if not just listing valid values
+my $cfg_ref = ConfigCase->new("$cfgdir/ccsm_utils/Case.template/$config_def_file"); 
+
+#if ($print>=2) { print "A new config reference object was created$eol";}
+
+
+#-----------------------------------------------------------------------------------------------
+# points mode settings
+if ( defined($opts{'pts_lat'}) && defined($opts{'pts_lon'}) ) {
+   $cfg_ref->set('PTS_MODE',      "TRUE" );
+   $cfg_ref->set('USE_MPISERIAL', "TRUE" );
+   $cfg_ref->set('PTS_LAT',  $opts{'pts_lat'} );
+   $cfg_ref->set('PTS_LON',  $opts{'pts_lon'} );
+}
+#-----------------------------------------------------------------------------------------------
+# Grid parameters
+my ($grid_longname, $grid_shortname) = set_grid("$cfgdir/ccsm_utils/Case.template/config_grid.xml", 
+						$grid, $cfg_ref);
+
+if ($print>=2) { print "Horizontal grid specifier: $grid.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Compset parameters
+set_compset($compset_file, $compset, $grid_longname, $grid_shortname, $cfg_ref);
+
+if ($print>=2) { print "Compset specifier: $compset.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Machine parameters
+set_machine("$cfgdir/ccsm_utils/Machines/config_machines.xml", $mach, $cfg_ref);
+
+if ($mach =~ "generic") {
+    my $scratchroot  = "$opts{'scratchroot'}";
+    my $exeroot = "$scratchroot/$case";
+    $cfg_ref->set('EXEROOT'             , "$exeroot");  
+    $cfg_ref->set('OBJROOT'             , "$exeroot");  
+    $cfg_ref->set('LIBROOT'             , "$exeroot/lib");  
+    $cfg_ref->set('DOUT_S_ROOT'         , "$exeroot/../archive/$case");  
+    $cfg_ref->set('DIN_LOC_ROOT_CSMDATA',  $opts{'din_loc_root_csmdata'});  
+    $cfg_ref->set('DIN_LOC_ROOT_CLMQIAN', "$opts{'din_loc_root_csmdata'}/atm/datm7/atm_forcing.datm7.Qian.T62.c080727");  
+    $cfg_ref->set('MAX_TASKS_PER_NODE'  ,  $opts{'max_tasks_per_node'});  
+    $cfg_ref->set('GMAKE_J'             ,  "1");
+}
+
+if ($print>=2) { print "Machine specifier: $mach.$eol"; }
+
+#-----------------------------------------------------------------------------------------------
+# Testname parameters
+if (defined $opts{'testname'}) {
+    $testname = $opts{'testname'};
+    if ($testname =~ "_D" || $testname =~ "_ED") {
+	$cfg_ref->set('DEBUG', "TRUE");
+        if ($print>=2) {print "DEBUG TRUE.$eol"; }
+    }
+    if ($testname =~ "_E" || $testname =~ "_DE") {
+	$cfg_ref->set('USE_ESMF_LIB', "TRUE");
+	$cfg_ref->set('COMP_INTERFACE', "ESMF");
+        if ($print>=2) {print "USE_ESMF_LIB TRUE.$eol"; }
+    }
+    if ($testname =~ "_P") {
+        my $popt = $testname;
+        $popt =~ s/.*_P([A-Za-z0-9]*)_?.*/$1/;
+        $pecount = $popt;
+        if ($print>=2) {print "pecount $pecount.$eol"; }
+    }
+    $testname =~ s/^([a-zA-Z0-9]*)_.*/$1/;
+    if ($print>=2) {print "testname $testname.$eol"; }
+    set_test("$cfgdir/ccsm_utils/Testcases/config_tests.xml", $testname, $cfg_ref);
+    if ($print>=2) { print "Test specifier: $testname.$eol"; }
+}
+
+#-----------------------------------------------------------------------------------------------
+# Determine pes for machine
+# Always match on the full grid name and input compset name
+
+my $grid_match = $cfg_ref->get('GRID'); 
+my $compset_match = $cfg_ref->get('CCSM_SCOMPSET'); 
+my $pmode  = $cfg_ref->get('PTS_MODE'); 
+if ( $pmode eq "TRUE" ) {
+   $pecount = 1;
+}
+
+##print "pes_match $grid_match $compset_match $mach $pecount \n";
+my %pes_match = (grid_match    => $grid_match, 
+		 compset_match => $compset_match,
+		 mach_match    => $mach,
+		 pecount       => $pecount);
+
+my %decomp = (NTASKS_ATM=>0, NTHRDS_ATM=>0, ROOTPE_ATM=>0, 
+	      NTASKS_LND=>0, NTHRDS_LND=>0, ROOTPE_LND=>0, 
+	      NTASKS_ICE=>0, NTHRDS_ICE=>0, ROOTPE_ICE=>0, 
+	      NTASKS_OCN=>0, NTHRDS_OCN=>0, ROOTPE_OCN=>0,
+	      NTASKS_CPL=>0, NTHRDS_CPL=>0, ROOTPE_CPL=>0,
+	      NTASKS_GLC=>0, NTHRDS_GLC=>0, ROOTPE_GLC=>0,
+              PES_LEVEL=>0);
+
+my $pecount_opts = $opts{'pecount'}; 
+set_pes("$cfgdir/ccsm_utils/Machines/config_pes.xml", \%pes_match, \%decomp, $pecount_opts);
+
+$cfg_ref->set('NTASKS_ATM', $decomp{'NTASKS_ATM'});
+$cfg_ref->set('NTASKS_LND', $decomp{'NTASKS_LND'});
+$cfg_ref->set('NTASKS_ICE', $decomp{'NTASKS_ICE'});
+$cfg_ref->set('NTASKS_OCN', $decomp{'NTASKS_OCN'});
+$cfg_ref->set('NTASKS_CPL', $decomp{'NTASKS_CPL'});
+$cfg_ref->set('NTASKS_GLC', $decomp{'NTASKS_GLC'});
+
+$cfg_ref->set('NTHRDS_ATM', $decomp{'NTHRDS_ATM'});
+$cfg_ref->set('NTHRDS_LND', $decomp{'NTHRDS_LND'});
+$cfg_ref->set('NTHRDS_ICE', $decomp{'NTHRDS_ICE'});
+$cfg_ref->set('NTHRDS_OCN', $decomp{'NTHRDS_OCN'});
+$cfg_ref->set('NTHRDS_CPL', $decomp{'NTHRDS_CPL'});
+$cfg_ref->set('NTHRDS_GLC', $decomp{'NTHRDS_GLC'});
+
+$cfg_ref->set('ROOTPE_ATM', $decomp{'ROOTPE_ATM'});
+$cfg_ref->set('ROOTPE_LND', $decomp{'ROOTPE_LND'});
+$cfg_ref->set('ROOTPE_ICE', $decomp{'ROOTPE_ICE'});
+$cfg_ref->set('ROOTPE_OCN', $decomp{'ROOTPE_OCN'});
+$cfg_ref->set('ROOTPE_CPL', $decomp{'ROOTPE_CPL'});
+$cfg_ref->set('ROOTPE_GLC', $decomp{'ROOTPE_GLC'});
+
+$cfg_ref->set('PES_LEVEL' , $decomp{'PES_LEVEL'});
+
+# Reset the pes if a pes file is specified
+if (defined $opts{'pes_file'}) {
+    my $pes_file = $opts{'pes_file'};
+    (-f "$pes_file")  or  die <<"EOF";
+** Cannot find pes_file \"$pes_file\" ***
+EOF
+    $cfg_ref->reset_setup("$pes_file");
+}
+
+# resolve the dollar referenced values for the pe stuff
+# allow up to 4 depths then stop
+# so, check the var value, if it starts with dollar, remove
+#     the dollar and check the next value.  continue until a
+#     non dollar value is found up to max depths.
+
+my @xvars = qw(NTASKS_ATM NTHRDS_ATM ROOTPE_ATM 
+	       NTASKS_LND NTHRDS_LND ROOTPE_LND 
+	       NTASKS_ICE NTHRDS_ICE ROOTPE_ICE 
+	       NTASKS_OCN NTHRDS_OCN ROOTPE_OCN 
+	       NTASKS_GLC NTHRDS_GLC ROOTPE_GLC 
+	       NTASKS_CPL NTHRDS_CPL ROOTPE_CPL);
+my $xvarf;
+my $xvar1;
+my $xvar2;
+my $xvar3;
+my $xvar4;
+foreach my $xvar ( @xvars ) {
+    $xvar1 = $cfg_ref->get("$xvar");
+    $xvar2 = "";
+    $xvar3 = "";
+    $xvar4 = "";
+    $xvarf = $xvar1;
+    if ($xvarf =~ m/^\$.+$/) {
+	$xvar2 = $xvarf;
+        $xvar2 =~ s/^\$(.+$)/$1/ ;
+        $xvar2 = $cfg_ref->get("$xvar2");
+	$xvarf = $xvar2;
+        if ($xvarf =~ m/^\$.+$/) {
+   	   $xvar3 = $xvarf;
+           $xvar3 =~ s/^\$(.+$)/$1/ ;
+           $xvar3 = $cfg_ref->get("$xvar3");
+	   $xvarf = $xvar3;
+           if ($xvarf =~ m/^\$.+$/) {
+      	      $xvar4 = $xvarf;
+              $xvar4 =~ s/^\$(.+$)/$1/ ;
+              $xvar4 = $cfg_ref->get("$xvar4");
+	      $xvarf = $xvar4;
+              if ($xvar4 =~ m/^\$.+$/) {
+		  die "xvar recursive search failed $xvar $xvar1 $xvar2 $xvar3 $xvar4 \n";
+              }
+           }
+        }
+    }
+#    print "xvar found $xvar $xvar1 $xvar2 $xvar3 $xvar4 \n";
+    $cfg_ref->set("$xvar", "$xvarf");
+}
+
+#-----------------------------------------------------------------------------------------------
+# Set env_run variables 
+$cfg_ref->set('CCSMUSER', "$ENV{'LOGNAME'}");
+$cfg_ref->set('CASEROOT', "$caseroot");
+$cfg_ref->set('CASE'    , "$case");
+$cfg_ref->set('CCSMROOT', "$ccsmroot");
+$cfg_ref->set('XMLMODE' , "$xmlmode");
+
+my $repotag;
+if (-f "$ccsmroot/ChangeLog") { 
+    $repotag =`cat $ccsmroot/ChangeLog | grep 'Tag name:' | head -1`;
+} else {
+    $repotag =`cat $ccsmroot/models/atm/cam/doc/ChangeLog | grep 'Tag name:' | head -1`;
+}
+my @repotag = split(/ /,$repotag); 
+$repotag = $repotag[2]; 
+chomp($repotag);
+$cfg_ref->set('CCSM_REPOTAG', $repotag);
+
+#-----------------------------------------------------------------------------------------------
+# Create the case directory tree
+my $sysmod;
+my $scriptsroot = "$ccsmroot/scripts";
+
+print "Creating $caseroot $eol $eol";
+
+# Create relevant directories
+my @mkdirs = qw(. README Tools SourceMods LockedFiles Tools/XML/Lite Tools/Templates);
+foreach my $mkdir ( @mkdirs ) {
+    $sysmod = "mkdir -p $caseroot/$mkdir"; 
+    system ($sysmod); if ($? == -1) {print "$sysmod failed: $!\n";}
+}
+
+# Copy relevant files into the case directory
+my @files = qw(configure check_input_data  
+	       create_production_test xmlchange check_case); 
+foreach my $file (@files) {
+    $sysmod = "cp -p $scriptsroot/ccsm_utils/Tools/$file $caseroot"; 
+    system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n";}
+}
+$sysmod = "chmod u+w $caseroot/create_production_test";
+system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n";}
+
+# Copy relevant files into the case Tools/ directory
+@files = qw(ccsm_getenv ccsm_check_lockedfiles ccsm_buildexe.csh ccsm_buildnml.csh
+            ccsm_prestage.csh ccsm_postrun.csh clean_build listfilesin_streams
+	    ccsm_sedfile generate_batch.csh generate_resolved.csh taskmaker.pl
+	    xml2env ccsm_l_archive.csh st_archive.sh);
+foreach my $file (@files) {
+    $sysmod = "cp -p $scriptsroot/ccsm_utils/Tools/$file $caseroot/Tools"; 
+    system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n";}
+}
+
+# Copy relevant files into the case Tools/ directory
+@files = qw(getTiming.csh getTiming.pl perf_summary.pl);
+foreach my $file (@files) {
+    $sysmod = "cp -p $scriptsroot/ccsm_utils/Tools/timing/$file $caseroot/Tools"; 
+    system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n";}
+}
+
+@files = qw(config_definition.xml config_grid.xml ConfigCase.pm);
+foreach my $file (@files) {
+    $sysmod = "cp -p $scriptsroot/ccsm_utils/Case.template/$file $caseroot/Tools"; 
+    system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n";}
+}
+
+@files = qw(Makefile mkSrcfiles mkDepends);
+foreach my $file (@files) {
+    $sysmod = "cp -p $scriptsroot/ccsm_utils/Build/$file $caseroot/Tools"; 
+    system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n";}
+}
+
+# Copy relevant files into the case Tools/XML directory
+$sysmod = "cp -p $scriptsroot/ccsm_utils/Tools/perl5lib/XML/Lite.pm $caseroot/Tools/XML"; 
+system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n";}
+$sysmod = "cp -p $scriptsroot/ccsm_utils/Tools/perl5lib/XML/Lite/Element.pm $caseroot/Tools/XML/Lite"; 
+system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n";}
+
+# Create the relevant template files in the caseroot Tools directory
+my @comps  = qw(cam datm xatm xatm satm clm dlnd xlnd slnd cice dice xice sice pop2 docn xocn socn camdom sglc xglc cism);
+my @models = qw(COMP_ATM COMP_LND COMP_ICE COMP_OCN COMP_GLC);
+
+my %templates = (
+		 cam     => "models/atm/cam/bld/cam.cpl7.template",
+		 clm     => "models/lnd/clm/bld/clm.cpl7.template",
+		 cice    => "models/ice/cice/bld/cice.cpl7.template",
+		 pop2    => "models/ocn/pop2/bld/pop2.cpl7.template",
+		 cism    => "models/glc/cism/bld/cism.cpl7.template",
+		 datm    => "models/atm/datm/bld/datm.cpl7.template",
+		 dlnd    => "models/lnd/dlnd/bld/dlnd.cpl7.template",
+		 dice    => "models/ice/dice/bld/dice.cpl7.template",
+		 docn    => "models/ocn/docn/bld/docn.cpl7.template",
+		 xatm    => "models/atm/xatm/bld/xatm.template",
+		 xlnd    => "models/lnd/xlnd/bld/xlnd.template",
+		 xice    => "models/ice/xice/bld/xice.template",
+		 xocn    => "models/ocn/xocn/bld/xocn.template",
+		 xglc    => "models/glc/xglc/bld/xglc.template",
+		 satm    => "models/atm/satm/bld/satm.template",
+		 slnd    => "models/lnd/slnd/bld/slnd.template",
+		 sice    => "models/ice/sice/bld/sice.template",
+		 socn    => "models/ocn/socn/bld/socn.template",
+		 sglc    => "models/glc/sglc/bld/sglc.template",
+		 camdom  => "models/atm/cam/bld/camdom.cpl7.template"
+		 );
+
+foreach my $comp (@comps)  {
+    foreach my $model (@models) {
+	if ($cfg_ref->get($model) eq $comp) {
+	    my $file = $templates{"$comp"};
+	    $sysmod = "cp -p $ccsmroot/$file $caseroot/Tools/Templates/.";
+	    system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n"; exit}
+	}
+    }
+}
+$sysmod = "cp -p $ccsmroot/models/drv/bld/cpl.template $caseroot/Tools/Templates/.";
+system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n"; exit}
+$sysmod = "cp -p $ccsmroot/models/drv/bld/ccsm.template $caseroot/Tools/Templates/.";
+system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n"; exit}
+$sysmod = "chmod +x $caseroot/Tools/Templates/*template"; 
+system($sysmod); if ($? == -1) {print "$sysmod failed: $!\n"; exit}
+
+# Copy relevant xml files to the caseroot Tools directory
+foreach my $comp (@comps)  {
+    foreach my $model (@models) {
+	if ($cfg_ref->get($model) eq $comp) {
+	    my $component = $cfg_ref->get($model); 
+	    if ($component eq 'pop2') {
+		$sysmod = "cp $ccsmroot/models/ocn/pop2/bld/generate_pop_decomp.pl  $caseroot/Tools/Templates/"; 
+		system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+		$sysmod = "cp $ccsmroot/models/ocn/pop2/bld/pop_decomp.xml $caseroot/Tools/Templates"; 
+		system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+	    } 
+	    if ($component eq 'cice') {
+		$sysmod = "cp $ccsmroot/models/ice/cice/bld/generate_cice_decomp.pl $caseroot/Tools/Templates/"; 
+		system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+		$sysmod = "cp $ccsmroot/models/ice/cice/bld/cice_decomp.xml $caseroot/Tools/Templates"; 
+		system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+	    }
+	    if ($component eq 'datm') {
+		$sysmod = "cp $ccsmroot/models/atm/datm/bld/datm.template.streams.xml $caseroot/Tools/Templates/"; 
+		system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+	    }	    
+	    if ($component eq 'dlnd') {
+		$sysmod = "cp $ccsmroot/models/lnd/dlnd/bld/dlnd.template.streams.xml $caseroot/Tools/Templates/"; 
+		system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+	    }
+	    if ($component eq 'dice') {
+		$sysmod = "cp $ccsmroot/models/ice/dice/bld/dice.template.streams.xml $caseroot/Tools/Templates/"; 
+		system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+	    }
+	    if ($component eq 'docn') {
+		$sysmod = "cp $ccsmroot/models/ocn/docn/bld/docn.template.streams.xml $caseroot/Tools/Templates/"; 
+		system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+	    }
+	}
+    }
+}
+
+# Create the relevant caseroot Sourcemods directories
+my $moddir = "$caseroot/SourceMods";
+foreach my $comp (@comps)  {
+    foreach my $model (@models) {
+	if ($cfg_ref->get($model) eq $comp) {
+	    $sysmod = "mkdir -p $moddir/src.$comp"; 
+	    system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+	}
+    }
+}
+$sysmod = "mkdir -p $caseroot/SourceMods/src.share"; 
+system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+$sysmod = "mkdir -p $caseroot/SourceMods/src.drv"  ; 
+system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+$sysmod = "chmod -R u+w $caseroot/SourceMods"; 
+system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+
+# Create machine specific Macros file
+$sysmod = "cat $scriptsroot/ccsm_utils/Machines/Macros.cppdefs > $caseroot/Macros.$mach";
+system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+$sysmod = "cat $scriptsroot/ccsm_utils/Machines/Macros.$mach >> $caseroot/Macros.$mach";
+system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+
+# The following creates env_mach_specific
+$sysmod = "cp $scriptsroot/ccsm_utils/Machines/env_machopts.$mach $caseroot/env_mach_specific";
+system($sysmod);
+if ($? == -1) {die "$sysmod failed: $!\n";}
+
+# Write the xml files
+$cfg_ref->write_file("$caseroot/env_case.xml"    , "xml");
+$cfg_ref->write_file("$caseroot/env_build.xml"   , "xml");
+$cfg_ref->write_file("$caseroot/env_conf.xml"    , "xml");
+$cfg_ref->write_file("$caseroot/env_run.xml"     , "xml");
+$cfg_ref->write_file("$caseroot/env_mach_pes.xml", "xml");  
+
+# Copy env_case.xml in to locked files
+$sysmod = "cp $caseroot/env_case.xml $caseroot/LockedFiles/env_case.xml.locked"; 
+system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+print "Locking file $caseroot/env_case.xml \n";
+
+$cfg_ref->write_doc("$caseroot/README/readme_env");
+
+$sysmod = "cp $scriptsroot/README $caseroot/README/readme_general"; 
+system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+
+$sysmod = "cp $scriptsroot/ccsm_utils/Tools/create_production_test_readme $caseroot/README/readme_create_production_test"; 
+system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
+
+my $file = "$caseroot/README.case";
+my $fh = IO::File->new($file, '>' ) or die "can't open file: $file\n";
+print $fh "$commandline\n";
+
+my $file = "$caseroot/CaseStatus";
+my $fh = IO::File->new($file, '>' ) or die "can't open file: $file\n";
+my $time = time;
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime(time);
+$year = 1900+$year;
+$mon = 1+$mon;
+print $fh "$commandline\n";
+printf ($fh "case created %04u-%02u-%02u %02u:%02u:%02u\n",$year,$mon,$mday,$hour,$min,$sec);
+
+print "Successfully created the case for $mach \n";
+
+if ($print>=2) { print "create_xml done.$eol"; }
+exit;
+
+#-----------------------------------------------------------------------------------------------
+# FINNISHED ####################################################################################
+#-----------------------------------------------------------------------------------------------
+
+sub absolute_path {
+#
+# Convert a pathname into an absolute pathname, expanding any . or .. characters.
+# Assumes pathnames refer to a local filesystem.
+# Assumes the directory separator is "/".
+#
+  my $path = shift;
+  my $cwd = getcwd();  # current working directory
+  my $abspath;         # resulting absolute pathname
+
+# Strip off any leading or trailing whitespace.  (This pattern won't match if
+# there's embedded whitespace.
+  $path =~ s!^\s*(\S*)\s*$!$1!;
+
+# Convert relative to absolute path.
+
+  if ($path =~ m!^\.$!) {          # path is "."
+      return $cwd;
+  } elsif ($path =~ m!^\./!) {     # path starts with "./"
+      $path =~ s!^\.!$cwd!;
+  } elsif ($path =~ m!^\.\.$!) {   # path is ".."
+      $path = "$cwd/..";
+  } elsif ($path =~ m!^\.\./!) {   # path starts with "../"
+      $path = "$cwd/$path";
+  } elsif ($path =~ m!^[^/]!) {    # path starts with non-slash character
+      $path = "$cwd/$path";
+  }
+
+  my ($dir, @dirs2);
+  my @dirs = split "/", $path, -1;   # The -1 prevents split from stripping trailing nulls
+                                     # This enables correct processing of the input "/".
+
+  # Remove any "" that are not leading.
+  for (my $i=0; $i<=$#dirs; ++$i) {
+      if ($i == 0 or $dirs[$i] ne "") {
+	  push @dirs2, $dirs[$i];
+      }
+  }
+  @dirs = ();
+
+  # Remove any "."
+  foreach $dir (@dirs2) {
+      unless ($dir eq ".") {
+	  push @dirs, $dir;
+      }
+  }
+  @dirs2 = ();
+
+  # Remove the "subdir/.." parts.
+  foreach $dir (@dirs) {
+    if ( $dir !~ /^\.\.$/ ) {
+        push @dirs2, $dir;
+    } else {
+        pop @dirs2;   # remove previous dir when current dir is ..
+    }
+  }
+  if ($#dirs2 == 0 and $dirs2[0] eq "") { return "/"; }
+  $abspath = join '/', @dirs2;
+  return( $abspath );
+}
+
+#-------------------------------------------------------------------------------
+
+sub subst_env_path {
+#
+# Substitute for any environment variables contained in a pathname.
+# Assumes the directory separator is "/".
+#
+  my $path = shift;
+  my $newpath;         # resulting pathname
+
+# Strip off any leading or trailing whitespace.  (This pattern won't match if
+# there's embedded whitespace.
+  $path =~ s!^\s*(\S*)\s*$!$1!;
+
+  my ($dir, @dirs2);
+  my @dirs = split "/", $path, -1;   # The -1 prevents split from stripping trailing nulls
+                                     # This enables correct processing of the input "/".
+
+  foreach $dir (@dirs) {
+    if ( $dir =~ /^\$(.+)$/ ) {
+        push @dirs2, $ENV{$1};
+    } else {
+        push @dirs2, $dir;
+    }
+  }
+  $newpath = join '/', @dirs2;
+  return( $newpath );
+}
+
+#-------------------------------------------------------------------------------
+
+sub get_option {
+
+    my ($mes, @expect) = @_;
+    my ($ans, $expect, $max_tries);
+
+    $max_tries = 5;
+    print $mes;
+    while ($max_tries) {
+	$ans = <>; chomp $ans;
+	--$max_tries;
+	$ans =~ s/^\s+//;
+	$ans =~ s/\s+$//;
+	# Check for null response which indicates that default is accepted.
+	unless ($ans) { return ""; }
+	foreach $expect (@expect) {
+	    if ($ans =~ /^$expect$/i) { return $expect; }
+	}
+	if ($max_tries > 1) {
+	    print "$ans does not match any of the expected values: @expect\n";
+	    print "Please try again: ";
+	} elsif ($max_tries == 1) {
+	    print "$ans does not match any of the expected values: @expect\n";
+	    print "Last chance! ";
+	}
+    }
+    die "Failed to get answer to question: $mes\n";
+}
+
+#-------------------------------------------------------------------------------
+
+sub print_hash {
+    my %h = @_;
+    my ($k, $v);
+    while ( ($k,$v) = each %h ) { print "$k => $v\n"; }
+}
+
+#-------------------------------------------------------------------------------
+
+sub set_grid
+{
+    # Set the parameters for the specified horizontal grid.  The
+    # parameters are read from an input file, and if no grid matches are
+    # found then issue error message.
+    # This routine uses the configuration defined at the package level ($cfg_ref).
+
+    my ($grid_file, $grid, $cfg_ref) = @_;
+    my $xml = XML::Lite->new( $grid_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_horiz_grid" or die
+	"file $grid_file is not a horizontal grid parameters file\n";
+
+    # Single column mode
+    my $pmode  = $cfg_ref->get('PTS_MODE'); 
+    my $pts_mode = 0;
+    if ( $pmode eq "TRUE" ) {
+       $pts_mode = 1;
+    }
+
+    # Read the grid parameters from $grid_file.
+    my @e = $xml->elements_by_name( "horiz_grid" );
+    my %a = ();
+
+    # Search for matching grid.
+    my $found = 0;
+  HGRID:
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ( ! defined($a{'GRID'}     ) ) { next; }
+	if ( ! defined($a{'SHORTNAME'}) ) { next; }
+	if ( ($grid eq $a{'GRID'}) || ($grid eq $a{'SHORTNAME'})) {
+	    $found = 1;
+	    last HGRID;
+	}
+    }
+
+    # Die unless search was successful.
+    unless ($found) { 
+	print "set_grid: no match for grid $grid - possible grid values are \n";
+	my @e_err = $xml->elements_by_name( "horiz_grid" );
+	my %a_err = ();
+	while ( my $e_err = shift @e_err ) {
+	    %a_err = $e_err->get_attributes();
+	    if (defined($a_err{'SHORTNAME'})) { 
+		print " $a_err{'GRID'} (SHORTNAME: $a_err{'SHORTNAME'}) \n";
+	    }
+	}
+	die "set_grid: exiting\n"; 
+    }
+    my $shortname = $a{'SHORTNAME'};
+    my $longname  = $a{'GRID'};
+
+     my @ids = keys %$cfg_ref;
+     foreach my $id (sort @ids) {
+	 foreach my $attr (keys %a) {
+             if ( ! $cfg_ref->is_ignore_name($attr) and ! $cfg_ref->is_valid_name($attr) ) { 
+                die "set_grid: invalid id $attr in grid $grid in file $grid_file exiting\n"; 
+             }
+	     if ($attr eq $id) {
+		 my $value = $a{$attr};
+		 $cfg_ref->set($id, $value);
+	     }
+	 }
+     }
+
+    # Search for matching grid for each component
+
+    my $atm_grid = $a{'ATM_GRID'};
+    my $lnd_grid = $a{'LND_GRID'};
+    my $ice_grid = $a{'ICE_GRID'};
+    my $ocn_grid = $a{'OCN_GRID'};
+
+    if ( $pts_mode ) {
+       if ( ($atm_grid ne $lnd_grid) || ($atm_grid ne $ice_grid) ||
+            ($atm_grid ne $ocn_grid)  ) {
+# tcraig, not necessary, 12/4/09
+#	   die "set_grid: PTS_MODE TRUE requires ALL grids be identical\n"; 
+       }
+    }
+
+    @e = $xml->elements_by_name( "horiz_grid" );
+    %a = ();
+    $found = 0;
+  HGRID:
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ( $atm_grid eq $a{'GLOB_GRID'} ) {
+	    $found = 1;
+	    last HGRID;
+	}
+    }
+    if ( ! $pts_mode ) {
+       $cfg_ref->set('ATM_NX', $a{'nx'});
+       $cfg_ref->set('ATM_NY', $a{'ny'});
+    }
+
+    @e = $xml->elements_by_name( "horiz_grid" );
+    %a = ();
+    $found = 0;
+  HGRID:
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ( $lnd_grid eq $a{'GLOB_GRID'} ) {
+	    $found = 1;
+	    last HGRID;
+	}
+    }
+    if ( ! $pts_mode ) {
+       $cfg_ref->set('LND_NX', $a{'nx'});
+       $cfg_ref->set('LND_NY', $a{'ny'});
+    }
+
+    @e = $xml->elements_by_name( "horiz_grid" );
+    %a = ();
+    $found = 0;
+  HGRID:
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ( $ice_grid eq $a{'GLOB_GRID'} ) {
+	    $found = 1;
+	    last HGRID;
+	}
+    }
+    if ( ! $pts_mode ) {
+       $cfg_ref->set('ICE_NX', $a{'nx'});
+       $cfg_ref->set('ICE_NY', $a{'ny'});
+    }
+
+    @e = $xml->elements_by_name( "horiz_grid" );
+    %a = ();
+    $found = 0;
+  HGRID:
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ( $lnd_grid eq $a{'GLOB_GRID'} ) {
+	    $found = 1;
+	    last HGRID;
+	}
+    }
+    if ( ! $pts_mode ) {
+       $cfg_ref->set('GLC_NX', $a{'nx'});
+       $cfg_ref->set('GLC_NY', $a{'ny'});
+    }
+
+    @e = $xml->elements_by_name( "horiz_grid" );
+    %a = ();
+    $found = 0;
+  HGRID:
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ( $ocn_grid eq $a{'GLOB_GRID'} ) {
+	    $found = 1;
+	    last HGRID;
+	}
+    }
+    if ( ! $pts_mode ) {
+       $cfg_ref->set('OCN_NX', $a{'nx'});
+       $cfg_ref->set('OCN_NY', $a{'ny'});
+    }
+    return ($longname, $shortname); 
+ }
+
+#-------------------------------------------------------------------------------
+
+sub set_compset
+{
+    # Set the parameters for the specified compset.  The
+    # parameters are read from an input file, and if no compset matches are
+    # found then issue error message.
+    # This routine uses the configuration defined at the package level ($cfg_ref).
+
+    my ($compset_file, $compset, $grid_longname, $grid_shortname, $cfg_ref) = @_;
+    my $xml = XML::Lite->new( $compset_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_compset" or die
+	"file $compset_file is not a compset parameters file\n";
+
+    # Read the compset parameters from $compset_file.
+    my @e = $xml->elements_by_name( "compset" );
+    my %a = ();
+
+    my $comment; 
+    my $desc;
+    my $compset_long; 
+    my $compset_short; 
+
+    # Search for matching compset.
+    my $found = 0;
+  COMPSET:
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ( ($compset eq $a{'NAME'}) || ($compset eq $a{'SHORTNAME'})) {
+	    $found = 1;
+	    $compset_long  = $a{'NAME'};
+	    $compset_short = $a{'SHORTNAME'};
+	    last COMPSET;
+	}
+    }
+
+    # Die unless search was successful.
+    unless ($found) { 
+	print "set_compset: no match for compset $compset - possible compset values are \n";
+	print_compsets($compset_file);
+	die "set_compset: exiting\n"; 
+    }
+
+    my $compset_longname = $a{'NAME'};
+    my $compset_shortname = $a{'SHORTNAME'};
+
+    my $temp = $a{'NAME'}." (".$a{'SHORTNAME'}.")";
+    $cfg_ref->set('CCSM_COMPSET', "$temp");
+    $temp = $a{'NAME'};
+    $cfg_ref->set('CCSM_LCOMPSET', "$temp");
+    $temp = $a{'SHORTNAME'};
+    $cfg_ref->set('CCSM_SCOMPSET', "$temp");
+
+    # Loop through all entry_ids of the $cfg_ref object and if the corresponding 
+    # attributed is defined in the compset hash, then reset the cfg_ref object to
+    # that value
+
+    my @ids = keys %$cfg_ref;
+    foreach my $id (sort @ids) {
+	foreach my $attr (keys %a) {
+	    if ( ! $cfg_ref->is_ignore_name($attr) and ! $cfg_ref->is_valid_name($attr) ) { 
+                die "set_compset: invalid id $attr in compset $compset in file $compset_file exiting\n"; 
+	    }
+	    if ($attr eq $id) {
+		my $value = $a{$attr};
+		$cfg_ref->set($id, $value);
+		$desc = $a{'DESC'};
+	    }
+	}
+    }
+
+    # Search for any matching grid over-rides.
+    $found = 0;
+    my $grid_match = 0;
+  COMPSET:
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ($a{'GRID_MATCH'}) {
+	    if ($grid_longname =~ /$a{'GRID_MATCH'}/ || $grid_shortname =~ /$a{'GRID_MATCH'}/ ) {
+		if ( ($compset eq $a{'NAME'}) || ($compset eq $a{'SHORTNAME'})) {
+		    if ($a{'COMMENT'}) {
+			$comment = $a{'COMMENT'};
+		    }
+		    if ($a{'DESC'}) {$desc = $a{'DESC'};}
+		    $found = 1;
+                    $grid_match = 1;
+		    last COMPSET;
+		}
+	    }
+	}
+    }
+    if ($grid_match) {
+	my @ids = keys %$cfg_ref;
+	foreach my $id (sort @ids) {
+	    foreach my $attr (keys %a) {
+		if ( ! $cfg_ref->is_ignore_name($attr) and ! $cfg_ref->is_valid_name($attr) ) { 
+		    die "set_compset: invalid id $attr in compset $compset in file $compset_file exiting\n"; 
+		}
+		if ($attr eq $id) {
+		    my $value = $a{$attr};
+		    $cfg_ref->set($id, $value);
+		}
+	    }
+	}
+    }
+
+    if ($desc =~ /INVALID/) {
+	print "\n *** ERROR: $desc *** \n ";
+	print "    supported grids for this compset are \n"; 
+	my @elem = $xml->elements_by_name( "compset" );
+	while ( my $e = shift @elem ) {
+	    %a = $e->get_attributes();
+	    if ( ($compset eq $a{'NAME'}) || ($compset eq $a{'SHORTNAME'})) {
+		if ($a{'GRID_MATCH'}) {
+		    print "      $a{'GRID_MATCH'} \n";
+		}
+	    }
+	}
+	die "     please retry this compset at one of the supported resolutions \n \n";
+    }
+
+    print "***********************************************************\n";
+    print "Component set     : $compset_long ($compset_short)\n";
+    print "Desc              : $desc \n";
+    print "***********************************************************\n\n";
+
+    if ($comment) {
+	print "***********************************************************\n";
+	print " !!!!!!!!!!!!!! IMPORTANT NOTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+	print "***********************************************************\n";
+	print "$comment \n";
+	print "***********************************************************\n\n";
+    }
+
+}
+
+#-------------------------------------------------------------------------------
+
+sub set_machine
+{
+    # Set the parameters for the specified machine.  The
+    # parameters are read from an input file, and if no machine matches are
+    # found then issue error message.
+    # This routine uses the configuration defined at the package level ($cfg_ref).
+
+    my ($machine_file, $machine, $cfg_ref) = @_;
+    my $xml = XML::Lite->new( $machine_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_machines" or die
+	"file $machine_file is not a machine parameters file\n";
+
+    # Read the machine parameters from $machine_file.
+    my @e = $xml->elements_by_name( "machine" );
+    my %a = ();
+
+    # Search for matching compset.
+    my $found = 0;
+  MACHINE:
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ( ($machine eq $a{'MACH'}) ) {
+	    $found = 1;
+	    last MACHINE;
+	}
+    }
+
+    # Die unless search was successful.
+    unless ($found) { 
+	print "set_machine: no match for machine $machine - possible machine values are \n";
+	my @e_err = $xml->elements_by_name( "machine" );
+	my %a_err = ();
+	while ( my $e_err = shift @e_err ) {
+	    %a_err = $e_err->get_attributes();
+	    if (defined($a_err{'DESC'})) { 
+		print "    $a_err{'MACH'} ($a_err{'DESC'}) \n";
+	    }
+	}
+	die "set_machine: exiting\n"; 
+    }
+
+    # Loop through all entry_ids of the $cfg_ref object and if the corresponding 
+    # attributed is defined in the compset hash, then reset the cfg_ref object to
+    # that value
+
+     my @ids = keys %$cfg_ref;
+     foreach my $id (sort @ids) {
+	 foreach my $attr (keys %a) {
+             if ( ! $cfg_ref->is_ignore_name($attr) and ! $cfg_ref->is_valid_name($attr) ) { 
+                die "set_machine: invalid id $attr in machine $machine in file $machine_file exiting\n"; 
+             }
+	     if ($attr eq $id) {
+		 my $value = $a{$attr};
+		 $cfg_ref->set($id, $value);
+	     }
+	 }
+     }
+
+}
+
+#-------------------------------------------------------------------------------
+
+sub set_pes
+{
+    # Set the parameters for the pey layout.    
+
+    my $pes_file = shift;
+    my $pes_match_ref = shift;
+    my $decomp_ref = shift;
+    my $pecount_opts = shift;
+
+    # Initialize some local variables
+    my $nm = "set_pes"; 
+    my %pes_match = %{$pes_match_ref};
+    my @matches = keys(%pes_match);
+    if ( ref($decomp_ref) ne "HASH" ) { die "ERROR::($nm) input decomp is not a hash!\n"; }
+
+    # Open and read the xml file
+    my $xml = XML::Lite->new( $pes_file );
+    if ( ! defined($xml) ) {
+	die "ERROR($nm): Trouble opening or reading $file\n";
+    }
+    my $elm  = $xml->root_element( );
+    my $root = "pesinfo";
+    my @children = $xml->elements_by_name( $root );
+    if ( $#children < 0 ) {
+	die "ERROR($nm): could not find the main $root root element in $file\n";
+    }
+    if ( $#children != 0 ) {
+	die "ERROR($nm): $root root element in $file is duplicated, there should only be one\n";
+    }
+    
+    # examine the attributes of each element to determine the "best fit"
+    my $possible_match = " ";
+    my $pecount_vals = " ";
+    for (my $i = 0; $i <= $#children; $i++) {
+	#
+	# Name of element, and it's associated attributes
+	my $child = $children[$i];
+	my $name = $child->get_name();
+	my @children_level = $child->get_children();
+	my $num_children = $#children_level+1;
+	
+	if ( $#children_level > -1 ) {
+	    foreach my $child_level ( @children_level ) {
+		
+		# Check all the attributes for this element to determine if we have a complete match
+		my %atts = $child_level->get_attributes;
+		my @keys = keys(%atts);
+		my $num_matches = 0;
+		foreach my $key ( @keys ) {
+		    foreach my $var ( @matches ) {
+			my $match = $atts{$key};
+			if ( ($key eq $var) && ($pes_match{$var} =~ /^$match/ )) {
+			    $num_matches++; 
+			}
+		    }
+		}
+
+                # Keep list of possible pecount attributes
+		foreach my $key ( @keys ) {
+		    if ($key eq "pecount") {
+			if ($pecount_vals =~ /$atts{$key}/){
+                            # this is a repeated match
+			} else {
+			    $pecount_vals = $pecount_vals . "$atts{$key} ";
+			    $pecount_vals =~ s/\|/ /g;
+			}
+		    }
+		}
+
+		# Need all the attributes to match in order to read the element pes
+		my $num_keys = $#keys + 1;
+		if ($num_matches eq $num_keys) {
+
+		    my %atts = $child_level->get_attributes;
+		    my @keys = keys(%atts);
+		    $possible_match = "";
+		    foreach my $key ( @keys ) {
+			$possible_match = "$possible_match" . "$key: $atts{$key}\n";
+		    }
+
+		    my @decomp_children = $child_level->get_children();
+		    if ( $#decomp_children > -1 ) {
+			foreach my $decomp_child ( @decomp_children ) {
+			    my $name  = $decomp_child->get_name();
+			    my $value = $decomp_child->get_text();
+			    if ( ! defined($$decomp_ref{$name}) ) {
+				die "ERROR($nm): $name is NOT a valid element for the decomp output hash\n";
+			    }
+			    $$decomp_ref{$name} = $value;
+			}
+		    } else {
+			die "ERROR($nm): No sub-elements for $name \n";
+		    }
+		}  
+	    }
+	}
+    }
+    if ($pecount_opts) {
+	if ($pecount_vals =~ /$pes_match{'pecount'}/)  {
+	    # do nothing
+	} else {
+	    die << "EOF";
+($0) invalid pecount option: $pes_match{'pecount'}
+($0)      valid options are: $pecount_vals
+EOF
+}
+        print "***********************************************************\n";
+        print "PE layouts are determined by config_pes.xml file \n";
+        print "Some PE layouts are created to match specific \n";
+        print "machine, grid, compset, and pecount options \n";
+        print "and will result in better PE layouts.\n";
+        print "Optimal layouts will match all four options. \n \n";
+        print "The PE layout for this case match these options:\n";
+        print "$possible_match";
+        print "***********************************************************\n";
+    }
+}
+
+#-------------------------------------------------------------------------------
+
+sub set_test
+{
+    # Set the parameters for the specified testname.  The
+    # parameters are read from an input file, and if no testname matches are
+    # found then issue error message.
+    # This routine uses the configuration defined at the package level ($cfg_ref).
+
+    my ($test_file, $testname, $cfg_ref) = @_;
+    my $xml = XML::Lite->new( $test_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_ccsmtest" or die
+	"file $test_file is not a test parameters file\n";
+
+    # Read the test parameters from $test_file.
+    my @e = $xml->elements_by_name( "ccsmtest" );
+    my %a = ();
+
+    # Search for matching test.
+    my $found = 0;
+  CCSMTEST:
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if ( ($testname eq $a{'NAME'}) )  {
+	    $found = 1;
+	    last CCSMTEST;
+	}
+    }
+
+    # Die unless search was successful.
+    unless ($found) { 
+	print "set_test: no match for test $testname - possible testnames are \n";
+	my @e_err = $xml->elements_by_name( "ccsmtest" );
+	my %a_err = ();
+	while ( my $e_err = shift @e_err ) {
+	    %a_err = $e_err->get_attributes();
+	    print " $a_err{'NAME'} ($a_err{'DESC'}) \n" ;
+	}
+	die "set_test: exiting\n"; 
+    }
+
+    # Loop through all entry_ids of the $cfg_ref object and if the corresponding 
+    # attributed is defined in the testname hash, then reset the cfg_ref object to
+    # that value
+
+     my @ids = keys %$cfg_ref;
+     foreach my $id (sort @ids) {
+	 foreach my $attr (keys %a) {
+             if ( ! $cfg_ref->is_ignore_name($attr) and ! $cfg_ref->is_valid_name($attr) ) { 
+                die "set_test: invalid id $attr in test $testname in file $test_file exiting\n"; 
+             }
+	     if ($attr eq $id) {
+	         my $value = $a{$attr};
+	         $cfg_ref->set($id, $value);
+             }
+	 }
+     }
+
+}
+
+#-------------------------------------------------------------------------------
+
+sub print_grids
+{
+    # Print all currently supported valid grids
+
+    my ($grid_file) = @_;
+    my $xml = XML::Lite->new( $grid_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_horiz_grid" or die
+	"file $grid_file is not a horizontal grid parameters file\n";
+
+    print ("  \n");
+    print ("  RESOLUTIONS:  name (shortname) \n");
+
+    # Read the grid parameters from $grid_file.
+    my @e = $xml->elements_by_name( "horiz_grid" );
+    my %a = ();
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if (defined($a{'SHORTNAME'})) { 
+	    print "    $a{'GRID'} ($a{'SHORTNAME'})  \n";
+	}
+    }
+}
+
+#-------------------------------------------------------------------------------
+
+sub print_compsets
+{
+    # Print all currently supported valid grids
+
+    my ($compset_file, $grid_longname, $grid_shortname) = @_;
+    my $xml = XML::Lite->new( $compset_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_compset" or die
+	"file $compset_file is not a compset parameters file\n";
+
+    print ("  \n");
+    print ("  COMPSETS:  name (shortname): description \n");
+    
+    # Read the compset parameters from $compset_file.
+    my @e = $xml->elements_by_name( "compset" );
+    my %a = ();
+    my $e; 
+    while ( $e = shift @e ) {
+	%a = $e->get_attributes();
+	my $desc = $a{'DESC'};
+	if ($desc =~ /INVALID/) {
+	    # get next element
+	    $e = shift @e;
+	    %a = $e->get_attributes();
+	    print "    $a{'NAME'} ($a{'SHORTNAME'}) \n";
+	    print "         Description: $a{'DESC'}  \n";
+	} else {
+	    if ($a{'GRID_MATCH'}) {
+		# do nothing
+	    } else {
+		print "    $a{'NAME'} ($a{'SHORTNAME'}) \n";
+		print "         Description: $a{'DESC'}  \n";
+	    }
+	}
+    }
+}
+
+#-------------------------------------------------------------------------------
+
+sub print_machines
+{
+    # Print all currently supported machines
+
+    my ($machine_file) = @_;
+    my $xml = XML::Lite->new( $machine_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_machines" or die
+	"file $machine_file is not a machine parameters file\n";
+
+    print ("  \n");
+    print ("  MACHINES:  name (description)\n");
+    
+    # Read the grid parameters from $grid_file.
+    my @e = $xml->elements_by_name( "machine" );
+    my %a = ();
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if (defined($a{'DESC'})) { 
+	    print "    $a{'MACH'} ($a{'DESC'}) \n";
+	}
+    }
+}
+
+
+#-------------------------------------------------------------------------------
+
+sub print_tests
+{
+    # Print all currently supported tests
+
+    my ($test_file) = @_;
+    my $xml = XML::Lite->new( $test_file );
+    my $root = $xml->root_element();
+
+    # Check for valid root node
+    my $name = $root->get_name();
+    $name eq "config_ccsmtest" or die
+	"file $test_file is not a ccsmtest parameters file\n";
+
+    print ("  \n");
+    print ("  TESTS:  name (description) \n");
+    
+    my @e = $xml->elements_by_name( "ccsmtest" );
+    my %a = ();
+    while ( my $e = shift @e ) {
+	%a = $e->get_attributes();
+	if (defined($a{'DESC'})) { 
+	    print "    $a{'NAME'} ($a{'DESC'}) \n";
+	}
+    }
+}
