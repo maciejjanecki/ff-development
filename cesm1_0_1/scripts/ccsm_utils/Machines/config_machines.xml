@@ -28,4 +28,24 @@
          MAX_TASKS_PER_NODE="24"
          MPISERIAL_SUPPORT="FALSE" />
 
+<machine MACH="tryton_plgrid_LD"
+         DESC="Tryton, os is Scientific Linux 6 (Linux.ifort), batch system is slurm (slur or something similar), JJ 09.2017"
+         EXEROOT="/scratch/lustre/$LOGNAME/LD/FindFish/$CASE"
+         OBJROOT="$EXEROOT"
+         INCROOT="$EXEROOT/lib/include"
+         DIN_LOC_ROOT_CSMDATA="/scratch/lustre/$LOGNAME/LD/FindFish/cesm_input_data"
+         DIN_LOC_ROOT_CLMQIAN="/scratch/lustre/$LOGNAME/LD/FindFish/cesm_input_data/atm/datm7/atm_forcing.datm7.Qian.T62.c080727"
+         DOUT_S_ROOT="/scratch/lustre/$LOGNAME/LD/FindFish/archive/$CASE"
+         DOUT_L_HTAR="FALSE"
+         DOUT_L_MSROOT="csm/$CASE"
+         CCSM_BASELINE="/scratch/lustre/$LOGNAME/LD/FindFish/cesm_input_data"
+         CCSM_CPRNC="/scratch/lustre/$LOGNAME/LD/FindFish/cesm_input_data/tools/cprnc/cprnc"
+         OS="Linux.ifort"
+         BATCHQUERY="squeue"
+         BATCHSUBMIT="sbatch"
+         GMAKE_J="8"
+         MAX_TASKS_PER_NODE="24"
+         MPISERIAL_SUPPORT="FALSE" />
+
+
 </config_machines>
