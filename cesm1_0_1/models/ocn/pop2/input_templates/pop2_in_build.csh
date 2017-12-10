@@ -11,7 +11,7 @@
 if      ( ${OCN_GRID} == gx3v5 || ${OCN_GRID} == gx3v6 || ${OCN_GRID} == gx3v7 || ${OCN_GRID} == gx1v5 || ${OCN_GRID} == gx1v5a || ${OCN_GRID} == gx1v5b || ${OCN_GRID} == gx1v6 ) then   
 # supported dipole resolutions
 else if ( ${OCN_GRID} == tx0.1v2 || ${OCN_GRID} == tx1v1 ) then   
-else if ( ${OCN_GRID} == bs9v1 || ${OCN_GRID} == bs9v2 || ${OCN_GRID} == bs2v1 || ${OCN_GRID} == bs2v2 ) then
+else if ( ${OCN_GRID} == bs9v1 || ${OCN_GRID} == bs9v2 || ${OCN_GRID} == bs2v1 || ${OCN_GRID} == bs2v2 || ${OCN_GRID} == bs01v1) then
 # tripole resolutions
 else
    echo " "
@@ -46,6 +46,9 @@ else if ( ${OCN_GRID} =~ bs9* ) then
   set ns_boundary_type = closed
   set ew_boundary_type = closed
 else if ( ${OCN_GRID} =~ bs2* ) then
+  set ns_boundary_type = closed
+  set ew_boundary_type = closed
+else if ( ${OCN_GRID} =~ bs01* ) then
   set ns_boundary_type = closed
   set ew_boundary_type = closed
 endif
@@ -156,6 +159,8 @@ else if ( ${OCN_GRID} =~ bs9* ) then
   setenv DT_COUNT 180
 else if ( ${OCN_GRID} =~ bs2* ) then
   setenv DT_COUNT 576
+else if ( ${OCN_GRID} =~ bs01* ) then
+  setenv DT_COUNT 1440
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -383,6 +388,8 @@ if (${OCN_GRID} =~ tx0.1* || ${OCN_GRID} =~ tx1* ) then
 else if (${OCN_GRID} =~ bs9* ) then
   set ldiag_bsf = .true.
 else if (${OCN_GRID} =~ bs2* ) then
+  set ldiag_bsf = .true.
+else if (${OCN_GRID} =~ bs01* ) then
   set ldiag_bsf = .true.
 endif
 
@@ -833,6 +840,10 @@ else if (${OCN_GRID} =~ bs2* ) then
   set hmix_momentum_choice = 'del4'
   set hmix_tracer_choice   = 'del4'
   set lsubmesoscale_mixing = .false.
+else if (${OCN_GRID} =~ bs01* ) then
+  set hmix_momentum_choice = 'del4'
+  set hmix_tracer_choice   = 'del4'
+  set lsubmesoscale_mixing = .false.
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -870,6 +881,10 @@ else if ( ${OCN_GRID} =~ bs9* ) then
   set lvariable_hmix  = .false.
   set am_del2_value   = 0.5e8
 else if ( ${OCN_GRID} =~ bs2* ) then
+  set lauto_hmix      = .false.
+  set lvariable_hmix  = .false.
+  set am_del2_value   = 0.5e8
+else if ( ${OCN_GRID} =~ bs01* ) then
   set lauto_hmix      = .false.
   set lvariable_hmix  = .false.
   set am_del2_value   = 0.5e8
@@ -913,6 +928,10 @@ else if ( ${OCN_GRID} =~ bs2* ) then
   set lauto_hmix      = .false.
   set lvariable_hmix  = .false.
   set ah_del2_value   = 1.0e7
+else if ( ${OCN_GRID} =~ bs01* ) then
+  set lauto_hmix      = .false.
+  set lvariable_hmix  = .false.
+  set ah_del2_value   = 1.0e7
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -945,6 +964,10 @@ else if ( ${OCN_GRID} =~ bs2* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
   set am_del4_value    = -0.3125e18
+else if ( ${OCN_GRID} =~ bs01* ) then
+  set lauto_hmix       = .false.
+  set lvariable_hmix   = .false.
+  set am_del4_value    = -7.8125e16
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -977,6 +1000,10 @@ else if ( ${OCN_GRID} =~ bs2* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
   set ah_del4_value    = -1.25e17
+else if ( ${OCN_GRID} =~ bs01* ) then
+  set lauto_hmix       = .false.
+  set lvariable_hmix   = .false.
+  set ah_del4_value    = -0.3125e17
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1069,7 +1096,7 @@ else if ( ${OCN_GRID} =~ bs9* ) then
    set ah_bolus       = 4.0e7
    set ah_bkg_srfbl   = 4.0e7
  endif
-else if ( ${OCN_GRID} =~ bs2* ) then
+else if ( ${OCN_GRID} =~ bs01* ) then
    set diag_gm_bolus = .true.
  if ($kappa_isop_choice == 'constant' && $kappa_thic_choice == 'constant') then
    set ah_gm_value    = 0.8e7
@@ -1216,7 +1243,7 @@ else if ( ${OCN_GRID} =~ bs9* ) then
  set vconst_5  =  3
  set vconst_6  = 1.0e7
  set vconst_7  = 90.0
-else if ( ${OCN_GRID} =~ bs2* ) then
+else if ( ${OCN_GRID} =~ bs01* ) then
  set hmix_alignment_choice =  grid
  set lvariable_hmix_aniso  =  .true.
  set lsmag_aniso           =  .false.
@@ -1392,7 +1419,7 @@ endif
 if ( ${OCN_GRID} =~ bs9* ) then
   set lms_balance       = .false.
 endif
-if ( ${OCN_GRID} =~ bs2* ) then
+if ( ${OCN_GRID} =~ bs01* ) then
   set lms_balance       = .false.
   set luse_cpl_ifrac    = .false.
 
@@ -1438,7 +1465,7 @@ else if ( ${OCN_GRID} == tx0.1v2 ) then
  set sfwf_weak_restore = 0.0115
 else if ( ${OCN_GRID} =~ bs9* ) then
  set sfwf_weak_restore = 0.0115
-else if ( ${OCN_GRID} =~ bs2* ) then
+else if ( ${OCN_GRID} =~ bs01* ) then
  set sfwf_weak_restore = 0.098
 endif
 
@@ -1478,9 +1505,9 @@ cat >> $POP2BLDSCRIPT << EOF2
    pt_interior_interp_type       = 'linear'
    pt_interior_interp_inc        = 72.
    pt_interior_restore_tau       = 10.
-   pt_interior_filename          = '/users/kdm/mjanecki/CESM/inputdata/ocn/pop/bs2v1/forcing/interior/temp_3d_bs2v1_monthly_20120217.ieeer8'
+   pt_interior_filename          = '/users/kdm/mjanecki/CESM/inputdata/ocn/pop/bs01v1/forcing/interior/temp_3d_bs01v1_monthly_20120217.ieeer8'
    pt_interior_file_fmt          = 'bin'
-   pt_interior_restore_max_level = 21 
+   pt_interior_restore_max_level = 33 
    pt_interior_formulation       = 'restoring'
    pt_interior_data_renorm(1)    = 1.
    pt_interior_variable_restore  = .false.
@@ -1503,9 +1530,9 @@ cat >> $POP2BLDSCRIPT << EOF2
    s_interior_interp_type       = 'linear'
    s_interior_interp_inc        = 72.
    s_interior_restore_tau       = 10.
-   s_interior_filename          = '/users/kdm/mjanecki/CESM/inputdata/ocn/pop/bs2v1/forcing/interior/salt_3d_bs2v1_monthly_20120217.ieeer8'
+   s_interior_filename          = '/users/kdm/mjanecki/CESM/inputdata/ocn/pop/bs01v1/forcing/interior/salt_3d_bs01v1_monthly_20120217.ieeer8'
    s_interior_file_fmt          = 'bin'
-   s_interior_restore_max_level = 21 
+   s_interior_restore_max_level = 33 
    s_interior_formulation       = 'restoring'
    s_interior_data_renorm(1)    = 0.001
    s_interior_variable_restore  = .false.
@@ -1589,6 +1616,8 @@ else if ( ${OCN_GRID} =~ bs9* ) then
     set qsw_distrb_opt = cosz
 else if ( ${OCN_GRID} =~ bs2* ) then
     set qsw_distrb_opt = cosz
+else if ( ${OCN_GRID} =~ bs01* ) then
+    set qsw_distrb_opt = cosz
 endif 
 
 #@ ny = \$ntask / \$NX; setenv NY \$ny
@@ -1618,6 +1647,8 @@ if ( ${OCN_GRID} =~ bs9* ) then
    set sw_absorption_type = jerlov
 endif
 if ( ${OCN_GRID} =~ bs2* ) then
+   set sw_absorption_type = jerlov
+else if (${OCN_GRID} =~ bs01* ) then
    set sw_absorption_type = jerlov
 endif
 

@@ -30,6 +30,7 @@
 
 <horiz_grid GLOB_GRID="bs2v1"       nx="600"    ny="640"   />
 <horiz_grid GLOB_GRID="bs05v1"       nx="1000"    ny="640"   />
+<horiz_grid GLOB_GRID="bs01v1"       nx="1000"    ny="640"   />
 
 <horiz_grid GLOB_GRID="pt1"         nx="1"      ny="1"  />
 
@@ -472,4 +473,24 @@
             MAP_R2O_FILE_R19="idmap"
             MAP_R2O_FILE_RX1="idmap"
             DESC="Baltic Sea 500m - FindFish project" />
+
+<horiz_grid GRID="bs01v1_bs01v1" SHORTNAME="b11_b11"
+            ATM_GRID="bs01v1" LND_GRID="bs01v1" OCN_GRID="bs01v1" ICE_GRID="bs01v1"
+            ATM_NCPL="144" OCN_NCPL="144"
+            CAM_DYCORE="fv"
+            NPFIX="FALSE"
+            CCSM_GCOST="0"
+            EPS_AGRID="1.0e-06"
+            MAP_A2OF_FILE="idmap"
+            MAP_A2OS_FILE="idmap"
+            MAP_O2AF_FILE="idmap"
+            MAP_O2AS_FILE="idmap"
+            MAP_A2LF_FILE="idmap"
+            MAP_A2LS_FILE="idmap"
+            MAP_L2AF_FILE="idmap"
+            MAP_L2AS_FILE="idmap"
+            MAP_R2O_FILE_R05="idmap"
+            MAP_R2O_FILE_R19="idmap"
+            MAP_R2O_FILE_RX1="idmap"
+            DESC="Gulf of Gdansk and Puck Bay 115 m - WaterPuck project" />
 </config_horiz_grid>
