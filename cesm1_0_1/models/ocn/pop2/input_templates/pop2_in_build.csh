@@ -967,7 +967,7 @@ else if ( ${OCN_GRID} =~ bs2* ) then
 else if ( ${OCN_GRID} =~ bs01* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
-  set am_del4_value    = -7.8125e16
+  set am_del4_value    = -1.953125e16
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1003,7 +1003,7 @@ else if ( ${OCN_GRID} =~ bs2* ) then
 else if ( ${OCN_GRID} =~ bs01* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
-  set ah_del4_value    = -0.3125e17
+  set ah_del4_value    = -7.8125e15
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
