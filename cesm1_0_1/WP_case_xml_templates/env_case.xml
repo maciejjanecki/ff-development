@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+
+<config_definition>
+
+<!-- ========================================================================== -->
+<!--                                                                            -->
+<!--       These variables CANNOT BE CHANGED once a case has been created.      -->
+<!--       Invoke create_newcase again if a different grid or component         -->
+<!--       combination is required.                                             -->
+<!--                                                                            -->
+<!--       See README/readme_env and README/readme_general for details          -->
+<!--                                                                            -->
+<!-- ========================================================================== -->
+
+
+
+<!--"case name (char) " -->
+<entry id="CASE"   value="WP02X"  />    
+
+<!--"full path of case (char) " -->
+<entry id="CASEROOT"   value="/scratch/lustre/plgjjakacki/LD/cases/WP02X"  />    
+
+<!--"ccsm source root directory (char) " -->
+<entry id="CCSMROOT"   value="/scratch/lustre/plgjjakacki/LD/FindFish_Model/cesm1_0_1"  />    
+
+<!--"CCSM grid (char) " -->
+<entry id="GRID"   value="bs01v1_bs01v1"  />    
+
+<!--"CCSM component set (char) " -->
+<entry id="CCSM_COMPSET"   value="WaterPuck (WP)"  />    
+
+<!--"current machine name (char) " -->
+<entry id="MACH"   value="tryton_plgrid"  />    
+
+<!--"Operate on only a single point of the global grid, valid values: TRUE,FALSE (logical) " -->
+<entry id="PTS_MODE"   value="FALSE"  />    
+
+<!-- ====================================== -->
+
+<!--"case user name (char) " -->
+<entry id="CCSMUSER"   value="plgjjakacki"  />    
+
+<!--"Case Tools directory location (char) " -->
+<entry id="CASETOOLS"   value="$CASEROOT/Tools"  />    
+
+<!--"Buildconf directory location (char) " -->
+<entry id="CASEBUILD"   value="$CASEROOT/Buildconf"  />    
+
+<!--"CCSM source scripts directory location (char) " -->
+<entry id="SCRIPTSROOT"   value="$CCSMROOT/scripts"  />    
+
+<!--"CCSM source scripts utils directory location (char) " -->
+<entry id="UTILROOT"   value="$CCSMROOT/scripts/ccsm_utils"  />    
+
+<!--"CCSM source scripts build directory location (char) " -->
+<entry id="BLDROOT"   value="$CCSMROOT/scripts/ccsm_utils/Build"  />    
+
+<!--"CCSM source models directory location (char) " -->
+<entry id="CODEROOT"   value="$CCSMROOT/models"  />    
+
+<!--"CCSM source models share code location (char) " -->
+<entry id="SHAREROOT"   value="$CCSMROOT/models/csm_share"  />    
+
+<!-- ====================================== -->
+
+<!--"Name of atmospheric component , valid values: cam,datm,xatm,satm (char) " -->
+<entry id="COMP_ATM"   value="datm"  />    
+
+<!--"Name of land component, valid values: clm,dlnd,xlnd,slnd (char) " -->
+<entry id="COMP_LND"   value="slnd"  />    
+
+<!--"Name of sea ice component, valid values: cice,dice,xice,sice (char) " -->
+<entry id="COMP_ICE"   value="cice"  />    
+
+<!--"Name of land ice component, valid values: xglc,sglc,cism (char) " -->
+<entry id="COMP_GLC"   value="sglc"  />    
+
+<!--"Name of ocean component, valid values: pop2,docn,xocn,socn,camdom (char) " -->
+<entry id="COMP_OCN"   value="pop2"  />    
+
+<!--"Name of coupling component, valid values: cpl (char) " -->
+<entry id="COMP_CPL"   value="cpl"  />    
+
+<!-- ====================================== -->
+
+<!--"atmosphere grid (char) " -->
+<entry id="ATM_GRID"   value="bs01v1"  />    
+
+<!--"land grid (char) " -->
+<entry id="LND_GRID"   value="bs01v1"  />    
+
+<!--"ocn grid (char) " -->
+<entry id="OCN_GRID"   value="bs01v1"  />    
+
+<!--"ice grid (must equal ocn grid) (char) " -->
+<entry id="ICE_GRID"   value="bs01v1"  />    
+
+<!--"number of atmosphere cells in i direction (integer) " -->
+<entry id="ATM_NX"   value="1000"  />    
+
+<!--"number of atmosphere cells in j direction (integer) " -->
+<entry id="ATM_NY"   value="640"  />    
+
+<!--"number of land cells in i direction (integer) " -->
+<entry id="LND_NX"   value="1000"  />    
+
+<!--"number of land cells in j direction (integer) " -->
+<entry id="LND_NY"   value="640"  />    
+
+<!--"number of glc cells in i direction (integer) " -->
+<entry id="GLC_NX"   value="1000"  />    
+
+<!--"number of glc cells in j direction (integer) " -->
+<entry id="GLC_NY"   value="640"  />    
+
+<!--"number of ice cells in i direction (integer) " -->
+<entry id="ICE_NX"   value="1000"  />    
+
+<!--"number of ice cells in j direction (integer) " -->
+<entry id="ICE_NY"   value="640"  />    
+
+<!--"number of ocn cells in i direction (integer) " -->
+<entry id="OCN_NX"   value="1000"  />    
+
+<!--"number of ocn cells in j direction (integer) " -->
+<entry id="OCN_NY"   value="640"  />    
+
+<!-- ====================================== -->
+
+<!--"operating system (char) " -->
+<entry id="OS"   value="Linux.ifort"  />    
+
+<!-- ====================================== -->
+
+<!--"CCSM component set, longname (char) " -->
+<entry id="CCSM_LCOMPSET"   value="WaterPuck"  />    
+
+<!--"CCSM component set, shortname (char) " -->
+<entry id="CCSM_SCOMPSET"   value="WP"  />    
+
+<!--"relative cost of compset where B is 1 (DO NOT EDIT) (integer) " -->
+<entry id="CCSM_CCOST"   value="-1"  />    
+
+<!--"relative cost of grid where f19_g15 is 1 (DO NOT EDIT) (integer) " -->
+<entry id="CCSM_GCOST"   value="0"  />    
+
+<!--"relative cost of machine (DO NOT EDIT) (integer) " -->
+<entry id="CCSM_MCOST"   value="0"  />    
+
+<!--"xml format option, expert removes extra comments from env xml files, valid values: normal,expert (char) " -->
+<entry id="XMLMODE"   value="normal"  />    
+
+<!-- ====================================== -->
+</config_definition>

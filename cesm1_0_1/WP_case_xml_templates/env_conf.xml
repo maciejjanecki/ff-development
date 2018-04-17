@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+
+<config_definition>
+
+<!-- ========================================================================== -->
+<!--                                                                            -->
+<!--      These variables CANNOT be modified once configure -case has been      -->
+<!--      invoked without first invoking configure -cleannamelist.              -->
+<!--      These variables SHOULD NOT be modified once a run has been submitted. -->
+<!--                                                                            -->
+<!--      See README/readme_env and README/readme_general for details           -->
+<!--                                                                            -->
+<!-- ========================================================================== -->
+
+
+
+<!--"Run initialization type, valid values: startup,hybrid,branch (char) " -->
+<entry id="RUN_TYPE"   value="startup"  />    
+
+<!--"Run start date (yyyy-mm-dd). Only used for startup or hybrid runs (char) " -->
+<entry id="RUN_STARTDATE"   value="2016-07-01"  />    
+
+<!--"Reference case for hybrid or branch runs (char) " -->
+<entry id="RUN_REFCASE"   value="case.std"  />    
+
+<!--"Reference date for hybrid or branch runs (yyyy-mm-dd) (char) " -->
+<entry id="RUN_REFDATE"   value="2016-07-01"  />    
+
+<!--"allow same branch casename as reference casename, valid values: TRUE,FALSE (logical) " -->
+<entry id="BRNCH_RETAIN_CASENAME"   value="FALSE"  />    
+
+<!--"flag for automatically prestaging the refcase restart dataset, valid values: TRUE,FALSE (logical) " -->
+<entry id="GET_REFCASE"   value="FALSE"  />    
+
+<!--"TRUE implies code will be built using mpiserial lib, valid values: TRUE,FALSE (logical) " -->
+<entry id="USE_MPISERIAL"   value="FALSE"  />    
+
+<!--"TRUE implies this machine supports the use of the mpiserial lib, valid values: TRUE,FALSE (logical) " -->
+<entry id="MPISERIAL_SUPPORT"   value="FALSE"  />    
+
+<!-- ====================================== -->
+
+<!-- ====================================== -->
+
+<!--"atm to ocn flux mapping file for fluxes (char) " -->
+<entry id="MAP_A2OF_FILE"   value="idmap"  />    
+
+<!--"atm to ocn state mapping file for states (char) " -->
+<entry id="MAP_A2OS_FILE"   value="idmap"  />    
+
+<!--"ocn to atm mapping file for fluxes (char) " -->
+<entry id="MAP_O2AF_FILE"   value="idmap"  />    
+
+<!--"ocn to atm mapping file for states (char) " -->
+<entry id="MAP_O2AS_FILE"   value="idmap"  />    
+
+<!--"atm to land mapping file for fluxes (char) " -->
+<entry id="MAP_A2LF_FILE"   value="idmap"  />    
+
+<!--"atm to land mapping file for states (char) " -->
+<entry id="MAP_A2LS_FILE"   value="idmap"  />    
+
+<!--"land to atm mapping file for fluxes (char) " -->
+<entry id="MAP_L2AF_FILE"   value="idmap"  />    
+
+<!--"land to atm mapping file for states (char) " -->
+<entry id="MAP_L2AS_FILE"   value="idmap"  />    
+
+<!--"runoff (.5 degree) to ocn mapping file (char) " -->
+<entry id="MAP_R2O_FILE_R05"   value="idmap"  />    
+
+<!--"runoff (19 basin) to ocn mapping file (char) " -->
+<entry id="MAP_R2O_FILE_R19"   value="idmap"  />    
+
+<!--"runoff (1 degree) to ocn mapping file (char) " -->
+<entry id="MAP_R2O_FILE_RX1"   value="idmap"  />    
+
+<!-- ====================================== -->
+
+<!--"Only used for C,G compsets: if ocn, ocn provides EP balance factor for precip, valid values: off,ocn (char) " -->
+<entry id="CPL_EPBAL"   value="ocn"  />    
+
+<!--"Only used for C,G compsets: if true, compute albedos to work with daily avg SW down, valid values: true,false (logical) " -->
+<entry id="CPL_ALBAV"   value="true"  />    
+
+<!--"BGC flag, valid values: none,CO2A,CO2B,CO2C,CO2_DMSA (char) " -->
+<entry id="CCSM_BGC"   value="none"  />    
+
+<!--"Only used for B,E,F,I compsets: if true will pass VOC fields from lnd to atm, valid values: TRUE,FALSE (char) " -->
+<entry id="CCSM_VOC"   value="FALSE"  />    
+
+<!--"CO2 ppmv (real) " -->
+<entry id="CCSM_CO2_PPMV"   value="379.000"  />    
+
+<!-- ====================================== -->
+
+<!-- ====================================== -->
+
+<!--"DATM mode, valid values: CORE2_NYF,CLM_QIAN,CLM1PT,COPYALL_ICM2,COPYALL_FF,COPYALL_WP (char) " -->
+<entry id="DATM_MODE"   value="COPYALL_WP"  />    
+
+<!--"DATM prescribed aerosol forcing, valid values: none,clim_1850,clim_2000,trans_1850-2000,rcp2.6,rcp4.5,rcp8.5,pt1_pt1 (char) " -->
+<entry id="DATM_PRESAERO"   value="none"  />    
+
+<!--"year align (integer) " -->
+<entry id="DATM_CLMNCEP_YR_ALIGN"   value="1"  />    
+
+<!--"starting year to loop data over (integer) " -->
+<entry id="DATM_CLMNCEP_YR_START"   value="2002"  />    
+
+<!--"ending year to loop data over (integer) " -->
+<entry id="DATM_CLMNCEP_YR_END"   value="2004"  />    
+
+<!-- ====================================== -->
+
+<!--"valid values: prognostic,prescribed,thermo_only, valid values: prognostic,prescribed,thermo_only (char) " -->
+<entry id="CICE_MODE"   value="prognostic"  />    
+
+<!--"CICE configure options, see CICE configure utility for details (char) " -->
+<entry id="CICE_CONFIG_OPTS"   value=" "  />    
+
+<!--"CICE specific namelist settings for -namelist option (char) " -->
+<entry id="CICE_NAMELIST_OPTS"   value=""  />    
+
+<!-- ====================================== -->
+
+<!--"surface heat and freshwater forcing, partial is consistent with coupling to a data atm model, valid values: full,partial (char) " -->
+<entry id="OCN_COUPLING"   value="partial"  />    
+
+<!--"under ice forcing, inactive is consistent with coupling to a data ice model, valid values: active,inactive (char) " -->
+<entry id="OCN_ICE_FORCING"   value="active"  />    
+
+<!--"provenance of surface Chl for radiative penetration computations, valid values: diagnostic,prognostic (char) " -->
+<entry id="OCN_CHL_TYPE"   value="diagnostic"  />    
+
+<!--"provenance of atmospheric CO2 for gas flux computation, valid values: constant,prognostic,diagnostic (char) " -->
+<entry id="OCN_CO2_TYPE"   value="constant"  />    
+
+<!--"TRUE implies using fix to pH scale of carbon thermodynamic constants, valid values: TRUE,FALSE (char) " -->
+<entry id="OCN_CO2_FLUX_OCMIP_BUG_FIX"   value="TRUE"  />    
+
+<!--"specification of transient forcing datasets, valid values: unset,1850-2000 (char) " -->
+<entry id="OCN_TRANSIENT"   value="unset"  />    
+
+<!-- ====================================== -->
+</config_definition>

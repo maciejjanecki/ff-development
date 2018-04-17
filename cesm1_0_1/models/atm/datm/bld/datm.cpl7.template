@@ -535,51 +535,6 @@ else if ($DATM_MODE == "COPYALL_WP") then
 
 cat >> $CASEBUILD/datm.buildnml.csh << EOF
 
-set STREAM1TXT = ICM.WP.stream.txt
-
-set year_align = 1
-set year_start = 1
-set year_end   = 1
-   
-set FFN = \$DIN_LOC_ROOT/atm/datm7/CORE2/COREv2.correction_factors.T62.121007.nc
-echo FFN = \$FFN >> \$CASEBUILD/datm.input_data_list
-
-set iradsw = 1
-
-cat >! datm_atm_in << EOF1
- &shr_strdata_nml
-   dataMode       = 'COPYALL'
-   domainFile     = '\$DIN_LOC_ROOT/atm/datm7/bs01v1/grid/$DOMAINFILE'
-   streams        = '\$STREAM1TXT \$year_align \$year_start \$year_end '
-   vectors        = 'u:v'
-   mapmask        = 'nomask'
-   tintalgo       = 'nearest','linear'
-   dtlimit        = 25000.,1.5
-  /
-EOF1
-
-EOF
-
-cat >> $CASEBUILD/datm.buildnml.csh << EOF
-cat >! \$STREAM1TXT << EOF1
-EOF
-$UTILROOT/Tools/build_streams $bsopts -s ICM.WP.stream  >> $CASEBUILD/datm.buildnml.csh || exit 3
-cat >> $CASEBUILD/datm.buildnml.csh << EOF
-EOF1
-
-EOF
-
-cat >> $CASEBUILD/datm.buildnml.csh << EOF
-
-\$CASETOOLS/listfilesin_streams -input_data_list -t \$STREAM1TXT >> \$CASEBUILD/datm.input_data_list
-
-EOF
-
-#----- COPYALL_WP mode -----------------------------------------------------------
-else if ($DATM_MODE == "COPYALL_WP") then
-
-cat >> $CASEBUILD/datm.buildnml.csh << EOF
-
 set STREAM1TXT = WP.stream.txt
 
 set year_align = 1

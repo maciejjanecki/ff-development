@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+
+<config_definition>
+
+<!-- ========================================================================== -->
+<!--                                                                            -->
+<!--       These variables SHOULD NOT be changed once the model has been built. -->
+<!--       Currently, these variables are not cached.                           -->
+<!--                                                                            -->
+<!--       Note1: users SHOULD NOT modify BUILD_COMPETE below                   -->
+<!--              this is done automatically by the scripts                     -->
+<!--                                                                            -->
+<!--       See README/readme_env and README/readme_general for details          -->
+<!--                                                                            -->
+<!-- ========================================================================== -->
+
+
+
+<!--"executable root directory (char) " -->
+<entry id="EXEROOT"   value="/scratch/lustre/$LOGNAME/LD/cases/$CASE"  />    
+
+<!--"use MCT or ESMF component interfaces, valid values: MCT,ESMF (char) " -->
+<entry id="COMP_INTERFACE"   value="MCT"  />    
+
+<!--"directory of esmf.mk in pre-built ESMF library (char) " -->
+<entry id="ESMF_LIBDIR"   value=""  />    
+
+<!--"TRUE implies using the ESMF library specified by ESMF_LIBDIR or ESMFMKFILE, valid values: TRUE,FALSE (char) " -->
+<entry id="USE_ESMF_LIB"   value="FALSE"  />    
+
+<!--"TRUE implies turning on run and compile time debugging, valid values: TRUE,FALSE (logical) " -->
+<entry id="DEBUG"   value="FALSE"  />    
+
+<!--"TRUE implies always build model for openmp capability, valid values: TRUE,FALSE (logical) " -->
+<entry id="BUILD_THREADED"   value="FALSE"  />    
+
+<!--"true implies compile with HIRES CPP options, valid values: true,false (logical) " -->
+<entry id="HIRES"   value="false"  />    
+
+<!--"PIO configure options, see PIO configure utility for details (char) " -->
+<entry id="PIO_CONFIG_OPTS"   value=" --disable-mct --disable-timing "  />    
+
+<!--"GLC land ice model number of elevation classes, valid values: 0,3,5,10 (integer) " -->
+<entry id="GLC_NEC"   value="0"  />    
+
+<!--"Number of processors for gmake (integer) " -->
+<entry id="GMAKE_J"   value="8"  />    
+
+<!-- ====================================== -->
+
+<!--"case run directory (char) " -->
+<entry id="RUNDIR"   value="$EXEROOT/run"  />    
+
+<!--"case build directory (char) " -->
+<entry id="OBJROOT"   value="$EXEROOT"  />    
+
+<!--"case lib directory (char) " -->
+<entry id="LIBROOT"   value="$EXEROOT/lib"  />    
+
+<!--"case lib include directory (char) " -->
+<entry id="INCROOT"   value="$EXEROOT/lib/include"  />    
+
+<!-- ====================================== -->
+
+<!--"If TRUE, models have been built successfully. (DO NOT EDIT), valid values: TRUE,FALSE (logical) " -->
+<entry id="BUILD_COMPLETE"   value="FALSE"  />    
+
+<!--"smp status of previous build, coded string. (DO NOT EDIT) (char) " -->
+<entry id="SMP_BUILD"   value="0"  />    
+
+<!--"smp status of current setup, coded string (DO NOT EDIT) (char) " -->
+<entry id="SMP_VALUE"   value="0"  />    
+
+<!--"Status of prior build. (DO NOT EDIT) (integer) " -->
+<entry id="BUILD_STATUS"   value="0"  />    
+
+<!-- ====================================== -->
+
+<!--"Optional ocean tracers.  Any combination of: iage cfc ecosys (char) " -->
+<entry id="OCN_TRACER_MODULES"   value="iage"  />    
+
+<!--"Size of pop block in first horiz dimension (integer) " -->
+<entry id="POP_BLCKX"   value="0"  />    
+
+<!--"Size of pop block in second horiz dimension (integer) " -->
+<entry id="POP_BLCKY"   value="0"  />    
+
+<!--"Max number of pop blocks per processor (integer) " -->
+<entry id="POP_MXBLCKS"   value="0"  />    
+
+<!--"pop block distribution type (char) " -->
+<entry id="POP_DECOMPTYPE"   value="0"  />    
+
+<!-- ====================================== -->
+
+<!--"Size of cice block in first horiz dimension (integer) " -->
+<entry id="CICE_BLCKX"   value="0"  />    
+
+<!--"Size of cice block in second horiz dimension (integer) " -->
+<entry id="CICE_BLCKY"   value="0"  />    
+
+<!--"Max number of cice blocks per processor (integer) " -->
+<entry id="CICE_MXBLCKS"   value="0"  />    
+
+<!--"cice block distribution type (char) " -->
+<entry id="CICE_DECOMPTYPE"   value="0"  />    
+
+<!-- ====================================== -->
+</config_definition>

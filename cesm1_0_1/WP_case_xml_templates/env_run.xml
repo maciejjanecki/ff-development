@@ -1,0 +1,243 @@
+<?xml version="1.0"?>
+
+<config_definition>
+
+<!-- ========================================================================== -->
+<!--                                                                            -->
+<!--       These variables MAY BE CHANGED ANYTIME during a run.                 -->
+<!--       Additional machine speific variables that can be changed             -->
+<!--       during a run are contained in the env_mach_specific file             -->
+<!--                                                                            -->
+<!--       Note1: users SHOULD NOT modify BUILD_COMPETE in env_build.xml        -->
+<!--              this is done automatically by the scripts                     -->
+<!--                                                                            -->
+<!--       See README/readme_env and README/readme_general for details          -->
+<!--                                                                            -->
+<!-- ========================================================================== -->
+
+
+
+<!--"A setting of TRUE implies a continuation run, valid values: TRUE,FALSE (logical) " -->
+<entry id="CONTINUE_RUN"   value="FALSE"  />    
+
+<!--"if RESUBMIT is greater than 0, then case will automatically resubmit (integer) " -->
+<entry id="RESUBMIT"   value="0"  />    
+
+<!-- ====================================== -->
+
+<!--"CCSM tag (char) " -->
+<entry id="CCSM_REPOTAG"   value="cesm1_0_1"  />    
+
+<!--"case description (char) " -->
+<entry id="CASESTR"   value="UNSET"  />    
+
+<!-- ====================================== -->
+
+<!--"sets the run length with STOP_N and STOP_DATE, valid values: none,never,nsteps,nstep,nseconds,nsecond,nminutes,nminute,nhours,nhour,ndays,nday,nmonths,nmonth,nyears,nyear,date,ifdays0,end (char) " -->
+<entry id="STOP_OPTION"   value="ndays"  />    
+
+<!--"sets the run length with STOP_OPTION and STOP_DATE (integer) " -->
+<entry id="STOP_N"   value="5"  />    
+
+<!--"date in yyyymmdd format, sets the run length with STOP_OPTION and STOP_N (integer) " -->
+<entry id="STOP_DATE"   value="-999"  />    
+
+<!-- ====================================== -->
+
+<!--"sets frequency of model restart writes (same options as STOP_OPTION) (char) " -->
+<entry id="REST_OPTION"   value="$STOP_OPTION"  />    
+
+<!--"sets model restart writes with REST_OPTION and REST_DATE (char) " -->
+<entry id="REST_N"   value="$STOP_N"  />    
+
+<!--"date in yyyymmdd format, sets model restart write date with REST_OPTION and REST_N (char) " -->
+<entry id="REST_DATE"   value="$STOP_DATE"  />    
+
+<!-- ====================================== -->
+
+<!--"calendar type, valid values: NO_LEAP,GREGORIAN (char) " -->
+<entry id="CALENDAR"   value="NO_LEAP"  />    
+
+<!--"logical that turns on diagnostic budgets, valid values: TRUE,FALSE (logical) " -->
+<entry id="BUDGETS"   value="FALSE"  />    
+
+<!--"Turns on component varying thread control in the driver, valid values: TRUE,FALSE (logical) " -->
+<entry id="DRV_THREADING"   value="FALSE"  />    
+
+<!--"turns on bit-for-bit reproducibility with varying pe counts in coupler, valid values: TRUE,FALSE (logical) " -->
+<entry id="BFBFLAG"   value="FALSE"  />    
+
+<!--"logical to diagnose model timing at the end of the run, valid values: TRUE,FALSE (logical) " -->
+<entry id="CHECK_TIMING"   value="TRUE"  />    
+
+<!--"level of debug output, 0=minimum, 1=normal, 2=more, 3=too much, valid values: 0,1,2,3 (integer) " -->
+<entry id="INFO_DBUG"   value="2"  />    
+
+<!--"if TRUE, turns on the timing barrier calls in the model, valid values: TRUE,FALSE (logical) " -->
+<entry id="TIMING_BARRIER"   value="FALSE"  />    
+
+<!--"timer output depth, valid values: 1,2,3,4,5,6,7,8,9,10 (integer) " -->
+<entry id="TIMER_LEVEL"   value="4"  />    
+
+<!--"error tolerance for differences in fractions in domain checking (real) " -->
+<entry id="EPS_FRAC"   value="1.0e-02"  />    
+
+<!--"error tolerance for differences in atm/land masks in domain checking (real) " -->
+<entry id="EPS_AMASK"   value="1.0e-13"  />    
+
+<!--"error tolerance for differences in atm/land lon/lat in domain checking (real) " -->
+<entry id="EPS_AGRID"   value="1.0e-06"  />    
+
+<!--"error tolerance for differences in atm/land areas in domain checking (real) " -->
+<entry id="EPS_AAREA"   value="9.0e-07"  />    
+
+<!--"error tolerance for differences in ocean/ice masks in domain checking (real) " -->
+<entry id="EPS_OMASK"   value="1.0e-06"  />    
+
+<!--"error tolerance for differences in ocean/ice lon/lat in domain checking (real) " -->
+<entry id="EPS_OGRID"   value="1.0e-02"  />    
+
+<!--"error tolerance for differences in ocean/ice areas in domain checking (real) " -->
+<entry id="EPS_OAREA"   value="1.0e-01"  />    
+
+<!--"invoke pole averaging corrections in shr_map_mod weights generation (logical) " -->
+<entry id="SHR_MAP_DOPOLE"   value="TRUE"  />    
+
+<!--"invoke pole vector corrections in map_atmocn (logical) " -->
+<entry id="NPFIX"   value="FALSE"  />    
+
+<!--"grid for atm ocn flux calc (atm currently not supported) (char) " -->
+<entry id="AOFLUX_GRID"   value="ocn"  />    
+
+<!-- ====================================== -->
+
+<!--"sets timing output file frequency (like REST_OPTION but relative to run start date) (char) " -->
+<entry id="TPROF_OPTION"   value="never"  />    
+
+<!--"sets timing output file frequency (like REST_N) (char) " -->
+<entry id="TPROF_N"   value="-999"  />    
+
+<!--"yyyymmdd format, sets timing output file date (like REST_DATE) (integer) " -->
+<entry id="TPROF_DATE"   value="-999"  />    
+
+<!-- ====================================== -->
+
+<!--"sets coupler time-average history file frequency (like REST_OPTION) (char) " -->
+<entry id="AVGHIST_OPTION"   value="never"  />    
+
+<!--"sets coupler time-average history file frequency (like REST_N) (char) " -->
+<entry id="AVGHIST_N"   value="-999"  />    
+
+<!--"yyyymmdd format, sets coupler time-average history date (like REST_DATE) (integer) " -->
+<entry id="AVGHIST_DATE"   value="-999"  />    
+
+<!--"logical to write an extra initial coupler history file, valid values: TRUE,FALSE (logical) " -->
+<entry id="HISTINIT"   value="TRUE"  />    
+
+<!--"sets coupler snapshot history file frequency (like REST_OPTION) (char) " -->
+<entry id="HIST_OPTION"   value="never"  />    
+
+<!--"sets coupler snapshot history file frequency (like REST_N) (char) " -->
+<entry id="HIST_N"   value="-999"  />    
+
+<!--"yyyymmdd format, sets coupler snapshot history date (like REST_DATE) (integer) " -->
+<entry id="HIST_DATE"   value="-999"  />    
+
+<!--"output level for instantaneous budget diagnostics, valid values: 0,1,2,3 (integer) " -->
+<entry id="BUDGET_INST"   value="0"  />    
+
+<!--"output level for daily average budget diagnostics, valid values: 0,1,2,3 (integer) " -->
+<entry id="BUDGET_DAILY"   value="0"  />    
+
+<!--"output level for monthly average budget diagnostics, valid values: 0,1,2,3 (integer) " -->
+<entry id="BUDGET_MONTHLY"   value="1"  />    
+
+<!--"output level for annual average budget diagnostics, valid values: 0,1,2,3 (integer) " -->
+<entry id="BUDGET_ANNUAL"   value="1"  />    
+
+<!--"output level for longterm average budget diagnostics written at end of year, valid values: 0,1,2,3 (integer) " -->
+<entry id="BUDGET_LONGTERM_EOY"   value="1"  />    
+
+<!--"output level for longterm average budget diagnostics written at end of run, valid values: 0,1,2,3 (integer) " -->
+<entry id="BUDGET_LONGTERM_STOP"   value="0"  />    
+
+<!-- ====================================== -->
+
+<!--"number of atm coupling intervals per day (char) " -->
+<entry id="ATM_NCPL"   value="288"  />    
+
+<!--"number of land coupling intervals per day (integer) (char) " -->
+<entry id="LND_NCPL"   value="$ATM_NCPL"  />    
+
+<!--"number of ice coupling intervals per day (integer) (char) " -->
+<entry id="ICE_NCPL"   value="$ATM_NCPL"  />    
+
+<!--"number of ocn coupling intervals per day (integer) (char) " -->
+<entry id="OCN_NCPL"   value="288"  />    
+
+<!--"if TRUE, treats ocean model like lnd/ice in coupling, valid values: TRUE,FALSE (logical) " -->
+<entry id="OCN_TIGHT_COUPLING"   value="FALSE"  />    
+
+<!--"number of glc coupling intervals per day (integer) (integer) " -->
+<entry id="GLC_NCPL"   value="1"  />    
+
+<!-- ====================================== -->
+
+<!--"command used to query batch system (char) " -->
+<entry id="BATCHQUERY"   value="squeue"  />    
+
+<!--"command used to submit to batch system (char) " -->
+<entry id="BATCHSUBMIT"   value="sbatch"  />    
+
+<!-- ====================================== -->
+
+<!--"general ccsm inputdata directory (char) " -->
+<entry id="DIN_LOC_ROOT_CSMDATA"   value="/scratch/lustre/$LOGNAME/LD/cesm_input_data"  />    
+
+<!--"general ccsm inputdata directory for CLM QIAN datm forcing files (char) " -->
+<entry id="DIN_LOC_ROOT_CLMQIAN"   value="/scratch/lustre/$LOGNAME/LD/cesm_input_data/atm/datm7/atm_forcing.datm7.Qian.T62.c080727"  />    
+
+<!--"local inputdata directory for CCSM prestaged data (char) " -->
+<entry id="DIN_LOC_ROOT"   value="$DIN_LOC_ROOT_CSMDATA"  />    
+
+<!-- ====================================== -->
+
+<!--"directory where log files should be copied (char) " -->
+<entry id="LOGDIR"   value="$CASEROOT/logs"  />    
+
+<!--"logical to turn on short term archiving, valid values: TRUE,FALSE (logical) " -->
+<entry id="DOUT_S"   value="TRUE"  />    
+
+<!--"local short term archiving root directory (char) " -->
+<entry id="DOUT_S_ROOT"   value="/scratch/lustre/$LOGNAME/LD/archive/$CASE"  />    
+
+<!--"logical to archive all interim restart files, not just those at eor, valid values: TRUE,FALSE (logical) " -->
+<entry id="DOUT_S_SAVE_INT_REST_FILES"   value="FALSE"  />    
+
+<!--"logical to turn on long term archiving (if DOUT_S is also TRUE), valid values: TRUE,FALSE (logical) " -->
+<entry id="DOUT_L_MS"   value="FALSE"  />    
+
+<!--"local long term archiving root directory (char) " -->
+<entry id="DOUT_L_MSROOT"   value="csm/$CASE"  />    
+
+<!--"logical to tar up long term archiver history files, valid values: TRUE,FALSE (logical) " -->
+<entry id="DOUT_L_HTAR"   value="FALSE"  />    
+
+<!--"standard ccsm baselines directory for testing (char) " -->
+<entry id="CCSM_BASELINE"   value="/scratch/lustre/$LOGNAME/PLGRID_NG/cesm_input_data"  />    
+
+<!--"standard location of the cprnc tool (char) " -->
+<entry id="CCSM_CPRNC"   value="/scratch/lustre/$LOGNAME/PLGRID_NG/cesm_input_data/tools/cprnc/cprnc"  />    
+
+<!-- ====================================== -->
+
+<!-- ====================================== -->
+
+<!--"tavg output control for tracer-budget terms, valid values: TRUE,FALSE (char) " -->
+<entry id="OCN_TAVG_TRACER_BUDGET"   value="FALSE"  />    
+
+<!--"tavg output control for high-frequency output, valid values: TRUE,FALSE (char) " -->
+<entry id="OCN_TAVG_HIFREQ"   value="FALSE"  />    
+
+<!-- ====================================== -->
+</config_definition>
