@@ -11,7 +11,7 @@
 if      ( ${OCN_GRID} == gx3v5 || ${OCN_GRID} == gx3v6 || ${OCN_GRID} == gx3v7 || ${OCN_GRID} == gx1v5 || ${OCN_GRID} == gx1v5a || ${OCN_GRID} == gx1v5b || ${OCN_GRID} == gx1v6 ) then   
 # supported dipole resolutions
 else if ( ${OCN_GRID} == tx0.1v2 || ${OCN_GRID} == tx1v1 ) then   
-else if ( ${OCN_GRID} == bs9v1 || ${OCN_GRID} == bs9v2 || ${OCN_GRID} == bs2v1 || ${OCN_GRID} == bs2v2 || ${OCN_GRID} == bs01v1) then
+else if ( ${OCN_GRID} == bs9v1 || ${OCN_GRID} == bs9v2 || ${OCN_GRID} == bs2v1 || ${OCN_GRID} == bs2v2 || ${OCN_GRID} == bs01v1 || ${OCN_GRID} == bs05v1 ) then
 # tripole resolutions
 else
    echo " "
@@ -20,7 +20,7 @@ else
    echo "     ${OCN_GRID} is not a supported grid.               "
    echo "     Supported grids are: gx3v5, gx3v7, gx1v5, gx1v5a, gx1v5b,   "
    echo "                          gx1v6 and tx0.1v2                      "
-   echo "     Baltic Sea grids: bs9v1,bs9v2,bs2v1,bs2v2                   "
+   echo "     Baltic Sea grids: bs9v1,bs9v2,bs2v1,bs2v2,bs01v1                    "
   #echo "     Experimental grid: gx3v6                                    "
   #echo "     Testing grids:   tx1v1                                      "
    echo "   =============================================================="
@@ -49,6 +49,9 @@ else if ( ${OCN_GRID} =~ bs2* ) then
   set ns_boundary_type = closed
   set ew_boundary_type = closed
 else if ( ${OCN_GRID} =~ bs01* ) then
+  set ns_boundary_type = closed
+  set ew_boundary_type = closed
+else if ( ${OCN_GRID} =~ bs05* ) then
   set ns_boundary_type = closed
   set ew_boundary_type = closed
 endif
@@ -160,7 +163,7 @@ else if ( ${OCN_GRID} =~ bs9* ) then
 else if ( ${OCN_GRID} =~ bs2* ) then
   setenv DT_COUNT 576
 else if ( ${OCN_GRID} =~ bs01* ) then
-  setenv DT_COUNT 1440
+  setenv DT_COUNT 2800
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -329,6 +332,16 @@ endif
 set tdiag_freq_opt = $diag_freq_opt
 if (${OCN_GRID} =~ bs* ) then
    set tdiag_freq_opt     = 'never'
+endif
+if (\${OCN_GRID} =~ bs01* ) then
+  set tdiag_freq_opt     = 'never'
+  set diag_global_freq_opt = nhour
+  set diag_global_freq     = 6
+  set diag_cfl_freq_opt    = nday
+  set diag_cfl_freq        = 15
+  set diag_transp_freq     = 1.e30
+else
+  set tdiag_freq_opt     = 'never'
 endif
 
 cat >> \$POP2_IN << EOF1
@@ -525,12 +538,17 @@ EOF2
 #--------------------------------------------------------------------------
 #  history_nml
 #--------------------------------------------------------------------------
-
+set history_freq_opt  = never
+set history_freq      = 1e30
+if (${OCN_GRID} =~ bs01v1 ) then
+  set history_freq_opt = nhour
+  set history_freq = 6
+endif
 cat >> $POP2BLDSCRIPT << EOF2
 cat >> \$POP2_IN << EOF1
 &history_nml
-   history_freq_opt  = 'never'
-   history_freq      = 1
+   history_freq_opt  = '$history_freq_opt'
+   history_freq      = $history_freq
    history_outfile   = '\${output_h}s'
    history_fmt       = 'nc'
    history_contents  = '\$history_contents_filename'
@@ -967,7 +985,7 @@ else if ( ${OCN_GRID} =~ bs2* ) then
 else if ( ${OCN_GRID} =~ bs01* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
-  set am_del4_value    = -1.953125e16
+  set am_del4_value    = -7.8125e15
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1003,7 +1021,7 @@ else if ( ${OCN_GRID} =~ bs2* ) then
 else if ( ${OCN_GRID} =~ bs01* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
-  set ah_del4_value    = -7.8125e15
+  set ah_del4_value    = -15.625e14
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1087,27 +1105,37 @@ else if ( ${OCN_GRID} == tx0.1v2 ) then
  endif
 else if ( ${OCN_GRID} =~ bs9* ) then
    set diag_gm_bolus = .true.
- if ($kappa_isop_choice == 'constant' && $kappa_thic_choice == 'constant') then
-   set ah_gm_value    = 0.8e7
-   set ah_bolus       = 0.8e7
-   set ah_bkg_srfbl   = 0.8e7
- else if ($kappa_isop_choice == 'bfre' && $kappa_thic_choice == 'bfre') then
-   set ah_gm_value    = 4.0e7
-   set ah_bolus       = 4.0e7
-   set ah_bkg_srfbl   = 4.0e7
- endif
+   if ($kappa_isop_choice == 'constant' && $kappa_thic_choice == 'constant') then
+      set ah_gm_value    = 0.8e7
+      set ah_bolus       = 0.8e7
+      set ah_bkg_srfbl   = 0.8e7
+   else if ($kappa_isop_choice == 'bfre' && $kappa_thic_choice == 'bfre') then
+      set ah_gm_value    = 4.0e7
+      set ah_bolus       = 4.0e7
+      set ah_bkg_srfbl   = 4.0e7
+   endif
+else if ( ${OCN_GRID} =~ bs2* ) then
+   set diag_gm_bolus = .true.
+   if ($kappa_isop_choice == 'constant' && $kappa_thic_choice == 'constant') then
+      set ah_gm_value    = 0.8e7
+      set ah_bolus       = 0.8e7
+      set ah_bkg_srfbl   = 0.8e7
+   else if ($kappa_isop_choice == 'bfre' && $kappa_thic_choice == 'bfre') then
+      set ah_gm_value    = 4.0e7
+      set ah_bolus       = 4.0e7
+      set ah_bkg_srfbl   = 4.0e7
+   endif
 else if ( ${OCN_GRID} =~ bs01* ) then
    set diag_gm_bolus = .true.
- if ($kappa_isop_choice == 'constant' && $kappa_thic_choice == 'constant') then
-   set ah_gm_value    = 0.8e7
-   set ah_bolus       = 0.8e7
-   set ah_bkg_srfbl   = 0.8e7
- else if ($kappa_isop_choice == 'bfre' && $kappa_thic_choice == 'bfre') then
-   set ah_gm_value    = 4.0e7
-   set ah_bolus       = 4.0e7
-   set ah_bkg_srfbl   = 4.0e7
- endif
-
+   if ($kappa_isop_choice == 'constant' && $kappa_thic_choice == 'constant') then
+      set ah_gm_value    = 0.8e7
+      set ah_bolus       = 0.8e7
+      set ah_bkg_srfbl   = 0.8e7
+   else if ($kappa_isop_choice == 'bfre' && $kappa_thic_choice == 'bfre') then
+      set ah_gm_value    = 4.0e7
+      set ah_bolus       = 4.0e7
+      set ah_bkg_srfbl   = 4.0e7
+   endif
 endif
 
 
@@ -1227,6 +1255,23 @@ else if ( ${OCN_GRID} == tx0.1v2 ) then
  set vconst_6  =  0.6e7
  set vconst_7  =  45.0
 else if ( ${OCN_GRID} =~ bs9* ) then
+ set hmix_alignment_choice =  grid
+ set lvariable_hmix_aniso  =  .true.
+ set lsmag_aniso           =  .false.
+ set visc_para =  1.0
+ set visc_perp =  1.0
+ set c_para    =  0.0
+ set c_perp    =  0.0
+ set u_para    =  0.0
+ set u_perp    =  0.0
+ set vconst_1  =  1.0e7
+ set vconst_2  = 24.5
+ set vconst_3  =  0.2
+ set vconst_4  =  1.0e-8
+ set vconst_5  =  3
+ set vconst_6  = 1.0e7
+ set vconst_7  = 90.0
+else if ( ${OCN_GRID} =~ bs2* ) then
  set hmix_alignment_choice =  grid
  set lvariable_hmix_aniso  =  .true.
  set lsmag_aniso           =  .false.
@@ -1390,7 +1435,37 @@ EOF2
 #  forcing_shf_nml and forcing_sfwf_nml
 #    OCN_COUPLING is a CCSM environment variable; see $case/env_conf
 #--------------------------------------------------------------------------
-
+#---------- make basic configuration for shf - jj ---------
+   set shf_formulation      = restoring
+   set shf_data_type        = none
+   set shf_data_inc         = 24.
+   set shf_interp_freq      = every-timestep
+   set shf_interp_type      = linear
+   set shf_interp_inc       = 72.
+   set shf_restore_tau      = 30.
+   set shf_file_fmt         = bin
+   set shf_data_renorm3     = 0.94
+   set shf_weak_restore     = 0.
+   set shf_strong_restore   = 0.0
+   set luse_cpl_ifrac       = .false.
+   set shf_strong_restore_ms = 92.64
+#---------- sfwf ----------------------------
+   set sfwf_formulation       = restoring
+   set sfwf_data_type         = none
+   set sfwf_data_inc          = 24.
+   set sfwf_interp_freq       = every-timestep
+   set sfwf_interp_type       = linear
+   set sfwf_interp_inc        = 72.
+   set sfwf_restore_tau       = 30.
+   set sfwf_file_fmt          = bin
+   set sfwf_data_renorm1    = 0.001
+   set sfwf_weak_restore      = 0.0115
+   set sfwf_strong_restore    = 0.0
+   set sfwf_strong_restore_ms = 0.6648
+   set ladjust_precip         = .false.
+   set lms_balance            = .true.
+   set lfw_as_salt_flx        = .false.
+   set lsend_precip_fact      = .false.
 if ($OCN_COUPLING  =~ *partial*) then
   #... forcing_shf_nml and forcing_sfwf_nml
   set formulation       = partially-coupled
@@ -1420,9 +1495,37 @@ if ( ${OCN_GRID} =~ bs9* ) then
   set lms_balance       = .false.
 endif
 if ( ${OCN_GRID} =~ bs01* ) then
-  set lms_balance       = .false.
-  set luse_cpl_ifrac    = .false.
-
+  set lms_balance      = .false.
+  set shf_formulation      = restoring
+  set shf_data_type        = none
+  set shf_data_inc     = 24.
+  set shf_interp_freq      = never
+  set shf_interp_type      = linear
+  set shf_interp_inc       = 72.
+  set shf_restore_tau      = 30.e30
+  set shf_file_fmt         = bin
+  set shf_data_renorm3     = 0.94
+  set shf_weak_restore     = 0.
+  set shf_strong_restore   = 0.0
+  set luse_cpl_ifrac   = .false.
+  set shf_strong_restore_ms = 92.64
+########## sfwf
+  set sfwf_formulation       = restoring
+  set sfwf_data_type         = none
+  set sfwf_data_inc          = 24.
+  set sfwf_interp_freq       = never
+  set sfwf_interp_type       = linear
+  set sfwf_interp_inc        = 72.
+  set sfwf_restore_tau       = 30.e30
+  set sfwf_file_fmt          = bin
+  set sfwf_data_renorm1      = 0.001
+  set sfwf_weak_restore      = 0.0115
+  set sfwf_strong_restore    = 0.0
+  set sfwf_strong_restore_ms = 0.6648
+  set ladjust_precip         = .false.
+  set lms_balance            = .false.
+  set lfw_as_salt_flx        = .false.
+  set lsend_precip_fact      = .false.
 endif
 
 
@@ -1432,20 +1535,20 @@ endif
 
 cat >> $POP2BLDSCRIPT << EOF2
 &forcing_shf_nml
-   shf_formulation      = '$formulation'
-   shf_data_type        = '$data_type'
-   shf_data_inc         = 24.
-   shf_interp_freq      = 'every-timestep'
-   shf_interp_type      = 'linear'
-   shf_interp_inc       = 72.
-   shf_restore_tau      = 1.0e20
+   shf_formulation      = '$shf_formulation'
+   shf_data_type        = '$shf_data_type'
+   shf_data_inc         = $shf_data_inc
+   shf_interp_freq      = '$shf_interp_freq'
+   shf_interp_type      = '$shf_interp_type'
+   shf_interp_inc       = $shf_interp_inc
+   shf_restore_tau      = $shf_restore_tau
    shf_filename         = '\$shf_filename'
-   shf_file_fmt         = 'bin'
-   shf_data_renorm(3)   = 0.94
-   shf_weak_restore     = 0.0
-   shf_strong_restore   = 0.0
+   shf_file_fmt         = '$shf_file_fmt'
+   shf_data_renorm(3)   = $shf_data_renorm3
+   shf_weak_restore     = $shf_weak_restore
+   shf_strong_restore   = $shf_strong_restore
    luse_cpl_ifrac       = $luse_cpl_ifrac
-   shf_strong_restore_ms= 0.0
+   shf_strong_restore_ms= $shf_strong_restore_ms
 /
 
 EOF2
@@ -1466,27 +1569,27 @@ else if ( ${OCN_GRID} == tx0.1v2 ) then
 else if ( ${OCN_GRID} =~ bs9* ) then
  set sfwf_weak_restore = 0.0115
 else if ( ${OCN_GRID} =~ bs01* ) then
- set sfwf_weak_restore = 0.098
+ set sfwf_weak_restore = 0.0115
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
 &forcing_sfwf_nml
-   sfwf_formulation       = '$formulation'
-   sfwf_data_type         = '$data_type'
-   sfwf_data_inc          = 24.
-   sfwf_interp_freq       = 'every-timestep'
-   sfwf_interp_type       = 'linear'
-   sfwf_interp_inc        = 72.
-   sfwf_restore_tau       = 1.
+   sfwf_formulation       = '$sfwf_formulation'
+   sfwf_data_type         = '$sfwf_data_type'
+   sfwf_data_inc          = $sfwf_data_inc
+   sfwf_interp_freq       = '$sfwf_interp_freq'
+   sfwf_interp_type       = '$sfwf_interp_type'
+   sfwf_interp_inc        = $sfwf_interp_inc
+   sfwf_restore_tau       = $sfwf_restore_tau
    sfwf_filename          = '\$sfwf_filename'
-   sfwf_file_fmt          = 'bin'
-   sfwf_data_renorm(1)    = 0.001
+   sfwf_file_fmt          = '$sfwf_file_fmt'
+   sfwf_data_renorm(1)    = $sfwf_data_renorm1
    sfwf_weak_restore      = $sfwf_weak_restore
-   sfwf_strong_restore    = 0.0
-   sfwf_strong_restore_ms = 0.0
+   sfwf_strong_restore    = $sfwf_strong_restore
+   sfwf_strong_restore_ms = $sfwf_strong_restore_ms
    ladjust_precip         = $ladjust_precip
    lms_balance            = $lms_balance
-   lfw_as_salt_flx        = .true.
+   lfw_as_salt_flx        = $lfw_as_salt_flx
    lsend_precip_fact      = $lsend_precip_fact
 /
 
@@ -1497,22 +1600,55 @@ EOF2
 # forcing_pt_interior_nml
 #--------------------------------------------------------------------------
 
+#--------------------------------------------------------------------------
+# interior restoring
+# only default values and for grid bs2v1
+  set pt_data_type         = none
+  set pt_data_inc          = 24.
+  set pt_interp_freq       = every-timestep
+  set pt_interp_type       = linear
+  set pt_interp_inc        = 72.
+  set pt_restore_tau       = 365.
+  set pt_filename          = unknown-pt_interior
+  set pt_file_fmt          = bin
+  set pt_restore_max_level = 0
+  set pt_formulation       = restoring
+  set pt_data_renorm       = 1.
+  set pt_variable_restore  = .false.
+  set pt_restore_filename  = unknown-pt_interior_restore
+  set pt_restore_file_fmt  = bin
+if ( ${OCN_GRID} =~ bs01v1 ) then
+  set pt_data_type         = monthly-calendar
+  set pt_data_inc          = 24.
+  set pt_interp_freq       = every-timestep
+  set pt_interp_type       = linear
+  set pt_interp_inc        = 72.
+  set pt_restore_tau       = 10.
+  set pt_filename          = unknown-pt_interior
+  set pt_file_fmt          = bin
+  set pt_restore_max_level = 33
+  set pt_formulation       = restoring
+  set pt_data_renorm       = 1.
+  set pt_variable_restore  = .false.
+  set pt_restore_filename  = unknown-pt_interior_restore
+  set pt_restore_file_fmt  = bin
+endif
 cat >> $POP2BLDSCRIPT << EOF2
 &forcing_pt_interior_nml
-   pt_interior_data_type         = 'monthly-calendar'
-   pt_interior_data_inc          = 24.
-   pt_interior_interp_freq       = 'every-timestep'
-   pt_interior_interp_type       = 'linear'
-   pt_interior_interp_inc        = 72.
-   pt_interior_restore_tau       = 10.
-   pt_interior_filename          = '/users/kdm/mjanecki/CESM/inputdata/ocn/pop/bs01v1/forcing/interior/temp_3d_bs01v1_monthly_20120217.ieeer8'
-   pt_interior_file_fmt          = 'bin'
-   pt_interior_restore_max_level = 33 
-   pt_interior_formulation       = 'restoring'
-   pt_interior_data_renorm(1)    = 1.
-   pt_interior_variable_restore  = .false.
-   pt_interior_restore_filename  = 'unknown-pt_interior_restore'
-   pt_interior_restore_file_fmt  = 'bin'
+   pt_interior_data_type         = '$pt_data_type'
+   pt_interior_data_inc          = $pt_data_inc
+   pt_interior_interp_freq       = '$pt_interp_freq'
+   pt_interior_interp_type       = '$pt_interp_type'
+   pt_interior_interp_inc        = $pt_interp_inc
+   pt_interior_restore_tau       = $pt_restore_tau
+   pt_interior_filename          = '\$pt_interior_file'
+   pt_interior_file_fmt          = '$pt_file_fmt'
+   pt_interior_restore_max_level = $pt_restore_max_level
+   pt_interior_formulation       = '$pt_formulation'
+   pt_interior_data_renorm(1)    = $pt_data_renorm
+   pt_interior_variable_restore  = $pt_variable_restore
+   pt_interior_restore_filename  = '$pt_restore_filename'
+   pt_interior_restore_file_fmt  = '$pt_restore_file_fmt'
 /
 
 EOF2
@@ -1521,23 +1657,53 @@ EOF2
 #--------------------------------------------------------------------------
 # forcing_s_interior_nml
 #--------------------------------------------------------------------------
+  set s_data_type         = none
+  set s_data_inc          = 24.
+  set s_interp_freq       = every-timestep
+  set s_interp_type       = linear
+  set s_interp_inc        = 72.
+  set s_restore_tau       = 365.
+  set s_filename          = unknown-pt_interior
+  set s_file_fmt          = bin
+  set s_restore_max_level = 0
+  set s_formulation       = restoring
+  set s_data_renorm       = 0.001
+  set s_variable_restore  = .false.
+  set s_restore_filename  = unknown-pt_interior_restore
+  set s_restore_file_fmt  = bin
+if ( ${OCN_GRID} =~ bs01v1) then
+  set s_data_type         = monthly-calendar
+  set s_data_inc          = 24.
+  set s_interp_freq       = every-timestep
+  set s_interp_type       = linear
+  set s_interp_inc        = 72.
+  set s_restore_tau       = 10.
+  set s_filename          = unknown-pt_interior
+  set s_file_fmt          = bin
+  set s_restore_max_level = 33
+  set s_formulation       = restoring
+  set s_data_renorm       = 0.001
+  set s_variable_restore  = .false.
+  set s_restore_filename  = unknown-pt_interior_restore
+  set s_restore_file_fmt  = bin
+endif
 
 cat >> $POP2BLDSCRIPT << EOF2
 &forcing_s_interior_nml
-   s_interior_data_type         = 'monthly-calendar'
-   s_interior_data_inc          = 24.
-   s_interior_interp_freq       = 'every-timestep'
-   s_interior_interp_type       = 'linear'
-   s_interior_interp_inc        = 72.
-   s_interior_restore_tau       = 10.
-   s_interior_filename          = '/users/kdm/mjanecki/CESM/inputdata/ocn/pop/bs01v1/forcing/interior/salt_3d_bs01v1_monthly_20120217.ieeer8'
-   s_interior_file_fmt          = 'bin'
-   s_interior_restore_max_level = 33 
-   s_interior_formulation       = 'restoring'
-   s_interior_data_renorm(1)    = 0.001
-   s_interior_variable_restore  = .false.
-   s_interior_restore_filename  = 'unknown-s_interior_restore'
-   s_interior_restore_file_fmt  = 'bin'
+   s_interior_data_type         = '$s_data_type'
+   s_interior_data_inc          = $s_data_inc
+   s_interior_interp_freq       = '$s_interp_freq'
+   s_interior_interp_type       = '$s_interp_type'
+   s_interior_interp_inc        = $s_interp_inc
+   s_interior_restore_tau       = $s_restore_tau
+   s_interior_filename          = '\$s_interior_file'
+   s_interior_file_fmt          = '$s_file_fmt'
+   s_interior_restore_max_level = $s_restore_max_level 
+   s_interior_formulation       = '$s_formulation'
+   s_interior_data_renorm(1)    = $s_data_renorm
+   s_interior_variable_restore  = $s_variable_restore
+   s_interior_restore_filename  = '$s_restore_filename'
+   s_interior_restore_file_fmt  = '$s_restore_file_fmt'
 /
 
 EOF2
@@ -1549,14 +1715,14 @@ EOF2
 
 cat >> $POP2BLDSCRIPT << EOF2
 &lbc_nml
-   orlanski_north = .true.
+   orlanski_north = .false.
    orlanski_south = .false.
    orlanski_east  = .false.
    orlanski_west  = .false.
    nmn_north = .false.
    nmn_south = .false.
    nmn_east  = .false.
-   nmn_west  = .true.
+   nmn_west  = .false.
    north_bfile    = 'unknown_north_bfile'
    south_bfile    = 'unknown_south_bfile'
    east_bfile     = 'unknown_east_bfile'
@@ -1648,9 +1814,11 @@ if ( ${OCN_GRID} =~ bs9* ) then
 endif
 if ( ${OCN_GRID} =~ bs2* ) then
    set sw_absorption_type = jerlov
-else if (${OCN_GRID} =~ bs01* ) then
+endif
+if (${OCN_GRID} =~ bs01* ) then
    set sw_absorption_type = jerlov
 endif
+
 
 cat >> $POP2BLDSCRIPT << EOF2
 &sw_absorption_nml
@@ -1734,7 +1902,6 @@ else
  set overflows_on = .false.
  set overflows_interactive = .false.
 endif
-
 cat >> $POP2BLDSCRIPT << EOF2
 &overflows_nml
    overflows_on           = $overflows_on

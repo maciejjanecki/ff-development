@@ -1,11 +1,13 @@
 
     #-----------------------------------------------------------------------------
-    # 1.2.2 identify all bs01v1 datasets residing in $DIN_LOC_ROOT
+    # 1.2.2 identify all bs2v1 datasets residing in $DIN_LOC_ROOT
     #-----------------------------------------------------------------------------
-    set init_ts_filename      = $DIN_LOC_ROOT/ocn/pop/bs01v1/ic/init_ts_bs01v1_20110202.ieeer8
+    set init_ts_filename      = $DIN_LOC_ROOT/ocn/pop/bs01v1/ic/init_ts_bs01v1_20171214.ieeer8
     set horiz_grid_filename   = $DIN_LOC_ROOT/ocn/pop/bs01v1/grid/grid.bs01v1.ocn.20170627.ieeer8
-    set topography_filename   = $DIN_LOC_ROOT/ocn/pop/bs01v1/grid/kmt.bs01v1.ocn.20130206.ieeei4
-    set shf_filename          = $DIN_LOC_ROOT/ocn/pop/bs01v1/forcing/sst.bs01v1.20120202.ieeer8
-    set sfwf_filename         = $DIN_LOC_ROOT/ocn/pop/bs01v1/forcing/sss.bs01v1.20120130.ieeer8
-    set regionmask_filename   = $DIN_LOC_ROOT/ocn/pop/bs01v1/grid/regionmask.bs01v1.ocn.20130206.ieeei4
+    set topography_filename   = $DIN_LOC_ROOT/ocn/pop/bs01v1/grid/kmt.bs01v1.ocn.20171013.ieeei4
+    set shf_filename          = $DIN_LOC_ROOT/ocn/pop/bs01v1/forcing/sst.bs01v1.20171214.ieeer8
+    set sfwf_filename         = $DIN_LOC_ROOT/ocn/pop/bs01v1/forcing/sss.bs01v1.20171214.ieeer8
+    set regionmask_filename   = $DIN_LOC_ROOT/ocn/pop/bs01v1/grid/regionmask.bs01v1.ocn.20171013.ieeei4
+    set s_interior_file       = $DIN_LOC_ROOT/ocn/pop/bs01v1/forcing/salt_3d_bs01v1_monthly_20130618.ieeer8
+    set pt_interior_file      = $DIN_LOC_ROOT/ocn/pop/bs01v1/forcing/temp_3d_bs01v1_monthly_20130618.ieeer8
 

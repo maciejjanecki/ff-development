@@ -177,6 +177,7 @@
 
      MASK_G(:,:) = 0_i4
      MASK_G(110:160,219) = 1_i4
+     MASK_G = 0_i4
      call scatter_global(orlanski_north_U_MASK, MASK_G, master_task, distrb_clinic, &
                              field_loc_center, field_type_scalar)
  ! orlanski_north_U_MASK
@@ -199,6 +200,7 @@
     where (MASK_GR <= 0._r8)
        MASK_GR = 0._r8
     endwhere
+    MASK_GR = 0._r8
     call scatter_global(VVEL_RESTORING_MASK, MASK_GR, master_task, distrb_clinic, &
                               field_loc_center, field_type_scalar)
 
@@ -241,11 +243,12 @@
 !        MASK_GR = 0._r8
 !     endwhere
 ! ====================================================
+     MASK_GR = 0._r8
      call scatter_global(NMN_RESTORING_MASK, MASK_GR, master_task, distrb_clinic, &
                               field_loc_center, field_type_scalar)
      if (my_task == master_task) then
         open(88,file='nmn_restoring_mask.bin', access='direct',form = 'unformatted', &
-                     recl=600*640*8, status='unknown');
+                     recl=nx_global*ny_global*8, status='unknown');
         write(88,rec=1) MASK_GR
         close(88)
      endif
@@ -262,12 +265,14 @@
         endif
         kk = kk + 1
      enddo
+     MASK_GR = 0._r8
      call scatter_global(NMN_VEL_MASK, MASK_GR, master_task, distrb_clinic, &
                               field_loc_center, field_type_scalar)
      NMN_VEL_MASK = 1._r8
 
      MASK_G(:,:) = 0_i4
      MASK_G(3,:) = 1_i4
+     MASK_G = 0_i4
      call scatter_global(nmn_MASK, MASK_G, master_task, distrb_clinic, &
                               field_loc_center, field_type_scalar)
   endif

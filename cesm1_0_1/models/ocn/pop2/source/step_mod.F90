@@ -172,6 +172,19 @@
 
 !-----------------------------------------------------------------------
 !
+!jj wazne miejsce - zmiana danych wejsciowych
+!jj bedzie troche inaczej rozwiazane niz obecnie 
+!
+!-----------------------------------------------------------------------
+
+!   llbc_flag = check_time_flag(lbc_flag)
+!   if (llbc_flag) then
+!       call renew_sl_data
+!       llbc_flag = .false.
+!   endif
+
+!-----------------------------------------------------------------------
+!
 !  update timestep counter, set corresponding model time, set
 !  time-dependent logical switches to determine program flow.
 !
@@ -296,11 +309,11 @@
 
       !set negative salinity values to zero:
       !jj 
-      do iblock = 1,nblocks_clinic
-          where (TRACER(:,:,:,2,newtime,iblock) <= 0._POP_r8)
-             TRACER(:,:,:,2,newtime,iblock) = 0._POP_r8
-          endwhere
-      enddo
+!      do iblock = 1,nblocks_clinic
+!          where (TRACER(:,:,:,2,newtime,iblock) <= 0._POP_r8)
+!             TRACER(:,:,:,2,newtime,iblock) = 0._POP_r8
+!          endwhere
+!      enddo
       !jj
 
 

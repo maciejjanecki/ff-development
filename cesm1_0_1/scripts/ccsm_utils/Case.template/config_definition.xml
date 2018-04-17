@@ -850,7 +850,7 @@ inside strings.
 
 <entry id="DATM_MODE" 
  type="char"
- valid_values="CORE2_NYF,CLM_QIAN,CLM1PT,COPYALL_ICM2,COPYALL_FF"
+ valid_values="CORE2_NYF,CLM_QIAN,CLM1PT,COPYALL_ICM2,COPYALL_FF,COPYALL_WP"
  value="CORE2_NYF" 
  group="conf_datm"
  sdesc="DATM mode"

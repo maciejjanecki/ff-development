@@ -12,7 +12,7 @@
 !
 ! !REVISION HISTORY:
 !  SVN:$Id: gx1v3_domain_size.F90 7965 2007-12-12 15:51:18Z dennis $
-!  Jaromir Jakacki 10.12.2017 - WaterPuck version
+
 ! !USES:
 
    use kinds_mod

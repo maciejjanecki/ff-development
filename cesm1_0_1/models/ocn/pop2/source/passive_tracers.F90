@@ -306,7 +306,7 @@
       call ecosys_init(init_ts_file_fmt, read_restart_filename, &
                        tracer_d(ecosys_ind_begin:ecosys_ind_end), &
                        TRACER(:,:,:,ecosys_ind_begin:ecosys_ind_end,:,:), &
-                       tadvect_ctype_passive_tracers(ecosys_ind_begin:ecosys_ind_end), &
+                       tadvect_ctype_passive_tracers(nt)(ecosys_ind_begin:ecosys_ind_end), &
                        errorCode)
 
       if (errorCode /= POP_Success) then
