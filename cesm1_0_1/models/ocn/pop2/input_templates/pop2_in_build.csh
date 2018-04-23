@@ -478,7 +478,7 @@ else if (${OCN_GRID} =~ tx0.1* || ${OCN_GRID} =~ tx1* ) then
   set tavg_offset_day_values       = (   2           2      )
   set ltavg_one_time_header        = (.false.      .false.  )
   set ltavg_nino_diags_requested   = .false.
-else if ( ${OCN_GRID} =~ bs* ) then
+else if ( ${OCN_GRID} =~ bs2* ) then
   #------------------- shut off time-invariant stream until vertical grid issues are resolved
   set n_tavg_streams               = 3
   set ltavg_streams_index_present  = .true.
@@ -496,6 +496,25 @@ else if ( ${OCN_GRID} =~ bs* ) then
   set tavg_offset_month_values     = (    1         1           1                           )
   set tavg_offset_day_values       = (    2         2           2                           )
   set ltavg_one_time_header        = (.false.    .false.      .false.                       )
+  set ltavg_nino_diags_requested   = .false.
+else if ( ${OCN_GRID} =~ bs01* ) then
+  #------------------- shut off time-invariant stream until vertical grid issues are resolved
+  set n_tavg_streams               = 1
+  set ltavg_streams_index_present  = .true.
+  set tavg_freq_opt_values         = ("'nhour'")
+  set tavg_freq_values             = (    1    )
+  set tavg_stream_filestrings      = ("'WP.hydro.stream1'" )
+  set tavg_file_freq_opt           = ("'nhour'")
+  set tavg_file_freq_values        = (    6    )
+  set tavg_start_opt_values        = ("'nstep'")
+  set tavg_start_values            = (    0    )
+  set tavg_fmt_in_values           = ("'nc'"   )
+  set tavg_fmt_out_values          = ("'nc'"   )
+  set ltavg_has_offset_date_values = (.false.  )
+  set tavg_offset_year_values      = (    1    )
+  set tavg_offset_month_values     = (    1    )
+  set tavg_offset_day_values       = (    2    )
+  set ltavg_one_time_header        = (.false.)
   set ltavg_nino_diags_requested   = .false.
 endif
 
@@ -985,7 +1004,7 @@ else if ( ${OCN_GRID} =~ bs2* ) then
 else if ( ${OCN_GRID} =~ bs01* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
-  set am_del4_value    = -7.8125e15
+  set am_del4_value    = -1.e10
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1021,7 +1040,7 @@ else if ( ${OCN_GRID} =~ bs2* ) then
 else if ( ${OCN_GRID} =~ bs01* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
-  set ah_del4_value    = -15.625e14
+  set ah_del4_value    = -0.1e10
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1177,7 +1196,7 @@ cat >> $POP2BLDSCRIPT << EOF2
    efficiency_factor          = 0.07
    time_scale_constant        = 8.64e4
    luse_const_horiz_len_scale = .false.
-   hor_length_scale           = 5.0e5
+   hor_length_scale           = 1.15e4
 /
 
 EOF2
