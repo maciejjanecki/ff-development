@@ -34,7 +34,7 @@
  do yy=sDate(1),eDate(1)
    dayOfYear = 1
    do mm=sDate(2),eDate(2)
-      do dd=sDate(3),eDate(3)
+      do dd=1,daysInMonths(mm) !sDate(3),eDate(3)
          do hh=sDate(4),eDate(4)
            do ii = 1,ntracers
               !read in data
@@ -77,7 +77,8 @@
            enddo
 !           stop
         enddo
-     enddo
+        dayOfYear = dayOfYear + 1
+     enddo !dd
    enddo
  enddo
 
