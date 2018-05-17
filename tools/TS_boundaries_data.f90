@@ -17,13 +17,14 @@
  data sDate /2011, 1, 1, 1/ !data poczatkowa 
  data eDate /2011,12,31, 4/ !data koncowa
  data seconds /3600,25200,46800,68400/
- data hours /0,6,12,18/
- data outFnames /"SST_","SSS_","TEMP_3D_","SALT_3D_"/
+! data hours /0,6,12,18/
+ data hours /3,9,15,21/
+ data outFnames /"SST","SSS","TEMP3D","SALT3D"/
 
  pathIn  = '../../tmp_data/ARTUR/lbc/2011'
  pathOut = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/forcing' 
  1000 format(i4.4,'-',i2.2,'-',i2.2,'-',i5.5,'_',a4,'_1000_0640_0033_0001.ieeer8') 
- 1010 format(A,i3.3,':',i2.2,'.bin')
+ 1010 format(A,'.',i4.4,'.',i3.3,'.',i2.2)
 !***********
 
  data tracer /'TEMP','SALT'/
@@ -58,7 +59,7 @@
               
               !save data in POP's flux correction formats
               !SST and SSS
-              write(outFile,1010) trim(outFnames(ii)),dayOfYear,hours(hh)
+              write(outFile,1010) trim(outFnames(ii)),yy,dayOfYear,hours(hh)
               outFile = trim(pathOut)//'/'//trim(outFile)
               write(*,'(A)') trim(outFile)
               open(10,file=trim(outFile),status='replace',access='direct', &
@@ -66,7 +67,7 @@
               write(10,rec=1) odata(:,:,1) !write surface data into the separate file
               close(10)
               !TEMP and SALT 3D
-              write(outFile,1010) trim(outFnames(ii+2)),dayOfYear,hours(hh)
+              write(outFile,1010) trim(outFnames(ii+2)),yy,dayOfYear,hours(hh)
               outFile = trim(pathOut)//'/'//trim(outFile)
               write(*,'(A)') trim(outFile)
               open(10,file=trim(outFile),status='replace',access='direct', &

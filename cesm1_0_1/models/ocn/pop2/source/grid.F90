@@ -119,6 +119,9 @@
       UAREA, TAREA        ,&! area of U,T cells
       UAREA_R, TAREA_R    ,&! reciprocal of area of U,T cells
       HT, HU, HUR           ! ocean depth at T,U points
+   real (POP_r8), dimension(nx_block,ny_block,max_blocks_clinic), public :: &
+      BBL_DRAG
+   real (POP_r8), parameter, public :: bbl_roughness_height = 0.5
 
    !*** 3d depth fields for partial bottom cells
 
@@ -911,6 +914,21 @@
    call POP_HaloUpdate(KMU, POP_haloClinic, POP_gridHorzLocNECorner,& 
                        POP_fieldKindScalar, errorCode,              &
                        fillValue = 0_POP_i4)
+
+!  bbl implementation
+   BBL_DRAG = 0._r8
+   do n=1,nblocks_clinic
+   do j=1,ny_block-1
+   do i=1,nx_block-1
+       if (KMU(i,j,n) /= 0) then
+           BBL_DRAG(i,j,n) = (vonkar*vonkar)* &
+          ((log(dz(KMU(i,j,n))/2._r8/bbl_roughness_height))**(-2.))
+       else
+           BBL_DRAG(i,j,n) = 0._r8
+       endif
+   end do
+   end do
+   end do
 
    if (errorCode /= POP_Success) then
       call POP_ErrorSet(errorCode, &

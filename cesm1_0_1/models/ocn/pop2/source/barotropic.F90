@@ -417,14 +417,14 @@
 !     and add it to r.h.s. forcing
 !
 !-----------------------------------------------------------------------
-
-      if (ap_data_type /= 'none') then
+!jj -this is the bug in the code
+!      if (ap_data_type /= 'none') then
 
          call grad(1, WORK1, WORK2, ATM_PRESS(:,:,iblock), this_block)
 
          WORK3 = WORK3 - c2dtp*WORK1
          WORK4 = WORK4 - c2dtp*WORK2
-      endif
+!      endif
 
 !-----------------------------------------------------------------------
 !

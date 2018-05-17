@@ -1,0 +1,24 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v6.93  
+ ! Linux 2.6.32-504.el6.x86_64 64-bit - 11/13/14
+ ! 10-May-18 14:19     
+
+DEFINE AXIS/X=1:1000:1 x10
+DEFINE AXIS/Y=1:640:1 y5
+DEFINE GRID/X=x10/Y=y5 g10x5
+FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap rest_WP_rec_46.bin
+shade ss
+!DEFINE AXIS/X=1:1000:1 x10
+!FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap TEMP01.bin
+!shade ss
+!FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap TEMP33.bin
+!shade ss
+!FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap SALT33.bin
+!shade ss
+!FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap SALT32.bin
+!shade ss
+!FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap SALT22.bin
+!shade ss
+!FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap SALT12.bin
+!shade ss
+exit

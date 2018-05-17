@@ -749,25 +749,25 @@
 !mj biogeny
 !mj ===================================================================
 
-          do iblock = 1,nblocks_clinic
-             do ii = 3,7
-               where (TRACER(:,:,:,ii,:,iblock) < c0)
-                 TRACER(:,:,:,ii,:,iblock) = 0.01_r8
-               endwhere
-             enddo
-          enddo
+!jj          do iblock = 1,nblocks_clinic
+!jj             do ii = 3,7
+!jj               where (TRACER(:,:,:,ii,:,iblock) < c0)
+!jj                 TRACER(:,:,:,ii,:,iblock) = 0.01_r8
+!jj               endwhere
+!jj             enddo
+!jj          enddo
 
 !mj ===================================================================
 !mj fitoplankton i inne
 !mj ===================================================================
 
-          do iblock = 1,nblocks_clinic
-             do ii = 9,nt 
-               where (TRACER(:,:,:,ii,:,iblock) < c0)
-                 TRACER(:,:,:,ii,:,iblock) = 0.01_r8
-               endwhere
-             enddo
-          enddo
+!jj          do iblock = 1,nblocks_clinic
+!jj             do ii = 9,nt 
+!jj               where (TRACER(:,:,:,ii,:,iblock) < c0)
+!jj                 TRACER(:,:,:,ii,:,iblock) = 0.01_r8
+!jj               endwhere
+!jj             enddo
+!jj          enddo
 
 !mj ===================================================================
 

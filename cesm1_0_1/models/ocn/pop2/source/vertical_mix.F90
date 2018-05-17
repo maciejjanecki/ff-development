@@ -168,6 +168,12 @@
    integer (int_kind), dimension(nt) :: &
       tavg_DIA_IMPVF_TRACER  ! tavg id for diabatic implicit vertical flux of tracer
 
+   integer (int_kind) :: bbl_option
+        !0 typical quadratic drag formula
+        !1 bbl based on Durski, Glenn and Dale: "Vertical mixing schemes in the coastal
+        ! ocean: Comparison of the level 2.5 Mellor-Yamada scheme with an enhanced version
+        ! of the K profile parametrization" JGR Vol 109 2004
+
 !EOC
 !***********************************************************************
 
@@ -211,7 +217,7 @@
                                bottom_heat_flx, bottom_heat_flx_depth, &
                                implicit_vertical_mix,                  &
                                convection_type, nconvad,               &
-                               convect_diff, convect_visc
+                               convect_diff, convect_visc, bbl_option
 
 !-----------------------------------------------------------------------
 !
@@ -228,7 +234,8 @@
    nconvad = 2
    convect_diff = 1000.0_r8
    convect_visc = 1000.0_r8
-
+   bbl_option = 0
+  
    if (my_task == master_task) then
       open (nml_in, file=nml_filename, status='old',iostat=nml_error)
       if (nml_error /= 0) then
@@ -306,6 +313,15 @@
       else
          write(stdout,'(a37)') ' Bottom geothermal heat flux disabled'
       endif
+      if (bbl_option /= 0) then
+         if (bbl_option == 1) then
+            write(stdout,*) '========================================================='
+            write(stdout,*) ''
+            write(stdout,*) 'Durski, Glenn and Haidvogel bottom boundary layer enabled'
+            write(stdout,*) ''
+            write(stdout,*) '========================================================='
+         endif
+      endif
    endif
 
    call broadcast_scalar(vmix_itype,            master_task)
@@ -318,7 +334,7 @@
    call broadcast_scalar(nconvad,               master_task)
    call broadcast_scalar(convect_diff,          master_task)
    call broadcast_scalar(convect_visc,          master_task)
-  
+   call broadcast_scalar(bbl_option,            master_task)  
    bottom_heat_flx = bottom_heat_flx * hflux_factor
 
    if (bottom_heat_flx /= c0) then
@@ -942,16 +958,40 @@
 !  bottom momentum fluxes from quadratic drag law
 !
 !-----------------------------------------------------------------------
+   select case (bbl_option)
 
-   do j=this_block%jb,this_block%je
-   do i=this_block%ib,this_block%ie
-      if (k == KMU(i,j,bid)) then 
-         vmag = bottom_drag*sqrt(UOLD(i,j,k)**2 + VOLD(i,j,k)**2)
-         VUFB(i,j) = vmag*UOLD(i,j,k)
-         VVFB(i,j) = vmag*VOLD(i,j,k)
-      endif
-   end do
-   end do
+      case (0)
+          do j=this_block%jb,this_block%je
+          do i=this_block%ib,this_block%ie
+                 if (k == KMU(i,j,bid)) then
+                     vmag = bottom_drag*sqrt(UOLD(i,j,k)**2 + VOLD(i,j,k)**2)
+                     VUFB(i,j) = vmag*UOLD(i,j,k)
+                     VVFB(i,j) = vmag*VOLD(i,j,k)
+                 endif
+          end do
+          end do
+
+      case (1)
+          do j=this_block%jb,this_block%je
+          do i=this_block%ib,this_block%ie
+                 if (k == KMU(i,j,bid)) then
+! for special cases                     vmag = BDRAG_MASK(i,j,bid)*BBL_DRAG(i,j,bid)*sqrt(UOLD(i,j,k)**2 + VOLD(i,j,k)**2)
+                     vmag = BBL_DRAG(i,j,bid)*sqrt(UOLD(i,j,k)**2 + VOLD(i,j,k)**2)
+                     VUFB(i,j) = vmag*UOLD(i,j,k)
+                     VVFB(i,j) = vmag*VOLD(i,j,k)
+                 endif
+          end do
+          end do
+   end select
+!jj   do j=this_block%jb,this_block%je
+!jj   do i=this_block%ib,this_block%ie
+!jj      if (k == KMU(i,j,bid)) then 
+!jj         vmag = bottom_drag*sqrt(UOLD(i,j,k)**2 + VOLD(i,j,k)**2)
+!jj         VUFB(i,j) = vmag*UOLD(i,j,k)
+!jj         VVFB(i,j) = vmag*VOLD(i,j,k)
+!jj      endif
+!jj   end do
+!jj   end do
 
 !-----------------------------------------------------------------------
 !

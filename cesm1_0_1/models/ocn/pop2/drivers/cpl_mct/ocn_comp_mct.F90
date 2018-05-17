@@ -1083,12 +1083,12 @@ contains
          PREC_F(i,j,iblock) = WORKB(i,j) + SNOW_F(i,j,iblock)    ! rain + snow
 
          WORKB(i,j        ) = x2o_o%rAttr(index_x2o_Foxx_swnet,n)
-         SHF_QSW(i,j,iblock) = 0.*WORKB(i,j)*  &
+         SHF_QSW(i,j,iblock) = WORKB(i,j)*  &
             RCALCT(i,j,iblock)*hflux_factor  !  convert from W/m**2
-         SENH_F(i,j,iblock)  = 0.*x2o_o%rAttr(index_x2o_Foxx_sen,n)
-         LWUP_F(i,j,iblock)  = 0.*x2o_o%rAttr(index_x2o_Foxx_lwup,n)
-         LWDN_F(i,j,iblock)  = 0.*x2o_o%rAttr(index_x2o_Foxx_lwdn,n)
-         MELTH_F(i,j,iblock) = 0.*x2o_o%rAttr(index_x2o_Foxx_melth,n)
+         SENH_F(i,j,iblock)  = x2o_o%rAttr(index_x2o_Foxx_sen,n)
+         LWUP_F(i,j,iblock)  = x2o_o%rAttr(index_x2o_Foxx_lwup,n)
+         LWDN_F(i,j,iblock)  = x2o_o%rAttr(index_x2o_Foxx_lwdn,n)
+         MELTH_F(i,j,iblock) = x2o_o%rAttr(index_x2o_Foxx_melth,n)
 
          WORKB(i,j       ) = x2o_o%rAttr(index_x2o_Si_ifrac,n)
          IFRAC(i,j,iblock) = WORKB(i,j) * RCALCT(i,j,iblock)
@@ -1103,7 +1103,7 @@ contains
 
       enddo
       enddo
-
+!   write(*,*) 'max/min SENH_F',maxval(SENH_F(:,:,iblock)),minval(SENH_F(:,:,iblock))
    enddo
 
 !-----------------------------------------------------------------------

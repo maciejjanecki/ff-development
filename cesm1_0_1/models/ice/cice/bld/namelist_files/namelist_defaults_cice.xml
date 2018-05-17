@@ -100,7 +100,7 @@
 <kmt_file hgrid="tx1v1"     >'ocn/pop/tx1v1/grid/topography_20050510.ieeei4'</kmt_file>
 
 <kmt_file hgrid="bs2v1"     >'ice/cice/kmt.bs2v1.ocn.20130206.ieeei4'       </kmt_file>
-<kmt_file hgrid="bs01v1"    >'ice/cice/bs01v1/kmt.bs01v1.ocn.20180432.ieeer4'</kmt_file>
+<kmt_file hgrid="bs01v1"    >'ice/cice/bs01v1/grid/kmt.bs01v1.ocn.20180432.ieeer4'</kmt_file>
 
 <kcatbound> 0 </kcatbound>
 
