@@ -33,7 +33,8 @@
    use broadcast, only: broadcast_scalar
    use communicate, only: my_task, master_task
    use grid, only: FCOR, DZU, HUR, KMU, KMT, sfc_layer_type,                 &
-       sfc_layer_varthick, partial_bottom_cells, dz, DZT, CALCT, dzw, dzr
+       sfc_layer_varthick, partial_bottom_cells, dz, DZT, CALCT, dzw, dzr, &
+       amSmag
    use advection, only: advu, advt, comp_flux_vel_ghost
    use pressure_grad, only: lpressure_avg, gradp
    use horizontal_mix, only: hdiffu, hdifft, iso_impvmixt_tavg
@@ -106,6 +107,8 @@
       tavg_UVEL2,        &! tavg id for U velocity squared
       tavg_VVEL,         &! tavg id for V velocity
       tavg_VVEL2,        &! tavg id for V velocity squared
+!jj SLV
+      tavg_AMSMAG,       &!
       tavg_KE,           &! tavg id for kinetic energy
       tavg_ST,           &! tavg id for salt*temperature
       tavg_RHO,          &! tavg id for in-situ density
@@ -260,6 +263,11 @@
    call define_tavg_field(tavg_VVEL2,'VVEL2',3,                        &
                           long_name='Velocity**2 in grid-y direction', &
                           units='centimeter^2/s^2', grid_loc='3221',   &
+                          coordinates='ULONG ULAT z_t time')
+
+   call define_tavg_field(tavg_AMSMAG,'AMSMAG',3,                                    &
+                          long_name='Relative Smagorinsky-Like viscosity',           &
+                          units='nondimentional (divided by am)', grid_loc='3221',   &
                           coordinates='ULONG ULAT z_t time')
 
    call define_tavg_field(tavg_KE,'KE',3,                              &
@@ -606,6 +614,11 @@
          if (tavg_requested(tavg_V1_8) .and. k <= 8) then
             call accumulate_tavg_field(VVEL(:,:,k,curtime,iblock), &
                                        tavg_V1_8,iblock,k)
+         endif
+
+         if (tavg_requested(tavg_AMSMAG)) then
+            call accumulate_tavg_field(amSmag(:,:,k,iblock), &
+                                       tavg_AMSMAG,iblock,k)
          endif
 
          if (tavg_requested(tavg_KE)) then

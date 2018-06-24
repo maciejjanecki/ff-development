@@ -6,7 +6,8 @@
 DEFINE AXIS/X=1:1000:1 x10
 DEFINE AXIS/Y=1:640:1 y5
 DEFINE GRID/X=x10/Y=y5 g10x5
-FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap rest_WP_rec_46.bin
+!FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap rest_WP_rec_46.bin
+FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap temp_rec_01.bin
 shade ss
 !DEFINE AXIS/X=1:1000:1 x10
 !FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap TEMP01.bin

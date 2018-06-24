@@ -394,8 +394,12 @@ set iradsw = 1
 
 cat >> $CASEBUILD/datm.buildnml.csh << EOF 
 
+
 set FFN = \$DIN_LOC_ROOT/atm/datm7/CORE2/COREv2.correction_factors.T62.121007.nc
 echo FFN = \$FFN >> \$CASEBUILD/datm.input_data_list
+
+
+set iradsw = 1
 
 EOF
 

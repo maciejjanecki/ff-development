@@ -27,6 +27,7 @@
    use time_management
    use prognostic
    use exit_mod
+   use forcing_pt_interior, only: PT_RST_MASK
 
    implicit none
    private
@@ -1101,7 +1102,7 @@
             STF(:,:,2,iblock) = &
                               (SFWF_DATA(:,:,iblock,sfwf_data_sss,0) - &
                                TRACER(:,:,1,2,curtime,iblock))*        &
-                              sfwf_restore_rtau*dz(1)
+                              sfwf_restore_rtau*dz(1)*PT_RST_MASK(:,:,iblock)
          end do
          !$OMP END PARALLEL DO
 

@@ -31,18 +31,21 @@
    use constants, only: field_type_vector, field_type_scalar,       &
        grav, c1, c0, field_loc_NEcorner, field_loc_center
    use prognostic, only: max_blocks_clinic, GRADPX, GRADPY, UBTROP, VBTROP, &
-       PSURF, curtime, oldtime, newtime, PGUESS
+       PSURF, curtime, oldtime, newtime, PGUESS, slvl_assimilation, SSH_EXT
    use operators, only: grad, div
    use grid, only: sfc_layer_type, sfc_layer_varthick, TAREA, REGION_MASK,    &
           KMT, FCOR, HU, CALCT, sfc_layer_rigid, sfc_layer_oldfree 
    use time_management, only: mix_pass, leapfrogts, impcor, c2dtu, theta,     &
-          gamma, f_euler_ts, beta, c2dtp, dtp
+          gamma, f_euler_ts, beta, c2dtp, dtp, iyear,iyear0,tsecond
    use global_reductions, only: global_sum
-   use forcing_fields, only: ATM_PRESS, FW
+   use forcing_fields, only: ATM_PRESS, FW, SEA_LEVEL
    use forcing_ap, only: ap_data_type
    use tavg, only: define_tavg_field, tavg_requested, accumulate_tavg_field
-
+   use forcing_slvl, only: set_slvl,SLVL_MASK
    use overflows
+
+
+   use communicate, only: my_task
 
    implicit none
    private
@@ -357,13 +360,16 @@
    integer (int_kind) :: iblock
 
    real (r8) ::          &
-      xcheck              ! global sum of checkerboard
+      xcheck             ! global sum of checkerboard
+
+   real(r8) :: slFact
+   real(r8), parameter :: slFactLimit = 0.5
 
    real (r8), dimension(nx_block,ny_block,max_blocks_clinic) :: &
       RHS,               &! r.h.s. of elliptic eqn times T-cell area
       UH,VH,             &! auxiliary velocities (see description above)
       PCHECK,            &! array for computing null space
-      WORKX,WORKY         ! local temp space
+      WORKX,WORKY,WORK_SL         ! local temp space
 
    real (r8), dimension(nx_block,ny_block) :: &
       diagonalCorrection,     &! time dependent correction to operator
@@ -380,6 +386,12 @@
 
    !$OMP PARALLEL DO PRIVATE(iblock, this_block, diagonalCorrection, &
    !$OMP                     WORK1, WORK2, WORK3, WORK4)
+   slFact = 0.25 !this value works fine - it is only for testing
+   if (iyear0 == iyear) then
+       slFact = min(tsecond/(30._r8*86400._r8),slFactLimit)
+   else
+       slFact = slFactLimit
+   endif
 
    do iblock = 1,nblocks_clinic
       this_block = get_block(blocks_clinic(iblock),iblock)  
@@ -425,6 +437,23 @@
          WORK3 = WORK3 - c2dtp*WORK1
          WORK4 = WORK4 - c2dtp*WORK2
 !      endif
+
+!jj sea level assimilation at the boundaries
+    if (slvl_assimilation==1) then
+      call set_slvl(SEA_LEVEL)
+      SSH_EXT(:,:,iblock) = SEA_LEVEL(:,:,iblock)
+!      write(*,*) 'max/min seaLevel = ',maxval(SEA_LEVEL(:,:,iblock)),minval(SEA_LEVEL(:,:,iblock)),my_task,slFact
+      WORK_SL(:,:,iblock) = &
+           PSURF(:,:,curtime,iblock) - (PSURF(:,:,curtime,iblock) - SEA_LEVEL(:,:,iblock)*grav)*SLVL_MASK(:,:,iblock)
+      WORK_SL(:,:,iblock) = (PSURF(:,:,curtime,iblock) - WORK_SL(:,:,iblock))*slFact !!!!!sl_fact !*(-1._r8)
+      call grad(1, WORK1, WORK2, WORK_SL(:,:,iblock),this_block)
+      WORK3 = WORK3 - c2dtp*WORK1
+      WORK4 = WORK4 - c2dtp*WORK2
+    endif
+    
+
+
+
 
 !-----------------------------------------------------------------------
 !
@@ -605,7 +634,12 @@
 !     calculate gradient of PSURF(:,:,newtime)
 !
 !-----------------------------------------------------------------------
-
+      !jj
+      !implementing time filter (Orlanski 1976 and Asselin 1972) for ssh
+      PSURF(:,:,newtime,iblock) = PSURF(:,:,newtime,iblock)*0.6_r8 &
+                                + PSURF(:,:,curtime,iblock)*0.3_r8 &
+                                + PSURF(:,:,oldtime,iblock)*0.1_r8
+      !jj 
       call grad(1,GRADPX(:,:,newtime,iblock), &
                   GRADPY(:,:,newtime,iblock), &
                    PSURF(:,:,newtime,iblock),this_block)
@@ -644,6 +678,13 @@
                                          WORKY(:,:,iblock))
  
       endif
+!jj and Robert filter for barotropic components
+      UBTROP(:,:,newtime,iblock) = UBTROP(:,:,newtime,iblock)*0.70_r8 &
+                                 + UBTROP(:,:,curtime,iblock)*0.25_r8 &
+                                 + UBTROP(:,:,oldtime,iblock)*0.05_r8
+      VBTROP(:,:,newtime,iblock) = VBTROP(:,:,newtime,iblock)*0.70_r8 &
+                                 + VBTROP(:,:,curtime,iblock)*0.25_r8 &
+                                 + VBTROP(:,:,oldtime,iblock)*0.05_r8
 
 !-----------------------------------------------------------------------
 !
@@ -655,6 +696,8 @@
          call accumulate_tavg_field(HU(:,:,iblock)*             &
                                     UBTROP(:,:,curtime,iblock), &
                                     tavg_SU, iblock, 1)
+!         call accumulate_tavg_field(SEA_LEVEL(:,:,iblock),   &
+!                                    tavg_SU, iblock, 1)
       endif
 
       if (tavg_requested(tavg_SV)) then

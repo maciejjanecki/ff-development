@@ -1523,6 +1523,9 @@ contains
 
    real (r8), dimension(nx_block,ny_block,max_blocks_clinic) ::  &
       WORK                ! local work arrays
+   real (r8), dimension(nx_block,ny_block,max_blocks_clinic) ::  &
+      VELAVE                ! local work array
+   real (r8), parameter :: p1=0.1,p6=0.6,p3=0.3,p7=0.7
 
    real (r8) ::   &
       delt,             & ! time interval since last step
@@ -1589,14 +1592,34 @@ contains
 
    !$OMP PARALLEL DO PRIVATE(iblock)
    do iblock = 1, nblocks_clinic
+       VELAVE(:,:,iblock) = c0
+       where(kmt(:,:,iblock) == 2) !assume that kmt has to be > 2
+          VELAVE(:,:,iblock) = p7*(UVEL(:,:,1,curtime,iblock)+UVEL(:,:,1,oldtime,iblock))/c2+ &
+                               p3*(UVEL(:,:,2,curtime,iblock)+UVEL(:,:,2,oldtime,iblock))/c2
+       elsewhere (kmt(:,:,iblock) > 2)
+          VELAVE(:,:,iblock) = p6*(UVEL(:,:,1,curtime,iblock)+UVEL(:,:,1,oldtime,iblock))/c2+ &
+                               p3*(UVEL(:,:,2,curtime,iblock)+UVEL(:,:,2,oldtime,iblock))/c2+ &
+                               p1*(UVEL(:,:,3,curtime,iblock)+UVEL(:,:,3,oldtime,iblock))/c2
+       endwhere
    SBUFF_SUM(:,:,iblock,index_o2x_So_u) =   &
       SBUFF_SUM(:,:,iblock,index_o2x_So_u) + delt*  &
-                                   UVEL(:,:,1,curtime,iblock)
+!                                   UVEL(:,:,1,curtime,iblock)
+                                 VELAVE(:,:,iblock)
+
+       VELAVE(:,:,iblock) = c0
+       where(kmt(:,:,iblock) == 2) !assume that kmt has to be > 2
+          VELAVE(:,:,iblock) = p7*(VVEL(:,:,1,curtime,iblock)+VVEL(:,:,1,oldtime,iblock))/c2+ &
+                               p3*(VVEL(:,:,2,curtime,iblock)+VVEL(:,:,2,oldtime,iblock))/c2
+       elsewhere (kmt(:,:,iblock) > 2)
+          VELAVE(:,:,iblock) = p6*(VVEL(:,:,1,curtime,iblock)+VVEL(:,:,1,oldtime,iblock))/c2+ &
+                               p3*(VVEL(:,:,2,curtime,iblock)+VVEL(:,:,2,oldtime,iblock))/c2+ &
+                               p1*(VVEL(:,:,3,curtime,iblock)+VVEL(:,:,3,oldtime,iblock))/c2
+       endwhere
 
    SBUFF_SUM(:,:,iblock,index_o2x_So_v) =   &
       SBUFF_SUM(:,:,iblock,index_o2x_So_v) + delt*  &
-                                   VVEL(:,:,1,curtime,iblock)
-
+!                                   VVEL(:,:,1,curtime,iblock)
+                                 VELAVE(:,:,iblock)
    SBUFF_SUM(:,:,iblock,index_o2x_So_t ) =   &
       SBUFF_SUM(:,:,iblock,index_o2x_So_t ) + delt*  &
                                    TRACER(:,:,1,1,curtime,iblock)
@@ -1607,11 +1630,11 @@ contains
 
    SBUFF_SUM(:,:,iblock,index_o2x_So_dhdx) =   &
       SBUFF_SUM(:,:,iblock,index_o2x_So_dhdx) + delt*  &
-                                   GRADPX(:,:,curtime,iblock)
+                                   (GRADPX(:,:,curtime,iblock)+GRADPX(:,:,oldtime,iblock))/c2
 
    SBUFF_SUM(:,:,iblock,index_o2x_So_dhdy) =   &
       SBUFF_SUM(:,:,iblock,index_o2x_So_dhdy) + delt*  &
-                                   GRADPY(:,:,curtime,iblock)
+                                   (GRADPY(:,:,curtime,iblock)+GRADPY(:,:,oldtime,iblock))/c2
 
    if (index_o2x_Faoo_fco2 > 0 .and. sflux_co2_nf_ind > 0) then
       call named_field_get(sflux_co2_nf_ind, iblock, WORK(:,:,iblock))

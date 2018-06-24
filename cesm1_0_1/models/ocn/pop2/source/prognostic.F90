@@ -59,7 +59,7 @@
    real (r8), dimension(nx_block,ny_block,max_blocks_clinic), &
       target :: VVEL_RESTORING_MASK, NMN_VEL_MASK
    real (r8), dimension(nx_block,ny_block,max_blocks_clinic), &
-      target :: NMN_RESTORING_MASK ! 2D mask
+      target :: NMN_RESTORING_MASK, SSH_EXT ! 2D mask
    real (r8), dimension(nx_block,ny_block,km,max_blocks_clinic,5), &
       target :: ORL_AVE_SPEED_VVEL,ORL_AVE_SPEED_TEMP,ORL_AVE_SPEED_SALT
    real (r8), dimension(nx_block,ny_block,max_blocks_clinic,5), &
@@ -92,6 +92,7 @@
       oldtime,           &! previous time level (n-1)
       mixtime             ! set to oldtime on leafrog steps
                           ! and to curtime on matsuno steps
+   integer (int_kind) :: slvl_assimilation=0
 
 !EOP
 !BOC

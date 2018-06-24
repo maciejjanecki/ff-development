@@ -39,6 +39,7 @@
    use movie, only: define_movie_field, movie_requested, update_movie_field
    use time_management
    use exit_mod
+   use forcing_slvl, only: init_slvl
 #ifdef CCSMCOUPLED
    use shr_sys_mod, only: shr_sys_abort
 #endif
@@ -152,6 +153,7 @@
    call init_pt_interior
    call init_s_interior
    call init_ap(ATM_PRESS)
+   call init_slvl(SEA_LEVEL)
 
 !-----------------------------------------------------------------------
 !

@@ -54,6 +54,9 @@
    real (r8), dimension(:,:,:), allocatable :: &
       S_RESTORE_RTAU   !  inverse restoring timescale for
                        !  spatially-varying restoring
+!WP restoring mask
+   real (r8), dimension(:,:,:), allocatable :: &
+          S_RST_MASK
 
    integer (int_kind), dimension(:,:,:), allocatable :: &
       S_RESTORE_MAX_LEVEL ! maximum level for applying variable
@@ -73,6 +76,10 @@
       s_interior_interp_next, &! time next interpolation to be done
       s_interior_restore_tau, &! restoring timescale
       s_interior_restore_rtau  ! reciprocal of restoring timescale
+!WP restoring mask
+   logical(log_kind) :: s_interior_mask
+   character (char_len) :: s_interior_mask_file, &
+                           s_interior_mask_file_fmt
 
    integer (int_kind) ::            &
       s_interior_interp_order,      &! order of temporal interpolation
@@ -152,7 +159,9 @@
         s_interior_file_fmt,         s_interior_restore_max_level,    &
         s_interior_data_renorm,      s_interior_formulation,          &
         s_interior_variable_restore, s_interior_restore_filename,     &
-        s_interior_restore_file_fmt
+        s_interior_restore_file_fmt, &
+!WP restoring mask
+        s_interior_mask,s_interior_mask_file,s_interior_mask_file_fmt
 
 !-----------------------------------------------------------------------
 !
@@ -210,7 +219,10 @@
    call broadcast_scalar(s_interior_restore_file_fmt,  master_task)
    call broadcast_array (s_interior_data_renorm,       master_task)
 
-!-----------------------------------------------------------------------
+!WP restoring mask
+   call broadcast_scalar(s_interior_mask,              master_task)
+   call broadcast_scalar(s_interior_mask_file,         master_task)
+   call broadcast_scalar(s_interior_mask_file_fmt,     master_task)!-----------------------------------------------------------------------
 !
 !  convert data_type to 'monthly-calendar' if input is 'monthly'
 !
@@ -548,6 +560,38 @@
       call destroy_file(s_int_data_file)
 
    endif
+!WP restorig mask - could cause errors when use it inproperly
+  if (s_interior_mask) then
+      allocate(S_RST_MASK(nx_block,ny_block,max_blocks_clinic))
+
+      forcing_filename = s_interior_mask_file
+
+      s_int_data_file = construct_file(s_interior_restore_file_fmt,  &
+                                    full_name=trim(forcing_filename),  &
+                                    record_length=rec_type_dbl,        &
+                                    recl_words=nx_global*ny_global)
+
+      call data_set(s_int_data_file, 'open_read')
+
+      i_dim = construct_io_dim('i',nx_global)
+      j_dim = construct_io_dim('j',ny_global)
+
+      s_int_data_in = construct_io_field('RESTORING_MASK',          &
+                             dim1=i_dim, dim2=j_dim,                   &
+                             field_loc = field_loc_center,             &
+                             field_type = field_type_scalar,           &
+                             d2d_array = S_RST_MASK)
+
+      call data_set (s_int_data_file, 'define', s_int_data_in)
+      call data_set (s_int_data_file, 'read',   s_int_data_in)
+      call data_set (s_int_data_file, 'close')
+      call destroy_file(s_int_data_file)
+  else
+      allocate(S_RST_MASK(nx_block,ny_block,max_blocks_clinic))
+      S_RST_MASK = 1._r8
+  endif
+
+!-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
 !
@@ -760,7 +804,7 @@
 
       !*** add restoring term to other source terms
 
-      S_SOURCE = S_SOURCE + DS_INTERIOR
+      S_SOURCE = S_SOURCE + DS_INTERIOR*S_RST_MASK(:,:,bid)
 
    endif ! k=1
 

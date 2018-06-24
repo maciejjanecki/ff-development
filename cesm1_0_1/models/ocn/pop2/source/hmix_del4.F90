@@ -75,8 +75,9 @@
 
    real (r8) ::         &
       ah,               &! horizontal tracer   mixing coefficient
-      am                 ! horizontal momentum mixing coefficient
-
+      am,               &! horizontal momentum mixing coefficient
+!jj SLV
+      cSmag
    logical (log_kind) :: &
       lvariable_hmixu,   &! spatially varying mixing coeffs
       lvariable_hmixt     ! spatially varying mixing coeffs
@@ -129,7 +130,11 @@
       lauto_hmix,          &! flag to internally compute mixing coeff
       lvariable_hmix        ! flag to enable spatially varying mixing
 
-   namelist /hmix_del4u_nml/ lauto_hmix, lvariable_hmix, am
+!jj   namelist /hmix_del4u_nml/ lauto_hmix, lvariable_hmix, am
+!jj del4 provides too small momentum disspation, added Smagorinsky like additional viscosity
+!jj (SLV)
+   namelist /hmix_del4u_nml/ lauto_hmix, lvariable_hmix, am, luse_smag_visc, &
+                             cSmag
 
    real (r8) ::            &
       amfmin, amfmax         ! min max mixing for varible mixing
@@ -145,6 +150,9 @@
    lauto_hmix = .false.
    lvariable_hmix = .false.
    am = c0
+!jj SLV
+   luse_smag_visc = .false.
+   cSmag = c0
 
    if (my_task == master_task) then
       open (nml_in, file=nml_filename, status='old',iostat=nml_error)
@@ -190,12 +198,23 @@
          write(stdout,'(a44)') &
                   'Variable horizontal momentum mixing disabled'
       endif
+!jj SLV
+      if (.not. luse_smag_visc) then
+        write(stdout,'(A)') &
+                  'Smagorinsky-like viscosity disabled'
+      else
+        write(stdout,'(A,f20.8)') &
+                  'Smagorinsky-like viscosity enebled, cSmag = ',cSmag
+        
+      endif
 
    endif
 
    call broadcast_scalar(lvariable_hmixu, master_task)
    call broadcast_scalar(am,              master_task)
-
+!jj SLV
+   call broadcast_scalar(luse_smag_visc,  master_task)
+   call broadcast_scalar(cSmag         ,  master_task)
 !-----------------------------------------------------------------------
 !
 !  set spatially variable mixing arrays if requested
@@ -659,7 +678,7 @@
       CC,               &! central 5-point weight
       CN,CS,CE,CW,      &! additional weights for partial bottom cells
       HDIFFCFL           ! local hdiff cfl number for diagnostics
-
+   real (r8), dimension (nx_block,ny_block) :: WORK4
 !-----------------------------------------------------------------------
 !
 !  biharmonic mixing
@@ -784,12 +803,29 @@
 
    HDUK = c0
    HDVK = c0
+!jj Smagorinsky-like viscosity in biharmonic mixing
+   if (.not. luse_smag_visc .or. nsteps_total <=2) then
+        amSmag(:,:,k,bid) = c1
+   else
+        amSmag(:,:,k,bid) = c0
+        WORK4 = am
+        !Smagorinsky laplacian, Griffies et al. equation 13
+        amSmag(:,:,k,bid) = ((UMIXK-VMIXK)**2+(VMIXK+UMIXK)**2)**0.5 
+        amSmag(:,:,k,bid) = (cSmag/pi)**2*DXU(:,:,bid)*DYU(:,:,bid)*amSmag(:,:,k,bid)
+        amSmag(:,:,k,bid) = ((-c1)*amSmag(:,:,k,bid)*DXU(:,:,bid)*DYU(:,:,bid)/8._r8)/am !will be relative value in tavg output
+!        where (SEA_LEVEL_MASK(:,:,bid) >= 0.5_r8) 
+!           aSmag(:,:,k,bid) = am
+!        end where
+!        amSmag(:,:,k,bid) = (c1 - SEA_LEVEL_MASK(:,:,bid))*amSmag(:,:,k,bid)+WORK4*SEA_LEVEL_MASK(:,:,bid)
+!        if (nsteps_total <=2) amSmag(:,:,k,bid) = c1
+   endif
 
    if (partial_bottom_cells) then
 
       do j=this_block%jb,this_block%je
       do i=this_block%ib,this_block%ie
-         HDUK(i,j)  = am*((CC (i,j    )*D2UK(i  ,j  ) +        &
+!jj SLV         HDUK(i,j)  = am*((CC (i,j    )*D2UK(i  ,j  ) +        &
+         HDUK(i,j)  = am*amSmag(i,j,k,bid)*((CC (i,j    )*D2UK(i  ,j  ) +        &
                            CN (i,j    )*D2UK(i  ,j+1) +        &
                            CS (i,j    )*D2UK(i  ,j-1) +        &
                            CE (i,j    )*D2UK(i+1,j  ) +        &
@@ -804,7 +840,8 @@
 
       do j=this_block%jb,this_block%je
       do i=this_block%ib,this_block%ie
-         HDVK(i,j)  = am*((CC (i,j    )*D2VK(i  ,j  ) +        &
+!jj SLV         HDVK(i,j)  = am*((CC (i,j    )*D2VK(i  ,j  ) +        &
+         HDVK(i,j)  = am*amSmag(i,j,k,bid)*((CC (i,j    )*D2VK(i  ,j  ) +        &
                            CN (i,j    )*D2VK(i  ,j+1) +        &
                            CS (i,j    )*D2VK(i  ,j-1) +        &
                            CE (i,j    )*D2VK(i+1,j  ) +        &
@@ -821,7 +858,8 @@
 
       do j=this_block%jb,this_block%je
       do i=this_block%ib,this_block%ie
-         HDUK(i,j)  = am*((CC (i,j    )*D2UK(i  ,j  ) +        &
+!jj SLV         HDUK(i,j)  = am*((CC (i,j    )*D2UK(i  ,j  ) +        &
+         HDUK(i,j)  = am*amSmag(i,j,k,bid)*((CC (i,j    )*D2UK(i  ,j  ) +        &
                            DUN(i,j,bid)*D2UK(i  ,j+1) +        &
                            DUS(i,j,bid)*D2UK(i  ,j-1) +        &
                            DUE(i,j,bid)*D2UK(i+1,j  ) +        &
@@ -836,7 +874,8 @@
 
       do j=this_block%jb,this_block%je
       do i=this_block%ib,this_block%ie
-         HDVK(i,j)  = am*((CC (i,j    )*D2VK(i  ,j  ) +        &
+!jj SLV         HDVK(i,j)  = am*((CC (i,j    )*D2VK(i  ,j  ) +        &
+         HDVK(i,j)  = am*amSmag(i,j,k,bid)*((CC (i,j    )*D2VK(i  ,j  ) +        &
                            DUN(i,j,bid)*D2VK(i  ,j+1) +        &
                            DUS(i,j,bid)*D2VK(i  ,j-1) +        &
                            DUE(i,j,bid)*D2VK(i+1,j  ) +        &
@@ -850,6 +889,8 @@
       end do
 
    endif ! partial bottom cells
+
+!   amSmag(:,:,k,bid) = amSmag(:,:,k,bid)/am
 
    where (k > KMU(:,:,bid))
       HDUK = c0

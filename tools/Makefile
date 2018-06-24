@@ -29,13 +29,27 @@ OBJ  = \
         read_init_ts.o \
         read_temp.o \
         create_init_ts_WP.o \
-        TS_boundaries_data.o
+        TS_boundaries_data.o \
+        create_rest_mask.o \
+        SSH_boundaries_data.o \
+        create_slvl_mask.o \
+        cnvts3d.o
 
 all: rst2init_ts \
      read_init_ts \
      read_temp   \
      create_init_ts_WP \
-     TS_boundaries_data
+     TS_boundaries_data \
+     create_rest_mask  \
+     SSH_boundaries_data \
+     create_slvl_mask \
+     cnvts3d
+
+cnvts3d: $(OBJ) cnvts3d.o
+	$(COMP) $(FLAGS) cnvts3d.o $(LIB) -o $(EXEDIR)/cnvts3d
+
+cnvts3d.o: cnvts3d.f90
+	$(COMP) $(FLAGS) $(INCL) -c cnvts3d.f90
 
 rst2init_ts: $(OBJ) rst2init_ts.o
 	$(COMP) $(FLAGS) rst2init_ts.o $(LIB) -o $(EXEDIR)/rst2init_ts
@@ -67,5 +81,23 @@ TS_boundaries_data: $(OBJ) TS_boundaries_data.o
 TS_boundaries_data.o: TS_boundaries_data.f90
 	$(COMP) $(FLAGS) $(INCL) -c TS_boundaries_data.f90
 
+SSH_boundaries_data: $(OBJ) SSH_boundaries_data.o
+	$(COMP) $(FLAGS) SSH_boundaries_data.o $(LIB) -o $(EXEDIR)/SSH_boundaries_data
+
+SSH_boundaries_data.o: SSH_boundaries_data.f90
+	$(COMP) $(FLAGS) $(INCL) -c SSH_boundaries_data.f90
+
+create_rest_mask: $(OBJ) create_rest_mask.o
+	$(COMP) $(FLAGS) create_rest_mask.o $(LIB) -o $(EXEDIR)/create_rest_mask
+
+create_rest_mask.o: create_rest_mask.f90
+	$(COMP) $(FLAGS) $(INCL) -c create_rest_mask.f90
+
+create_slvl_mask: $(OBJ) create_slvl_mask.o
+	$(COMP) $(FLAGS) create_slvl_mask.o $(LIB) -o $(EXEDIR)/create_slvl_mask
+
+create_slvl_mask.o: create_slvl_mask.f90
+	$(COMP) $(FLAGS) $(INCL) -c create_slvl_mask.f90
+
 clean: 
-	/bin/rm *.o rst2init_ts read_init_ts create_init_ts_WP TS_boundaries_data
+	/bin/rm *.o rst2init_ts read_init_ts create_init_ts_WP SSH_boundaries_data TS_boundaries_data create_rest_mask create_slvl_mask cnvts3d read_temp

@@ -44,7 +44,8 @@
               tgrid_to_ugrid, &
               ugrid_to_tgrid, &
               fill_points,    &
-              read_topography
+              read_topography,&
+              diag_amSmag
 
 ! !PUBLIC DATA MEMBERS:
 
@@ -72,6 +73,8 @@
 
    logical (POP_logical), public ::    &
       partial_bottom_cells   ! flag for partial bottom cells
+
+   logical (POP_logical), public :: luse_smag_visc
 
    real (POP_r8), dimension(:,:), allocatable, public :: &
       BATH_G           ! Observed ocean bathymetry mapped to global T grid
@@ -121,6 +124,8 @@
       HT, HU, HUR           ! ocean depth at T,U points
    real (POP_r8), dimension(nx_block,ny_block,max_blocks_clinic), public :: &
       BBL_DRAG
+   real (POP_r8), dimension(nx_block,ny_block,km,max_blocks_clinic), public :: amSmag
+   real (POP_r8), public :: amSmagDiag(2,km)
    real (POP_r8), parameter, public :: bbl_roughness_height = 0.5
 
    !*** 3d depth fields for partial bottom cells
@@ -139,7 +144,7 @@
    logical (POP_logical), dimension(nx_block,ny_block,max_blocks_clinic), &
       public :: &
       CALCT          ,&! flag=true if point is an ocean point
-      CALCU            !   at the surface
+      CALCU,amSmagMask            !   at the surface
 
    real (POP_r8), dimension(nx_block,ny_block,max_blocks_clinic), public :: &
       RCALCT         ,&! real equiv of CALCT,U to use as more
@@ -257,6 +262,38 @@
 !***********************************************************************
 
  contains
+
+
+ subroutine diag_amSmag
+
+!jj SLV
+
+ integer(i4) :: k,iblock
+ type (block) :: &
+      this_block  ! block info for current block
+ real (POP_r8), dimension(nx_block,ny_block,max_blocks_clinic) :: &
+      WORK
+
+  if (luse_smag_visc) then !print Smagorinsky diagnostics
+      do k=1,km
+         amSmagMask = .false.
+
+         do iblock=1,nblocks_clinic
+                this_block = get_block(blocks_clinic(iblock),iblock)
+                where (KMU(:,:,iblock) >= k) amSmagMask(:,:,iblock) = .true.
+         enddo !iblock
+                               !(DXU, distrb_clinic, field_loc_NEcorner, CALCU)
+         WORK(:,:,:) = amSmag(:,:,k,:)
+         amSmagDiag(1,k) = global_minval(WORK, distrb_clinic, field_loc_NEcorner, amSmagMask)
+         amSmagDiag(2,k) = global_maxval(WORK, distrb_clinic, field_loc_NEcorner, amSmagMask)
+      enddo
+      write(stdout,*) 'Smagorinsky biharmonic viscosity diagnostics'
+      do k=1,km
+         write(stdout,'(i3,1x,a17,1pe25.13,1x,1pe25.13)') k,'amSmag min/max = ',amSmagDiag(1,k),amSmagDiag(2,k)
+      enddo
+   endif
+
+ end subroutine diag_amSmag
 
 !***********************************************************************
 !BOP

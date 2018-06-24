@@ -38,8 +38,8 @@ module forcing_fields
       SENH_F = c0,       &! sensible heat flux    from cpl (W/m2   )
       LWUP_F = c0,       &! longwave heat flux up from cpl (W/m2   )
       LWDN_F = c0,       &! longwave heat flux dn from cpl (W/m2   )
-      MELTH_F= c0         ! melt     heat flux    from cpl (W/m2   )
-
+      MELTH_F= c0,       & ! melt     heat flux    from cpl (W/m2   )
+      SEA_LEVEL = c0      !sea level data for assimilation WaterPuck and Find Fish projects
 
    integer(kind=int_kind), public :: &
       ATM_CO2_PROG_nf_ind = 0, & ! bottom atm level prognostic co2

@@ -20,13 +20,14 @@
    use domain, only: nblocks_clinic, blocks_clinic
    use constants, only: grav, c0
    use prognostic, only: max_blocks_clinic, PSURF, GRADPX, GRADPY, newtime,  &
-       curtime, oldtime
+       curtime, oldtime, SSH_EXT
    use forcing_fields, only: FW, FW_OLD
    use grid, only: sfc_layer_type, sfc_layer_varthick, sfc_layer_rigid,      &
        sfc_layer_oldfree, CALCU, tgrid_to_ugrid
    use time_management, only: mix_pass, dtp
    use tavg, only: define_tavg_field, tavg_requested, accumulate_tavg_field
    use movie, only: define_movie_field, movie_requested, update_movie_field
+   use forcing_slvl, only: SLVL_OUT_MASK
 
    implicit none
    private
@@ -285,12 +286,13 @@
 !-----------------------------------------------------------------------
 
       if (tavg_requested(tavg_SSH) .and. mix_pass /= 1) then
-         WORK = PSURF(:,:,curtime,iblock)/grav
+         WORK = SLVL_OUT_MASK(:,:,iblock)*PSURF(:,:,curtime,iblock)/grav
          call accumulate_tavg_field(WORK, tavg_SSH, iblock, 1)
       endif
 
       if (tavg_requested(tavg_SSH2) .and. mix_pass /= 1) then
-         WORK = (PSURF(:,:,curtime,iblock)/grav)**2
+!jj         WORK = (PSURF(:,:,curtime,iblock)/grav)**2
+         WORK = SSH_EXT(:,:,iblock)
          call accumulate_tavg_field(WORK, tavg_SSH2, iblock, 1)
       endif
 

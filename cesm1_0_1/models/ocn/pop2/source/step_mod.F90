@@ -120,6 +120,8 @@
    logical (POP_logical), save ::    &
       first_call = .true.          ! flag for initializing timers
 
+   logical (POP_logical), save :: lsmag_diag = .false.
+
    type (block) ::        &
       this_block          ! block information for current block
 
@@ -778,6 +780,7 @@
    if ( eod .and. ldiag_velocity) then
       call diag_velocity
    endif
+   if (luse_smag_visc .and. lsmag_diag) call diag_amSmag
 
    if (ldiag_global_tracer_budgets) call tracer_budgets
 

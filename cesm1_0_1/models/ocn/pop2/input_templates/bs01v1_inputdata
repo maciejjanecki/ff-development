@@ -2,7 +2,7 @@
     #-----------------------------------------------------------------------------
     # 1.2.2 identify all bs2v1 datasets residing in $DIN_LOC_ROOT
     #-----------------------------------------------------------------------------
-    set init_ts_filename      = $DIN_LOC_ROOT/ocn/pop/bs01v1/ic/init_ts_bs01v1_09052018.ieeer8
+    set init_ts_filename      = $DIN_LOC_ROOT/ocn/pop/bs01v1/ic/init_ts_bs01v1_20160701.ieeer8
     set horiz_grid_filename   = $DIN_LOC_ROOT/ocn/pop/bs01v1/grid/grid.bs01v1.ocn.20170627.ieeer8
     set topography_filename   = $DIN_LOC_ROOT/ocn/pop/bs01v1/grid/kmt.bs01v1.ocn.20180432.ieeer4
     set shf_filename          = $DIN_LOC_ROOT/ocn/pop/bs01v1/forcing/SST
@@ -10,4 +10,3 @@
     set regionmask_filename   = $DIN_LOC_ROOT/ocn/pop/bs01v1/grid/regionmask.bs01v1.ocn.20171013.ieeei4
     set s_interior_file       = $DIN_LOC_ROOT/ocn/pop/bs01v1/forcing/SALT3D
     set pt_interior_file      = $DIN_LOC_ROOT/ocn/pop/bs01v1/forcing/TEMP3D
-

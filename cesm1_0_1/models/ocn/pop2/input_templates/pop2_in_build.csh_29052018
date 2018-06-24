@@ -419,8 +419,8 @@ EOF2
 
 cat >> $POP2BLDSCRIPT << EOF2
 &restart_nml
-   restart_freq_opt    = 'never' 
-   restart_freq        = 1e30
+   restart_freq_opt    = 'nhour' 
+   restart_freq        = 6
    restart_start_opt   = 'nstep'
    restart_start       =  0
    restart_outfile     = '\$output_r'
@@ -502,10 +502,10 @@ else if ( ${OCN_GRID} =~ bs01* ) then
   set n_tavg_streams               = 1
   set ltavg_streams_index_present  = .true.
   set tavg_freq_opt_values         = ("'nhour'")
-  set tavg_freq_values             = (    6    )
+  set tavg_freq_values             = (    1    )
   set tavg_stream_filestrings      = ("'WP.hydro.stream1'" )
-  set tavg_file_freq_opt           = ("'nday'")
-  set tavg_file_freq_values        = (    1    )
+  set tavg_file_freq_opt           = ("'nhour'")
+  set tavg_file_freq_values        = (    6    )
   set tavg_start_opt_values        = ("'nstep'")
   set tavg_start_values            = (    0    )
   set tavg_fmt_in_values           = ("'nc'"   )
@@ -560,8 +560,8 @@ EOF2
 set history_freq_opt  = never
 set history_freq      = 1e30
 if (${OCN_GRID} =~ bs01v1 ) then
-  set history_freq_opt = never
-  set history_freq = 1e30
+  set history_freq_opt = nhour
+  set history_freq = 6
 endif
 cat >> $POP2BLDSCRIPT << EOF2
 cat >> \$POP2_IN << EOF1
@@ -624,14 +624,13 @@ set convect_diff = 1000.0
 set convect_visc = 1000.0
 #jj note: currnetly it is Richardson vertical mixing parametrization
 #jj but finnaly it should be kpp
-set bbl=0
+
 if (${OCN_GRID} =~ bs* ) then
   set vmix_choice = kpp
   set implicit_vertical_mix = .true.
   set convection_type = diffusion
   set convect_diff = 1000.0
   set convect_visc = 1000.0
-  set bbl = 1
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -646,7 +645,6 @@ cat >> $POP2BLDSCRIPT << EOF2
    bottom_drag           = 1.0e-3
    bottom_heat_flx       = 0.0
    bottom_heat_flx_depth = 1000.0e2
-   bbl_option            = $bbl
 /
 
 EOF2
@@ -1432,46 +1430,6 @@ cat >> $POP2BLDSCRIPT << EOF2
 
 EOF2
 
-set slvl_data_type      = none
-set slvl_data_inc       = 1.e20
-set slvl_interp_freq    = never
-set slvl_interp_type    = nearest
-set slvl_interp_inc     = 1.e20
-set slvl_filename       = unknown-slvl
-set slvl_file_fmt       = bin
-set slvl_data_renorm    = 1.
-set slvl_mask           = .false.
-set slvl_mask_file      = unknown-slvl
-set slvl_mask_file_fmt  = bin
-if ( ${OCN_GRID} =~ bs01* ) then
-   set slvl_data_type      = n-hour
-   set slvl_data_inc       = 6
-   set slvl_interp_freq    = every-timestep
-   set slvl_interp_type    = linear
-   set slvl_interp_inc     = 1.e20
-   set slvl_filename       = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/forcing/SSH
-   set slvl_file_fmt       = bin
-   set slvl_data_renorm    = 100.
-   set slvl_mask           = .true.
-   set slvl_mask_file      = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/slvl_mask.bin
-   set slvl_mask_file_fmt  = bin
-endif
-cat >> $POP2BLDSCRIPT << EOF2
-&forcing_slvl_nml
-   slvl_data_type      = '$slvl_data_type'
-   slvl_data_inc       = $slvl_data_inc
-   slvl_interp_freq    = '$slvl_interp_freq'
-   slvl_interp_type    = '$slvl_interp_type'
-   slvl_interp_inc     = $slvl_interp_inc
-   slvl_filename       = '$slvl_filename'
-   slvl_file_fmt       = '$slvl_file_fmt'
-   slvl_data_renorm    = $slvl_data_renorm
-   use_slvl_mask       = $slvl_mask
-   slvl_mask_file      = '$slvl_mask_file'
-   slvl_mask_file_fmt  = '$slvl_mask_file_fmt'
-/
-
-EOF2
 
 #--------------------------------------------------------------------------
 # forcing_ws_nml
@@ -1497,7 +1455,6 @@ EOF2
 #    OCN_COUPLING is a CCSM environment variable; see $case/env_conf
 #--------------------------------------------------------------------------
 #---------- make basic configuration for shf - jj ---------
-
    set shf_formulation      = restoring
    set shf_data_type        = none
    set shf_data_inc         = 24.
@@ -1559,12 +1516,12 @@ endif
 if ( ${OCN_GRID} =~ bs01* ) then
   set lms_balance      = .false.
   set shf_formulation      = restoring
-  set shf_data_type        = none
+  set shf_data_type        = n-hour
   set shf_data_inc     = 6.
   set shf_interp_freq      = never
   set shf_interp_type      = linear
   set shf_interp_inc       = 72.
-  set shf_restore_tau      = 1.e30
+  set shf_restore_tau      = 1.
   set shf_file_fmt         = bin
   set shf_data_renorm3     = 1.
   set shf_weak_restore     = 0.
@@ -1573,12 +1530,12 @@ if ( ${OCN_GRID} =~ bs01* ) then
   set shf_strong_restore_ms = 92.64
 ########## sfwf
   set sfwf_formulation       = restoring
-  set sfwf_data_type         = none
+  set sfwf_data_type         = n-hour
   set sfwf_data_inc          = 6.
   set sfwf_interp_freq       = never
   set sfwf_interp_type       = linear
   set sfwf_interp_inc        = 72.
-  set sfwf_restore_tau       = 1.e30
+  set sfwf_restore_tau       = 1.
   set sfwf_file_fmt          = bin
   set sfwf_data_renorm1      = 0.001
   set sfwf_weak_restore      = 0.0115
@@ -1619,6 +1576,7 @@ EOF2
 #--------------------------------------------------------------------------
 #  forcing_sfwf_nml
 #--------------------------------------------------------------------------
+
 if ( ${OCN_GRID} =~ gx3* ) then
  set sfwf_weak_restore = 0.0115
 else if ( ${OCN_GRID} =~ gx1* ) then
@@ -1678,7 +1636,7 @@ EOF2
   set pt_variable_restore  = .false.
   set pt_restore_filename  = unknown-pt_interior_restore
   set pt_restore_file_fmt  = bin
-  set pt_mask     = .false.
+  set pt_interior_mask     = .false.
   set pt_mask_file = unknown-pt_interior_mask_file
   set pt_mask_file_fmt = bin
 if ( ${OCN_GRID} =~ bs01v1 ) then
@@ -1724,7 +1682,6 @@ cat >> $POP2BLDSCRIPT << EOF2
 EOF2
 
 
-
 #--------------------------------------------------------------------------
 # forcing_s_interior_nml
 #--------------------------------------------------------------------------
@@ -1743,7 +1700,7 @@ EOF2
   set s_restore_filename  = unknown-pt_interior_restore
   set s_restore_file_fmt  = bin
   set s_mask     = .false.
-  set s_mask_file = unknown-pt_interior_mask_file
+  set s_mask_file= unknown-pt_interior_mask_file
   set s_mask_file_fmt = bin
 if ( ${OCN_GRID} =~ bs01v1) then
   set s_data_type         = n-hour
@@ -1764,7 +1721,6 @@ if ( ${OCN_GRID} =~ bs01v1) then
   set s_mask_file = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/tsrst_mask.bin
   set s_mask_file_fmt = bin
 endif
-
 
 cat >> $POP2BLDSCRIPT << EOF2
 &forcing_s_interior_nml

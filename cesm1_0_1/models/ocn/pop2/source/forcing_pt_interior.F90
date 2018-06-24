@@ -40,6 +40,10 @@
    real (r8), public ::       &! public for use in restart
       pt_interior_interp_last  ! time last interpolation was done
 
+!WP restoring mask
+   real (r8), dimension(:,:,:), allocatable, public :: &
+          PT_RST_MASK
+
 !EOP
 !BOC
 !-----------------------------------------------------------------------
@@ -54,10 +58,14 @@
    real (r8), dimension(:,:,:), allocatable :: &
       PT_RESTORE_RTAU  ! inverse restoring timescale for variable
                        ! interior restoring
+!WP restoring mask
+!   real (r8), dimension(:,:,:), allocatable :: &
+!          PT_RST_MASK
 
    integer (int_kind), dimension(:,:,:), allocatable :: &
       PT_RESTORE_MAX_LEVEL ! maximum level for applying variable
                            ! interior restoring
+   
 
    real (r8), dimension(12) :: &
       pt_interior_data_time    !
@@ -73,6 +81,13 @@
       pt_interior_interp_next, &! time next interpolation will be done
       pt_interior_restore_tau, &! restoring timescale (non-variable)
       pt_interior_restore_rtau  ! reciprocal of restoring timescale
+!WP restoring mask
+!   pt_interior_mask              = .true.
+!   pt_interior_mask_file         = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/tsrst_mask.bin'
+!   pt_interior_mask_file_fmt     = 'bin'
+   logical(log_kind) :: pt_interior_mask
+   character (char_len) :: pt_interior_mask_file, &
+                           pt_interior_mask_file_fmt
 
    integer (int_kind) ::             &
       pt_interior_interp_order,      &! order of temporal interpolation
@@ -153,7 +168,12 @@
         pt_interior_file_fmt,         pt_interior_restore_max_level,   &
         pt_interior_data_renorm,      pt_interior_formulation,         &
         pt_interior_variable_restore, pt_interior_restore_filename,    &
-        pt_interior_restore_file_fmt
+        pt_interior_restore_file_fmt, &
+!WP restoring mask
+        pt_interior_mask,pt_interior_mask_file,pt_interior_mask_file_fmt
+
+
+
 
 !-----------------------------------------------------------------------
 !
@@ -176,6 +196,9 @@
    pt_interior_variable_restore  = .false.
    pt_interior_restore_filename  = 'unknown-pt_interior_restore'
    pt_interior_restore_filename  = 'bin'
+   pt_interior_mask              = .false.
+   pt_interior_mask_file         = 'unknown-pt_interior_mask_file'
+   pt_interior_mask_file_fmt     = 'bin'
 
    if (my_task == master_task) then
       open (nml_in, file=nml_filename, status='old', iostat=nml_error)
@@ -210,6 +233,11 @@
    call broadcast_scalar(pt_interior_restore_filename,  master_task)
    call broadcast_scalar(pt_interior_restore_file_fmt,  master_task)
    call broadcast_array (pt_interior_data_renorm,       master_task)
+
+!WP restoring mask
+   call broadcast_scalar(pt_interior_mask,              master_task)
+   call broadcast_scalar(pt_interior_mask_file,         master_task)
+   call broadcast_scalar(pt_interior_mask_file_fmt,     master_task)
 
 !-----------------------------------------------------------------------
 !
@@ -551,6 +579,38 @@
    endif
 
 !-----------------------------------------------------------------------
+!WP restorig mask - could cause errors when use it inproperly
+  if (pt_interior_mask) then
+      allocate(PT_RST_MASK(nx_block,ny_block,max_blocks_clinic))
+
+      forcing_filename = pt_interior_mask_file
+
+      pt_int_data_file = construct_file(pt_interior_restore_file_fmt,  &
+                                    full_name=trim(forcing_filename),  &
+                                    record_length=rec_type_dbl,        &
+                                    recl_words=nx_global*ny_global)
+
+      call data_set(pt_int_data_file, 'open_read')
+
+      i_dim = construct_io_dim('i',nx_global)
+      j_dim = construct_io_dim('j',ny_global)
+
+      pt_data_in = construct_io_field('RESTORING_MASK',          &
+                             dim1=i_dim, dim2=j_dim,                   &
+                             field_loc = field_loc_center,             &
+                             field_type = field_type_scalar,           &
+                             d2d_array = PT_RST_MASK)
+
+      call data_set (pt_int_data_file, 'define', pt_data_in)
+      call data_set (pt_int_data_file, 'read',   pt_data_in)
+      call data_set (pt_int_data_file, 'close')
+      call destroy_file(pt_int_data_file)
+  else
+      allocate(PT_RST_MASK(nx_block,ny_block,max_blocks_clinic))
+      PT_RST_MASK = 1._r8
+  endif
+
+!-----------------------------------------------------------------------
 !
 !  echo forcing options to stdout.
 !
@@ -763,7 +823,7 @@
 
       !*** add restoring to any other source terms
 
-      PT_SOURCE = PT_SOURCE + DPT_INTERIOR
+      PT_SOURCE = PT_SOURCE + DPT_INTERIOR*PT_RST_MASK(:,:,bid)
 
    endif ! k=1
 

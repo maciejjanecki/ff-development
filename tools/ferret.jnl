@@ -1,13 +1,9 @@
  ! NOAA/PMEL TMAP
  ! FERRET v6.93  
  ! Linux 2.6.32-504.el6.x86_64 64-bit - 11/13/14
- ! 16-May-18 21:30     
+ !  3-Jun-18 21:20     
 
 go plot_init_ts.jnl
-FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap rest_WP_rec_66.bin
-go plot_init_ts.jnl
-FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap rest_WP_rec_66.bin
-shade ss
-FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap rest_WP_rec_33.bin
+FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap salt_rec_01.bin
 shade ss
 exit

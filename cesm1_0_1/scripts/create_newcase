@@ -630,7 +630,7 @@ foreach my $comp (@comps)  {
 		$sysmod = "cp $ccsmroot/models/ocn/pop2/bld/pop_decomp.xml $caseroot/Tools/Templates"; 
 		system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
 	    } 
-	    if ($component eq 'cice') {
+	    if ($component eq 'cice' || $component eq 'sice' || $component eq 'dice') {
 		$sysmod = "cp $ccsmroot/models/ice/cice/bld/generate_cice_decomp.pl $caseroot/Tools/Templates/"; 
 		system($sysmod); if ($? == -1) {die "$sysmod failed: $!\n";}
 		$sysmod = "cp $ccsmroot/models/ice/cice/bld/cice_decomp.xml $caseroot/Tools/Templates"; 

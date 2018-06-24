@@ -649,8 +649,9 @@
    endif
    
    if (number_of_fatal_errors /= 0)  &
-      call exit_POP(sigAbort,'subroutine pop_init_partially_coupled')
-
+!jj special option for WaterPuck project 
+!jj      call exit_POP(sigAbort,'subroutine pop_init_partially_coupled')
+         write(stdout,'(A)') "CESM requires 'partially-coupled' option"
 #endif
 !-----------------------------------------------------------------------
 !EOC

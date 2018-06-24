@@ -121,6 +121,7 @@ SUBROUTINE shr_flux_atmOcn(nMax  ,zbot  ,ubot  ,vbot  ,thbot ,   &
    real(R8),parameter :: umin  =  0.5_R8 ! minimum wind speed       (m/s)
    real(R8),parameter :: zref  = 10.0_R8 ! reference height           (m)
    real(R8),parameter :: ztref =  2.0_R8 ! reference height for air T (m)
+   real(R8),parameter :: ulim = 25.0_R8  ! for drag manipulation
 
    !--- local variables --------------------------------
    integer(IN) :: n      ! vector loop index
@@ -164,7 +165,8 @@ SUBROUTINE shr_flux_atmOcn(nMax  ,zbot  ,ubot  ,vbot  ,thbot ,   &
    real(R8)    :: xd     ! dummy arg ~ ?
  
    qsat(Tk)   = 640380.0_R8 / exp(5107.4_R8/Tk)
-   cdn(Umps)  =   0.0027_R8 / Umps + 0.000142_R8 + 0.0000764_R8 * Umps
+!jj   cdn(Umps)  =   0.0027_R8 / Umps + 0.000142_R8 + 0.0000764_R8 * Umps
+   cdn(Umps)  =   0.0027_R8 / Umps + 0.000142_R8 + 0.0000764_R8 * Umps - 3.14807e-13_r8 * Umps**6
    psimhu(xd) = log((1.0_R8+xd*(2.0_R8+xd))*(1.0_R8+xd*xd)/8.0_R8) - 2.0_R8*atan(xd) + 1.571_R8
    psixhu(xd) = 2.0_R8 * log((1.0_R8 + xd*xd)/2.0_R8)
  
@@ -212,7 +214,9 @@ SUBROUTINE shr_flux_atmOcn(nMax  ,zbot  ,ubot  ,vbot  ,thbot ,   &
    
         !--- neutral coefficients, z/L = 0.0 ---
         stable = 0.5_R8 + sign(0.5_R8 , delt)
-        rdn    = sqrt(cdn(vmag))
+!jj        rdn    = sqrt(cdn(vmag))
+        rdn    = sqrt(cdn(min(vmag,ulim)))
+!        if (vmag >= 33._r8) rdn = sqrt(0.00234_r8)
         rhn    = (1.0_R8-stable) * 0.0327_R8 + stable * 0.018_R8 
         ren    = 0.0346_R8 
    
@@ -236,7 +240,8 @@ SUBROUTINE shr_flux_atmOcn(nMax  ,zbot  ,ubot  ,vbot  ,thbot ,   &
         u10n = vmag * rd / rdn 
    
         !--- update transfer coeffs at 10m and neutral stability ---
-        rdn = sqrt(cdn(u10n))
+        rdn = sqrt(cdn(min(u10n,ulim)))
+!        if (u10n >= 33._r8) rdn=sqrt(0.00234_r8)
         ren = 0.0346_R8
         rhn = (1.0_R8-stable)*0.0327_R8 + stable * 0.018_R8 
     
@@ -269,7 +274,8 @@ SUBROUTINE shr_flux_atmOcn(nMax  ,zbot  ,ubot  ,vbot  ,thbot ,   &
         u10n = vmag * rd/rdn 
     
         !--- update transfer coeffs at 10m and neutral stability ---
-        rdn = sqrt(cdn(u10n))
+        rdn = sqrt(cdn(min(u10n,ulim)))
+!        if (u10n >= 33._r8) rdn=sqrt(0.00234_r8)
         ren = 0.0346_R8
         rhn = (1.0_R8 - stable)*0.0327_R8 + stable * 0.018_R8 
    

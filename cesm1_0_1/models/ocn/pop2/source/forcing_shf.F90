@@ -24,6 +24,7 @@
    use time_management
    use prognostic
    use exit_mod
+   use forcing_pt_interior, only:PT_RST_MASK
 
    implicit none
    private
@@ -1415,7 +1416,7 @@
          do iblock=1,nblocks_clinic
             STF(:,:,1,iblock) = (SHF_DATA(:,:,iblock,shf_data_sst,0) - &
                                  TRACER(:,:,1,1,curtime,iblock))*      &
-                                shf_restore_rtau*dz(1)
+                                shf_restore_rtau*dz(1)*PT_RST_MASK(:,:,iblock)
          end do
          !$OMP END PARALLEL DO
 
