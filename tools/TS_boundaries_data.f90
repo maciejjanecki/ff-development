@@ -13,6 +13,7 @@
  integer :: yy,mm,dd,hh,dayOfYear
  character(len=8),dimension(4) :: outFNames
  character*256 :: inFile,outFile
+ character*4   ::sDateC,eDateC
 
 !ustawienia*
  data sDate /2011, 1, 1, 1/ !data poczatkowa 
@@ -22,7 +23,10 @@
  data hours /3,9,15,21/
  data outFnames /"SST","SSS","TEMP3D","SALT3D"/
 
- pathIn  = '../../tmp_data/ARTUR/lbc/2011'
+ write(sDateC,'(i4.4)') sdate(1)
+ write(eDateC,'(i4.4)') edate(1)
+
+ pathIn  = '../../tmp_data/ARTUR/lbc/'//sDateC
  pathOut = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/forcing' 
  1000 format(i4.4,'-',i2.2,'-',i2.2,'-',i5.5,'_',a4,'_1000_0640_0033_0001.ieeer8') 
  1010 format(A,'.',i4.4,'.',i3.3,'.',i2.2)
@@ -48,9 +52,9 @@
               do kk=1,nk
                  read(10,rec=kk) odata(:,:,kk)
                  odata(:,:,kk) = odata(:,:,kk)*factors(ii)
-                 write(*,'(i4,2f14.6,"   ",A)') kk,maxval(odata(:,:,kk)),minval(odata(:,:,kk)),tracer(ii) 
+!                 write(*,'(i4,2f14.6,"   ",A)') kk,maxval(odata(:,:,kk)),minval(odata(:,:,kk)),tracer(ii) 
                  write(outFile,"(a4,i2.2,'.bin')") tracer(ii),kk
-                 write(*,'(A)') outFile
+!                 write(*,'(A)') outFile
                  open(22,file=trim(outFile),status='replace',access='direct', &
                            form='unformatted',recl=ni*nj*8)
                  write(22,rec=1) odata(:,:,kk)
@@ -77,7 +81,7 @@
                  write(10,rec=kk) odata(:,:,kk) !write 3D data 
               enddo                
            enddo
-           stop
+!           stop
         enddo
         dayOfYear = dayOfYear + 1
      enddo !dd
