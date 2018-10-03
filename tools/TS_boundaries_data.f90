@@ -1,8 +1,8 @@
- program create_init_ts_bs01v1
+ program TS_boundaries_data
 
  integer,parameter :: ni=1000,nj=640,nk=33,mnths=12
 !ustawienia*
- integer, parameter :: nhours = 4,ntracers=2,yearOffset = -1
+ integer, parameter :: nhours = 4,ntracers=2,yearOffset = 0
  
 !***********
  real*8 :: t(nk),s(nk),odata(ni,nj,nk),factors(ntracers)
@@ -23,8 +23,8 @@
  data hours /3,9,15,21/
  data outFnames /"SST","SSS","TEMP3D","SALT3D"/
 
- write(sDateC,'(i4.4)') sdate(1)
- write(eDateC,'(i4.4)') edate(1)
+ write(sDateC,'(i4.4)') sDate(1)
+ write(eDateC,'(i4.4)') eDate(1)
 
  pathIn  = '../../tmp_data/ARTUR/lbc/'//sDateC
  pathOut = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/forcing' 
@@ -81,9 +81,10 @@
                  write(10,rec=kk) odata(:,:,kk) !write 3D data 
               enddo                
            enddo
-!           stop
+           stop
         enddo
         dayOfYear = dayOfYear + 1
+        
      enddo !dd
    enddo
  enddo

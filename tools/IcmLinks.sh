@@ -1,11 +1,11 @@
 #!/bin/bash
 
 ### please set number of months (12 o 10)
-nmonths=10
+nmonths=12
 
 
 my_pwd=$PWD
-cyy=2012
+cyy=2011
 syy=0001
 cmm=01
 cdd=01
@@ -16,7 +16,7 @@ pathOut=/scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs01v1/data
 
 mc=( 31 28 31 30 31 30 31 31 30 31 30 31 )
 
-cd /scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs01v1/data 
+cd $pathOut 
 while [[ $m -lt $nmonths ]]; do #### 12 ]]; do
   md=${mc[m]}
   let m=m+1
@@ -34,13 +34,12 @@ while [[ $m -lt $nmonths ]]; do #### 12 ]]; do
     fout=${syy}${mm}${dd}_115m.nc
     rm $fout
     ln -s $fin $fout    
-    echo $fin 
-    echo $fout
+    echo $fin $fout
     let d=d+1
   done
 done 
 pwd
-cd $PWD
+cd $my_pwd
 
 
 #for MC in {1..12}; 
