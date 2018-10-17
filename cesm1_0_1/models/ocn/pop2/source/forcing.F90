@@ -26,6 +26,7 @@
    use forcing_shf
    use forcing_sfwf
    use forcing_pt_interior
+   use assim_pt
    use forcing_s_interior
    use forcing_ap
    use forcing_coupled, only: set_combined_forcing, tavg_coupled_forcing,  &
@@ -151,6 +152,7 @@
    call init_shf (STF)
    call init_sfwf(STF)
    call init_pt_interior
+   call init_assim_pt
    call init_s_interior
    call init_ap(ATM_PRESS)
    call init_slvl(SEA_LEVEL)
@@ -296,6 +298,7 @@
 !-----------------------------------------------------------------------
 
    call get_pt_interior_data
+   call get_assim_pt_data
    call get_s_interior_data
 
 !-----------------------------------------------------------------------

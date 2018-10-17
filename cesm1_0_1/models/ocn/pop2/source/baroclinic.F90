@@ -58,6 +58,7 @@
    use forcing_sfwf, only: lfw_as_salt_flx
    use sw_absorption, only:  add_sw_absorb
    use forcing_pt_interior, only: set_pt_interior
+   use assim_pt, only: set_assim_pt
    use forcing_s_interior, only: set_s_interior
    use passive_tracers, only: set_interior_passive_tracers,  &
        reset_passive_tracers, tavg_passive_tracers, &
@@ -1877,6 +1878,7 @@
    WORKN = c0
 
    call set_pt_interior(k,this_block,WORKN(:,:,1))
+   call set_assim_pt(k,this_block,WORKN(:,:,1))
    call set_s_interior (k,this_block,WORKN(:,:,2))
 
 

@@ -33,13 +33,10 @@ cat >! $CASEROOT/${CASE}.${mach}.run << EOF1
 #===============================================================================
 
 #SBATCH -J ${jobname}
-#SBATCH -p batch
+#SBATCH -p test
 #SBATCH -N ${nodes}
 #SBATCH --ntasks-per-node ${taskpn}
-#SBATCH --mem 1000
 #SBATCH --time 01:00:00
-#SBATCH --mail-type=END
-#SBATCH --mail-user=maciej.janecki@gmail.com
 
 EOF1
 

@@ -1723,7 +1723,29 @@ cat >> $POP2BLDSCRIPT << EOF2
 
 EOF2
 
+#--------------------------------------------------------------------------
+# assim_pt_nml
+#--------------------------------------------------------------------------
 
+cat >> $POP2BLDSCRIPT << EOF2
+&assim_pt_nml
+   assim_pt_data_type         = 'n-hour'
+   assim_pt_data_inc          = 24.
+   assim_pt_interp_freq       = 'every-timestep'
+   assim_pt_interp_type       = 'nearest'
+   assim_pt_interp_inc        = 2.
+   assim_pt_restore_tau       = 2.
+   assim_pt_filename          = '/users/kdm/anowicki/CESM/inputdata/ocn/pop/bs01v1/assim/assim_pt'
+   assim_pt_file_fmt          = 'bin'
+   assim_pt_restore_max_level = 21 
+   assim_pt_formulation       = 'restoring'
+   assim_pt_data_renorm(1)    = 1.
+   assim_pt_variable_restore  = .false.
+   assim_pt_restore_filename  = 'unknown-assim_pt_restore'
+   assim_pt_restore_file_fmt  = 'bin'
+/
+
+EOF2
 
 #--------------------------------------------------------------------------
 # forcing_s_interior_nml
