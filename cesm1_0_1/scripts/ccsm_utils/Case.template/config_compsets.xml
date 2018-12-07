@@ -838,8 +838,9 @@
 
 <compset NAME="WaterPuckFC" SHORTNAME="WPFC"
          DESC="Puck Bay coupled ocean ice IOPAN version 115m  ICM atmospheric data"
-         COMP_ATM="datm" COMP_LND="slnd" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         COMP_ATM="datm" COMP_LND="dlnd" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
          DATM_MODE="COPYALL_WP"
+         DLND_RUNOFF_MODE="RUNOFF.WP01"
          OCN_COUPLING="partial"
          OCN_ICE_FORCING="active"
          CCSM_CCOST="-1"
@@ -858,6 +859,8 @@
          ATM_NCPL="288"
          CPL_EPBAL="ocn"
          CPL_ALBAV="true" />
+
+
 
 <compset NAME="ICM_2km_eco" SHORTNAME="eco"
          DESC="Baltic Sea coupled ocean ice IOPAN version 2km ICM atmospheric data with ecosystem"

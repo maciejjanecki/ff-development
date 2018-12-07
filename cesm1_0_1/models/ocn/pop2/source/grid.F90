@@ -125,7 +125,7 @@
    real (POP_r8), dimension(nx_block,ny_block,max_blocks_clinic), public :: &
       BBL_DRAG
    real (POP_r8), dimension(nx_block,ny_block,km,max_blocks_clinic), public :: amSmag
-   real (POP_r8), public :: amSmagDiag(2,km)
+   real (POP_r8), public :: amSmagDiag(2,km), lpoints
    real (POP_r8), parameter, public :: bbl_roughness_height = 0.5
 
    !*** 3d depth fields for partial bottom cells
@@ -140,6 +140,10 @@
       KMT            ,&! k index of deepest grid cell on T grid
       KMU            ,&! k index of deepest grid cell on U grid
       KMTOLD           ! KMT field before smoothing
+   integer (POP_i4), dimension(nx_block,ny_block,max_blocks_clinic), &
+      public :: LMASK !land mask
+   real (POP_r8), dimension(nx_block,ny_block,max_blocks_clinic), public :: &
+      RLMASK 
 
    logical (POP_logical), dimension(nx_block,ny_block,max_blocks_clinic), &
       public :: &
@@ -873,6 +877,11 @@
                               'Error writing topography_outfile')
       if (my_task == master_task) deallocate(KMT_G)
    endif
+   LMASK = 0
+   where (KMT > 0) LMASK = 1
+   RLMASK = real(LMASK,r8)
+
+   lpoints = global_sum(LMASK, distrb_clinic, field_loc_center)
 
    !***
    !*** set up partial bottom cells

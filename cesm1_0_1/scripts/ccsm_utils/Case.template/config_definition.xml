@@ -961,7 +961,7 @@ inside strings.
 
 <entry id="DLND_RUNOFF_MODE" 
  type="char"
- valid_values="CPLHIST,RX1,NULL,RUNOFF.BS2" 
+ valid_values="CPLHIST,RX1,NULL,RUNOFF.BS2,RUNOFF.WP01" 
  value="RX1" 
  group="conf_dlnd"
  sdesc="valid values: CPLHIST,RX1,NULL" 

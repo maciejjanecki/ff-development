@@ -34,7 +34,8 @@
        PSURF, curtime, oldtime, newtime, PGUESS, slvl_assimilation, SSH_EXT
    use operators, only: grad, div
    use grid, only: sfc_layer_type, sfc_layer_varthick, TAREA, REGION_MASK,    &
-          KMT, FCOR, HU, CALCT, sfc_layer_rigid, sfc_layer_oldfree 
+          KMT, FCOR, HU, CALCT, sfc_layer_rigid, sfc_layer_oldfree, &
+          LMASK,RLMASK,lpoints 
    use time_management, only: mix_pass, leapfrogts, impcor, c2dtu, theta,     &
           gamma, f_euler_ts, beta, c2dtp, dtp, iyear,iyear0,tsecond
    use global_reductions, only: global_sum
@@ -377,6 +378,7 @@
 
    type (block) ::     &
       this_block        ! block information for current block
+   real (r8) :: asum
 
 !-----------------------------------------------------------------------
 !
@@ -392,6 +394,9 @@
    else
        slFact = slFactLimit
    endif
+
+
+   
 
    do iblock = 1,nblocks_clinic
       this_block = get_block(blocks_clinic(iblock),iblock)  
@@ -584,7 +589,10 @@
 !  solve elliptic equation for surface pressure
 !
 !-----------------------------------------------------------------------
-
+   asum = global_sum(PSURF(:,:,curtime,:), distrb_clinic, field_loc_center,RLMASK)
+   asum = asum/real(lpoints,r8)
+!   write(*,*) 'lpoints/asum = ',lpoints,asum,PSURF(10,12,curtime,:)
+   where (LMASK == 1) PSURF(:,:,curtime,:) = PSURF(:,:,curtime,:) - asum
    call POP_SolversRun(PSURF(:,:,newtime,:), RHS, errorCode)
 
    if (errorCode /= POP_Success) then
@@ -599,6 +607,9 @@
 !
 !-----------------------------------------------------------------------
 
+!   asum = global_sum(PSURF(:,:,newtime,:), distrb_clinic, field_loc_center)
+!   asum = asum/real(lpoints,r8)
+!   PSURF(:,:,newtime,:) = PSURF(:,:,newtime,:) - asum
    if (sfc_layer_type == sfc_layer_varthick) then
 
       !$OMP PARALLEL DO PRIVATE(iblock)

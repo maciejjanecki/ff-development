@@ -1,8 +1,13 @@
  ! NOAA/PMEL TMAP
  ! FERRET v6.93  
  ! Linux 2.6.32-504.el6.x86_64 64-bit - 11/13/14
- !  2-Oct-18 21:44     
+ !  7-Dec-18 11:16     
 
-go plot_ts.jnl
-shade s25*1000
+for plot_rst_mask.jnl
+go plot_rst_mask.jnl
+FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap "../../cesm_input_data/ocn/pop/bs01v1/forcing/tsrst_mask.bin"
+SET DATA/EZ/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap tsrst_mask.bin
+shade ss
+FILE/VAR=ss/GRID=g10x5/FORMAT=stream/type=r8/swap "../../cesm_input_data/ocn/pop/bs01v1/forcing/slvl_mask.bin"
+shade ss
 exit
