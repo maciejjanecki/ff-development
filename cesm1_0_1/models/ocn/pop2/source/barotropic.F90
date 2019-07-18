@@ -689,13 +689,13 @@
                                          WORKY(:,:,iblock))
  
       endif
-!jj and Robert filter for barotropic components
+!jj and Roberts filter for barotropic components for testing only 
       UBTROP(:,:,newtime,iblock) = UBTROP(:,:,newtime,iblock)*0.70_r8 &
-                                 + UBTROP(:,:,curtime,iblock)*0.25_r8 &
-                                 + UBTROP(:,:,oldtime,iblock)*0.05_r8
+                                 + UBTROP(:,:,curtime,iblock)*0.30_r8 !&
+                                 !+ UBTROP(:,:,oldtime,iblock)*0.10_r8
       VBTROP(:,:,newtime,iblock) = VBTROP(:,:,newtime,iblock)*0.70_r8 &
-                                 + VBTROP(:,:,curtime,iblock)*0.25_r8 &
-                                 + VBTROP(:,:,oldtime,iblock)*0.05_r8
+                                 + VBTROP(:,:,curtime,iblock)*0.30_r8 !&
+                                 !+ VBTROP(:,:,oldtime,iblock)*0.10_r8
 
 !-----------------------------------------------------------------------
 !

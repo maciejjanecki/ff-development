@@ -635,10 +635,10 @@ contains
           call exit_POP(sigAbort, 'ERROR in step')
        endif
 
-       if (check_KE(1000.0_r8)) then  !jj for the Baltic Sea
+       if (check_KE(2000.0_r8)) then  !jj for the Baltic Sea
           !*** exit if energy is blowing
           call output_driver
-          call exit_POP(sigAbort,'ERROR: k.e. > 1000 ')
+          call exit_POP(sigAbort,'ERROR: k.e. > 2000 ')
        endif
        call output_driver
        

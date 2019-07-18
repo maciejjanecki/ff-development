@@ -5,14 +5,18 @@ nmonths=6
 
 
 my_pwd=$PWD
-cyy=2015
+cyy=2013
 syy=0001
 cmm=01
 cdd=01
 
 pathIn=/scratch/lustre/plgjjakacki/LD/tmp_data/ARTUR/ICM/ICM_${cyy}_115m
 pathOut=/scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs01v1/data_v2
+#pathOut=/scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs01v1/data
+echo $pathIn
+echo $pathOut
 
+#exit
 
 mc=( 31 28 31 30 31 30 31 31 30 31 30 31 )
 

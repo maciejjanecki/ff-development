@@ -16,8 +16,8 @@
  character*4   ::sDateC,eDateC
 
 !ustawienia*
- data sDate /2015, 1, 1, 1/ !data poczatkowa 
- data eDate /2015,12,31, 4/ !data koncowa
+ data sDate /2018, 1, 1, 1/ !data poczatkowa 
+ data eDate /2018,12,31, 4/ !data koncowa
  data seconds /3600,25200,46800,68400/
 ! data hours /0,6,12,18/
  data hours /3,9,15,21/

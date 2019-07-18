@@ -120,6 +120,12 @@
    logical (POP_logical), save ::    &
       first_call = .true.          ! flag for initializing timers
 
+   logical (POP_logical), save ::    &
+      tracers_first_call = .true.          ! flag for changin salinity in the model (only one time)
+
+
+
+
    logical (POP_logical), save :: lsmag_diag = .false.
 
    type (block) ::        &
@@ -253,7 +259,18 @@
 !     time (n) variables.
 !
 !-----------------------------------------------------------------------
-
+!jj      if (tracers_first_call) then
+!jj         !$OMP PARALLEL DO PRIVATE(iblock)
+!jj         do iblock = 1,nblocks_clinic
+!jj            !  (nx_block,ny_block,km,nt,3,max_blocks_clinic)
+!jj            TRACER(:,:,:,2,:,iblock) = &
+!jj            TRACER(:,:,:,2,:,iblock) - 1.5_r8/1000._r8
+!jj            where(TRACER(:,:,:,2,:,iblock) < 0._r8) &
+!jj                  TRACER(:,:,:,2,:,iblock) = c0
+!jj         end do
+!jj         tracers_first_call = .false.
+!jj         !$OMP END PARALLEL DO
+!jj       endif
 
       if (mix_pass == 1) then
 

@@ -130,7 +130,7 @@
 !
 !-----------------------------------------------------------------------
 
-   include 'mpif.h'  ! MPI Fortran include file
+!jj   include 'mpif.h'  ! MPI Fortran include file
 
    type (distrb), intent(in) :: &
       dist                 ! distribution from which this is called
