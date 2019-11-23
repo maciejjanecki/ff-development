@@ -1,0 +1,9 @@
+DEFINE AXIS/X=1:1000:1 x10
+DEFINE AXIS/Y=1:640:1 y5
+DEFINE GRID/X=x10/Y=y5 g10x5
+FILE/VAR=s01/GRID=g10x5/FORMAT=stream/type=r8/swap SALT01.bin
+shade s01
+set win 2
+FILE/VAR=s25/GRID=g10x5/FORMAT=stream/type=r8/swap SALT25.bin
+shade s25
+

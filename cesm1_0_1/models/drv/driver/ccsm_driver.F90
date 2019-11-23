@@ -798,7 +798,7 @@ program ccsm_driver
    ! Set domain check and other flag
    !-----------------------------------------------------------------------------
 
-   domain_check = .true.
+   domain_check = .false.
    if (single_column         ) domain_check = .false.
    if (dead_comps            ) domain_check = .false.
 

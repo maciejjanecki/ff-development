@@ -472,7 +472,7 @@
             MAP_R2O_FILE_R05="idmap"
             MAP_R2O_FILE_R19="idmap"
             MAP_R2O_FILE_RX1="idmap"
-            DESC="Baltic Sea 500m - FindFish project" />
+            DESC="Baltic Proper 500m, same grid, preliminary version " />
 
 
 <horiz_grid GRID="bs01v1_bs01v1" SHORTNAME="b01_b01"
@@ -494,5 +494,25 @@
             MAP_R2O_FILE_R19="idmap"
             MAP_R2O_FILE_RX1="idmap"
             DESC="Puck Bay 115 meters same grid, version 1.0" />
+
+<horiz_grid GRID="bs05v1_bs05v1" SHORTNAME="b05_b05"
+            ATM_GRID="bs05v1" LND_GRID="bs05v1" OCN_GRID="bs05v1" ICE_GRID="bs05v1"
+            ATM_NCPL="288" OCN_NCPL="288"
+            CAM_DYCORE="fv"
+            NPFIX="FALSE"
+            CCSM_GCOST="0"
+            EPS_AGRID="1.0e-06"
+            MAP_A2OF_FILE="idmap"
+            MAP_A2OS_FILE="idmap"
+            MAP_O2AF_FILE="idmap"
+            MAP_O2AS_FILE="idmap"
+            MAP_A2LF_FILE="idmap"
+            MAP_A2LS_FILE="idmap"
+            MAP_L2AF_FILE="idmap"
+            MAP_L2AS_FILE="idmap"
+            MAP_R2O_FILE_R05="idmap"
+            MAP_R2O_FILE_R19="idmap"
+            MAP_R2O_FILE_RX1="idmap"
+            DESC="Gdansk Bay 575 meters same grid, version 1.0" />
 
 </config_horiz_grid>

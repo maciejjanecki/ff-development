@@ -17,10 +17,10 @@ else
    echo " "
    echo "   =============================================================="
    echo "   FATAL ERROR detected building pop2_in:                        "
-   echo "     ${OCN_GRID} is not a supported grid.               "
+   echo "     ${OCN_GRID} is not a supported grid.                        "
    echo "     Supported grids are: gx3v5, gx3v7, gx1v5, gx1v5a, gx1v5b,   "
    echo "                          gx1v6 and tx0.1v2                      "
-   echo "     Baltic Sea grids: bs9v1,bs9v2,bs2v1,bs2v2,bs01v1                    "
+   echo "     Baltic Sea grids: bs9v1,bs9v2,bs2v1,bs2v2,bs01v1,bs05v1     "
   #echo "     Experimental grid: gx3v6                                    "
   #echo "     Testing grids:   tx1v1                                      "
    echo "   =============================================================="
@@ -164,6 +164,8 @@ else if ( ${OCN_GRID} =~ bs2* ) then
   setenv DT_COUNT 576
 else if ( ${OCN_GRID} =~ bs01* ) then
   setenv DT_COUNT 2800
+else if ( ${OCN_GRID} =~ bs05* ) then
+  setenv DT_COUNT 576
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -344,6 +346,17 @@ else
   set tdiag_freq_opt     = 'never'
 endif
 
+if (\${OCN_GRID} =~ bs05* ) then
+  set tdiag_freq_opt     = 'never'
+  set diag_global_freq_opt = nhour
+  set diag_global_freq     = 6
+  set diag_cfl_freq_opt    = nday
+  set diag_cfl_freq        = 15
+  set diag_transp_freq     = 1.e30
+else
+  set tdiag_freq_opt     = 'never'
+endif
+
 cat >> \$POP2_IN << EOF1
 &diagnostics_nml
    diag_global_freq_opt   = '\$diag_freq_opt'
@@ -404,7 +417,10 @@ else if (${OCN_GRID} =~ bs2* ) then
   set ldiag_bsf = .true.
 else if (${OCN_GRID} =~ bs01* ) then
   set ldiag_bsf = .true.
+else if (${OCN_GRID} =~ bs05* ) then
+  set ldiag_bsf = .true.
 endif
+
 
 cat >> $POP2BLDSCRIPT << EOF2
 &bsf_diagnostic_nml
@@ -516,6 +532,25 @@ else if ( ${OCN_GRID} =~ bs01* ) then
   set tavg_offset_day_values       = (    2    )
   set ltavg_one_time_header        = (.false.)
   set ltavg_nino_diags_requested   = .false.
+else if ( ${OCN_GRID} =~ bs05* ) then
+  #------------------- shut off time-invariant stream until vertical grid issues are resolved
+  set n_tavg_streams               = 1
+  set ltavg_streams_index_present  = .true.
+  set tavg_freq_opt_values         = ("'nhour'")
+  set tavg_freq_values             = (    6    )
+  set tavg_stream_filestrings      = ("'FF.hydro.stream1'" )
+  set tavg_file_freq_opt           = ("'nday'")
+  set tavg_file_freq_values        = (    1    )
+  set tavg_start_opt_values        = ("'nstep'")
+  set tavg_start_values            = (    0    )
+  set tavg_fmt_in_values           = ("'nc'"   )
+  set tavg_fmt_out_values          = ("'nc'"   )
+  set ltavg_has_offset_date_values = (.false.  )
+  set tavg_offset_year_values      = (    1    )
+  set tavg_offset_month_values     = (    1    )
+  set tavg_offset_day_values       = (    2    )
+  set ltavg_one_time_header        = (.false.)
+  set ltavg_nino_diags_requested   = .false.
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -560,6 +595,10 @@ EOF2
 set history_freq_opt  = never
 set history_freq      = 1e30
 if (${OCN_GRID} =~ bs01v1 ) then
+  set history_freq_opt = never
+  set history_freq = 1e30
+endif
+if (${OCN_GRID} =~ bs05v1 ) then
   set history_freq_opt = never
   set history_freq = 1e30
 endif
@@ -883,6 +922,10 @@ else if (${OCN_GRID} =~ bs01* ) then
   set hmix_momentum_choice = 'del4'
   set hmix_tracer_choice   = 'del4'
   set lsubmesoscale_mixing = .false.
+else if (${OCN_GRID} =~ bs05* ) then
+  set hmix_momentum_choice = 'del4'
+  set hmix_tracer_choice   = 'del4'
+  set lsubmesoscale_mixing = .false.
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -924,6 +967,10 @@ else if ( ${OCN_GRID} =~ bs2* ) then
   set lvariable_hmix  = .false.
   set am_del2_value   = 0.5e8
 else if ( ${OCN_GRID} =~ bs01* ) then
+  set lauto_hmix      = .false.
+  set lvariable_hmix  = .false.
+  set am_del2_value   = 0.5e8
+else if ( ${OCN_GRID} =~ bs05* ) then
   set lauto_hmix      = .false.
   set lvariable_hmix  = .false.
   set am_del2_value   = 0.5e8
@@ -971,6 +1018,10 @@ else if ( ${OCN_GRID} =~ bs01* ) then
   set lauto_hmix      = .false.
   set lvariable_hmix  = .false.
   set ah_del2_value   = 1.0e7
+else if ( ${OCN_GRID} =~ bs05* ) then
+  set lauto_hmix      = .false.
+  set lvariable_hmix  = .false.
+  set ah_del2_value   = 1.0e9
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1007,6 +1058,10 @@ else if ( ${OCN_GRID} =~ bs01* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
   set am_del4_value    = -1.e10
+else if ( ${OCN_GRID} =~ bs05* ) then
+  set lauto_hmix       = .false.
+  set lvariable_hmix   = .false.
+  set am_del4_value    = -3.e16
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1043,6 +1098,10 @@ else if ( ${OCN_GRID} =~ bs01* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
   set ah_del4_value    = -0.1e10
+else if ( ${OCN_GRID} =~ bs05* ) then
+  set lauto_hmix       = .false.
+  set lvariable_hmix   = .false.
+  set ah_del4_value    = -0.3e16
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1147,6 +1206,17 @@ else if ( ${OCN_GRID} =~ bs2* ) then
       set ah_bkg_srfbl   = 4.0e7
    endif
 else if ( ${OCN_GRID} =~ bs01* ) then
+   set diag_gm_bolus = .true.
+   if ($kappa_isop_choice == 'constant' && $kappa_thic_choice == 'constant') then
+      set ah_gm_value    = 0.8e7
+      set ah_bolus       = 0.8e7
+      set ah_bkg_srfbl   = 0.8e7
+   else if ($kappa_isop_choice == 'bfre' && $kappa_thic_choice == 'bfre') then
+      set ah_gm_value    = 4.0e7
+      set ah_bolus       = 4.0e7
+      set ah_bkg_srfbl   = 4.0e7
+   endif
+else if ( ${OCN_GRID} =~ bs05* ) then
    set diag_gm_bolus = .true.
    if ($kappa_isop_choice == 'constant' && $kappa_thic_choice == 'constant') then
       set ah_gm_value    = 0.8e7
@@ -1326,6 +1396,23 @@ else if ( ${OCN_GRID} =~ bs01* ) then
  set vconst_5  =  3
  set vconst_6  = 1.0e7
  set vconst_7  = 90.0
+else if ( ${OCN_GRID} =~ bs05* ) then
+ set hmix_alignment_choice =  grid
+ set lvariable_hmix_aniso  =  .true.
+ set lsmag_aniso           =  .false.
+ set visc_para =  1.0
+ set visc_perp =  1.0
+ set c_para    =  0.0
+ set c_perp    =  0.0
+ set u_para    =  0.0
+ set u_perp    =  0.0
+ set vconst_1  =  1.0e7
+ set vconst_2  = 24.5
+ set vconst_3  =  0.2
+ set vconst_4  =  1.0e-8
+ set vconst_5  =  3
+ set vconst_6  = 1.0e7
+ set vconst_7  = 90.0
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1454,6 +1541,19 @@ if ( ${OCN_GRID} =~ bs01* ) then
    set slvl_data_renorm    = 100.
    set slvl_mask           = .true.
    set slvl_mask_file      = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/slvl_mask.bin
+   set slvl_mask_file_fmt  = bin
+endif
+if ( ${OCN_GRID} =~ bs05* ) then
+   set slvl_data_type      = none
+   set slvl_data_inc       = 6
+   set slvl_interp_freq    = every-timestep
+   set slvl_interp_type    = linear
+   set slvl_interp_inc     = 1.e20
+   set slvl_filename       = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/forcing/SSH
+   set slvl_file_fmt       = bin
+   set slvl_data_renorm    = 100.
+   set slvl_mask           = .true.
+   set slvl_mask_file      = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/slvl_mask.bin
    set slvl_mask_file_fmt  = bin
 endif
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1589,6 +1689,39 @@ if ( ${OCN_GRID} =~ bs01* ) then
   set lfw_as_salt_flx        = .true.
   set lsend_precip_fact      = .false.
 endif
+if ( ${OCN_GRID} =~ bs05* ) then
+  set lms_balance      = .false.
+  set shf_formulation      = restoring
+  set shf_data_type        = none
+  set shf_data_inc     = 6.
+  set shf_interp_freq      = never
+  set shf_interp_type      = linear
+  set shf_interp_inc       = 72.
+  set shf_restore_tau      = 1.e30
+  set shf_file_fmt         = bin
+  set shf_data_renorm3     = 1.
+  set shf_weak_restore     = 0.
+  set shf_strong_restore   = 0.0
+  set luse_cpl_ifrac   = .false.
+  set shf_strong_restore_ms = 92.64
+########## sfwf
+  set sfwf_formulation       = restoring
+  set sfwf_data_type         = none
+  set sfwf_data_inc          = 6.
+  set sfwf_interp_freq       = never
+  set sfwf_interp_type       = linear
+  set sfwf_interp_inc        = 72.
+  set sfwf_restore_tau       = 1.e30
+  set sfwf_file_fmt          = bin
+  set sfwf_data_renorm1      = 0.001
+  set sfwf_weak_restore      = 0.0115
+  set sfwf_strong_restore    = 0.0
+  set sfwf_strong_restore_ms = 0.6648
+  set ladjust_precip         = .false.
+  set lms_balance            = .false.
+  set lfw_as_salt_flx        = .true.
+  set lsend_precip_fact      = .false.
+endif
 
 
 #--------------------------------------------------------------------------
@@ -1630,6 +1763,8 @@ else if ( ${OCN_GRID} == tx0.1v2 ) then
 else if ( ${OCN_GRID} =~ bs9* ) then
  set sfwf_weak_restore = 0.0115
 else if ( ${OCN_GRID} =~ bs01* ) then
+ set sfwf_weak_restore = 0.0115
+else if ( ${OCN_GRID} =~ bs05* ) then
  set sfwf_weak_restore = 0.0115
 endif
 
@@ -1700,6 +1835,25 @@ if ( ${OCN_GRID} =~ bs01v1 ) then
   set pt_mask_file = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/tsrst_mask.bin
   set pt_mask_file_fmt = bin
 endif
+if ( ${OCN_GRID} =~ bs05v1 ) then
+  set pt_data_type         = none
+  set pt_data_inc          = 6
+  set pt_interp_freq       = every-timestep
+  set pt_interp_type       = linear
+  set pt_interp_inc        = 72.
+  set pt_restore_tau       = 0.5
+  set pt_filename          = unknown-pt_interior
+  set pt_file_fmt          = bin
+  set pt_restore_max_level = 33
+  set pt_formulation       = restoring
+  set pt_data_renorm       = 1.
+  set pt_variable_restore  = .false.
+  set pt_restore_filename  = unknown-pt_interior_restore
+  set pt_restore_file_fmt  = bin
+  set pt_mask     = .true.
+  set pt_mask_file = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/tsrst_mask.bin
+  set pt_mask_file_fmt = bin
+endif
 cat >> $POP2BLDSCRIPT << EOF2
 &forcing_pt_interior_nml
    pt_interior_data_type         = '$pt_data_type'
@@ -1762,6 +1916,25 @@ if ( ${OCN_GRID} =~ bs01v1) then
   set s_restore_file_fmt  = bin
   set s_mask     = .true.
   set s_mask_file = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/tsrst_mask.bin
+  set s_mask_file_fmt = bin
+endif
+if ( ${OCN_GRID} =~ bs05v1) then
+  set s_data_type         = none
+  set s_data_inc          = 6
+  set s_interp_freq       = every-timestep
+  set s_interp_type       = linear
+  set s_interp_inc        = 72.
+  set s_restore_tau       = 0.5
+  set s_filename          = unknown-pt_interior
+  set s_file_fmt          = bin
+  set s_restore_max_level = 33
+  set s_formulation       = restoring
+  set s_data_renorm       = 1.
+  set s_variable_restore  = .false.
+  set s_restore_filename  = unknown-pt_interior_restore
+  set s_restore_file_fmt  = bin
+  set s_mask     = .true.
+  set s_mask_file = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/tsrst_mask.bin
   set s_mask_file_fmt = bin
 endif
 
@@ -1865,6 +2038,8 @@ else if ( ${OCN_GRID} =~ bs2* ) then
     set qsw_distrb_opt = cosz
 else if ( ${OCN_GRID} =~ bs01* ) then
     set qsw_distrb_opt = cosz
+else if ( ${OCN_GRID} =~ bs05* ) then
+    set qsw_distrb_opt = cosz
 endif 
 
 #@ ny = \$ntask / \$NX; setenv NY \$ny
@@ -1897,6 +2072,9 @@ if ( ${OCN_GRID} =~ bs2* ) then
    set sw_absorption_type = jerlov
 endif
 if (${OCN_GRID} =~ bs01* ) then
+   set sw_absorption_type = jerlov
+endif
+if (${OCN_GRID} =~ bs05* ) then
    set sw_absorption_type = jerlov
 endif
 

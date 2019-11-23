@@ -601,6 +601,7 @@
       
   else
       allocate(SLVL_MASK(nx_block,ny_block,max_blocks_clinic))
+      allocate(SLVL_OUT_MASK(nx_block,ny_block,max_blocks_clinic))
       SLVL_MASK = 1._r8
       SLVL_OUT_MASK = 1._r8
   endif

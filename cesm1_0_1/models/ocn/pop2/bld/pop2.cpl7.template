@@ -421,6 +421,8 @@ echo  Begin identifying and collecting all pop2 input datasets                >>
     set sfwf_filename         = 'unknown_sfwf'
     set tidal_mixing_filename = 'unknown_tidal_mixing'
     set topography_filename   = 'unknown_topography'
+    set pt_interior_file      = 'unknown_pt_interior_file'
+    set s_interior_file       = 'unknown_s_interior_file'
 
 EOF2
 
