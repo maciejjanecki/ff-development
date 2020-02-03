@@ -5,7 +5,7 @@ nmonths=12
 
 
 my_pwd=$PWD
-cyy=2018
+cyy=2019
 syy=0001
 cmm=01
 cdd=01
@@ -20,7 +20,8 @@ echo $pathOut
 
 mc=( 31 28 31 30 31 30 31 31 30 31 30 31 )
 
-cd $pathOut 
+cd $pathOut
+m=5 
 while [[ $m -lt $nmonths ]]; do #### 12 ]]; do
   md=${mc[m]}
   let m=m+1
@@ -34,7 +35,8 @@ while [[ $m -lt $nmonths ]]; do #### 12 ]]; do
     if [[ $d -le 9 ]]
          then dd=0${d}
     fi  
-    fin=${pathIn}/${cyy}${mm}${dd}_115m.nc
+    #fin=${pathIn}/${cyy}${mm}${dd}_115m.nc
+    fin=${pathIn}/2019${mm}${dd}_115m.nc
     fout=${syy}${mm}${dd}_115m.nc
     rm $fout
     ln -s $fin $fout    

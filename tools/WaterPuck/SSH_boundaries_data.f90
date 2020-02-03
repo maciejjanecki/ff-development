@@ -18,15 +18,15 @@
  kmtFile = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/kmt.bs01v1.ocn.20180432.ieeer4'
 
 !ustawienia*
- data sDate /2018, 1, 1, 1/ !data poczatkowa 
- data eDate /2018,12,31, 4/ !data koncowa
+ data sDate /2019, 1, 1, 1/ !data poczatkowa 
+ data eDate /2019,12,31, 4/ !data koncowa
  data seconds /3600,25200,46800,68400/
 ! data hours /0,6,12,18/
  data hours /3,9,15,21/
  data outFnames /"SSH"/
 
 ! pathIn  = '../../tmp_data/ARTUR/lbc/2011'
- 2000 format('../../tmp_data/ARTUR/lbc/',i4.4)
+ 2000 format('../../../tmp_data/ARTUR/lbc/',i4.4)
  write(pathIn,2000) sDate(1)
  pathIn = trim(pathIn)
  pathOut = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/forcing'

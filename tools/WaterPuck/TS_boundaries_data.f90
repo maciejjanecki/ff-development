@@ -16,8 +16,8 @@
  character*4   ::sDateC,eDateC
 
 !ustawienia*
- data sDate /2018, 1, 1, 1/ !data poczatkowa 
- data eDate /2018,12,31, 4/ !data koncowa
+ data sDate /2019, 1, 1, 1/ !data poczatkowa 
+ data eDate /2019,12,31, 4/ !data koncowa
  data seconds /3600,25200,46800,68400/
 ! data hours /0,6,12,18/
  data hours /3,9,15,21/
@@ -26,7 +26,7 @@
  write(sDateC,'(i4.4)') sDate(1)
  write(eDateC,'(i4.4)') eDate(1)
 
- pathIn  = '../../tmp_data/ARTUR/lbc/'//sDateC
+ pathIn  = '../../../tmp_data/ARTUR/lbc/'//sDateC
  pathOut = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/forcing' 
  1000 format(i4.4,'-',i2.2,'-',i2.2,'-',i5.5,'_',a4,'_1000_0640_0033_0001.ieeer8') 
  1010 format(A,'.',i4.4,'.',i3.3,'.',i2.2)
