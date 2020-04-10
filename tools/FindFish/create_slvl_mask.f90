@@ -1,22 +1,29 @@
- program create_init_ts_bs01v1
+ program create_sea_level_mask !find fish
 
  integer,parameter :: ni=1000,nj=640,nk=33,r8=selected_real_kind(13)
- real*8 :: t(nk),s(nk),odata(ni,nj),mask(ni,nj),srm,otmp(ni,nj),dN,dp
+ real*8 :: t(nk),s(nk),odata(ni,nj),mask(ni,nj),srm,otmp(ni,nj),dN,dp,real_kmt_mask(ni,nj)
  integer :: ii,jj,kmt(ni,nj),kmtNew(ni,nj),imask(ni,nj),maskPoints,ib,jb,npoints
  logical :: res
  character*256 :: slvlFile,rstFile,dataPath, kmtFile
  integer :: slvlMaskPoints,rstMaskPoints,slvlNPoints,rstNPoints 
- slvlFile = 'slvl_mask.bin'
- rstFile  = 'tsrst_mask.bin'
- dataPath = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid'
-! kmt file /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/kmt.bs01v1.ocn.20180432.ieeer4 
- kmtFile = 'kmt.bs01v1.ocn.20180432.ieeer4'
- slvlMaskPoints=20
- rstMaskPoints =40
- slvlNPoints = 40
+ slvlFile = 'slvl_mask_ff_06032020.bin'
+ rstFile  = 'tsrst_mask_ff_06032020.bin'
+ dataPath = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid'
+! kmt file /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/kmt.bs05v1.ocn.20170627.ieeei4 
+ kmtFile = 'kmt.bs05v1.ocn.20170627.ieeei4'
+!read in kmt file
+  open(22,file=trim('kmt_file'),access='direct',form='unformatted', &
+               status='old',recl=ni*nj*4)
+  read(22,rec=1) imask
+  close(22)
+  real_kmt_mask = 0._r8
+  where (imask > 0) real_kmt_mask = 1._r8
+ slvlMaskPoints=34
+ rstMaskPoints =60
+ slvlNPoints = 44
  rstNPoints = 30 
- jb = 510
- ib = 1
+ jb = 300
+ ib = 3
  mask = 0._r8
  maskPoints=slvlMaskPoints
  npoints=slvlNPoints
@@ -33,7 +40,10 @@
     write(*,*) maskPoints+ii,':',ni,'|',jb,':',nj-maskPoints-1-ii,'|||',1._r8-real((ii-1),r8)*dp
  enddo
  !extend mask into whole domain
- where (mask <= 0.25_r8) mask=0.25_r8
+! where (mask <= 0.25_r8) mask=0.25_r8
+ mask = mask * real_kmt_mask
+ mask(50:100,300:325)=0._r8
+ mask(150:327,550:640)=0._r8
  write(*,*) trim(slvlFile)
  open(10,file=trim(slvlFile),access='direct',form='unformatted', &
                status='replace',recl=ni*nj*8)

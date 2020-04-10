@@ -5,4 +5,8 @@
     set init_ts_filename      = $DIN_LOC_ROOT/ocn/pop/bs05v1/ic/init_ts_file
     set horiz_grid_filename   = $DIN_LOC_ROOT/ocn/pop/bs05v1/grid/grid_bs05v1_1000x640.bin
     set topography_filename   = $DIN_LOC_ROOT/ocn/pop/bs05v1/grid/kmt.bs05v1.ocn.20170627.ieeei4
+    set shf_filename          = $DIN_LOC_ROOT/ocn/pop/bs05v1/forcing/SST
+    set sfwf_filename         = $DIN_LOC_ROOT/ocn/pop/bs05v1/forcing/SSS
     set regionmask_filename   = $DIN_LOC_ROOT/ocn/pop/bs05v1/grid/regionmask.bs05v1.ocn.20170627.ieeei4
+    set s_interior_file       = $DIN_LOC_ROOT/ocn/pop/bs05v1/forcing/SALT3D
+    set pt_interior_file      = $DIN_LOC_ROOT/ocn/pop/bs05v1/forcing/TEMP3D

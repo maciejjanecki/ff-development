@@ -16,8 +16,8 @@
  character*4   ::sDateC,eDateC
 
 !ustawienia*
- data sDate /2010, 1, 1, 1/ !data poczatkowa 
- data eDate /2010,12,31, 4/ !data koncowa
+ data sDate /2012, 1, 1, 1/ !data poczatkowa 
+ data eDate /2012,7,31, 4/ !data koncowa
  data seconds /3600,25200,46800,68400/
 ! data hours /0,6,12,18/
  data hours /3,9,15,21/
@@ -27,7 +27,8 @@
  write(eDateC,'(i4.4)') eDate(1)
 
 !!! >>>>>>  pathIn  = '../../tmp_data/ARTUR/lbc_FF/'//sDateC
- pathIn  = '../../../tmp_data/ARTUR/lbc_FF/2011'
+! pathIn  
+ 2000 format('../../../tmp_data/ARTUR/lbc_FF/',i4.4)
  pathOut = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/forcing' 
  1000 format(i4.4,'-',i2.2,'-',i2.2,'-',i5.5,'_',a4,'_1000_0640_0026_0001.ieeer8') 
  1010 format(A,'.',i4.4,'.',i3.3,'.',i2.2)
@@ -46,7 +47,8 @@
            do ii = 1,ntracers
               !read in data
  !!! =====>>>>>>             !!!!write(inFile,1000) yy,mm,dd,seconds(hh),tracer(ii)
-              write(inFile,1000) 2011,mm,dd,seconds(hh),tracer(ii)
+              write(pathIn,2000) yy
+              write(inFile,1000) yy,mm,dd,seconds(hh),tracer(ii)
               inFile = trim(pathIn)//'/'//trim(inFile)
               write(*,'(A)') trim(inFile)
               open(10,file=trim(inFile),status='old',access='direct', &

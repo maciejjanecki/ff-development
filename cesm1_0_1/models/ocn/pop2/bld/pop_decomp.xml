@@ -48,6 +48,29 @@
      <nlons>360</nlons>
      <nlats>240</nlats>
   </size>
+  <size res="bs05v1">
+     <nlons>1000</nlons>
+     <nlats>640</nlats>
+  </size>
+  
+
+<!-- -------------------------------------------------------------------------------- -->
+  <!--  find fish  resolution -->
+
+  <decomp nproc="96" res="bs05v1" model="pop">
+    <maxblocks >30</maxblocks>
+    <bsize_x   >20</bsize_x>
+    <bsize_y   >20</bsize_y>
+    <decomptype>cartesian</decomptype>
+  </decomp>
+
+  <decomp nproc="120" res="bs05v1" model="pop">
+    <maxblocks >30</maxblocks>
+    <bsize_x   >20</bsize_x>
+    <bsize_y   >20</bsize_y>
+    <decomptype>cartesian</decomptype>
+  </decomp>
+
 
 <!-- -------------------------------------------------------------------------------- -->
   <!-- tx0.1v2 resolution -->

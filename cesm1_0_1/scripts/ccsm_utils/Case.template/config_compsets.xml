@@ -838,8 +838,9 @@
 
 <compset NAME="FindFishFC" SHORTNAME="FFFC"
          DESC="Baltic Proper coupled ice-ocean, IOPAN version 500m with ICM atmospheric data"
-         COMP_ATM="datm" COMP_LND="slnd" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         COMP_ATM="datm" COMP_LND="dlnd" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
          DATM_MODE="COPYALL_FF"
+         DLND_RUNOFF_MODE="RUNOFF.FF"
          OCN_COUPLING="partial"
          OCN_ICE_FORCING="active"
          CCSM_CCOST="-1"

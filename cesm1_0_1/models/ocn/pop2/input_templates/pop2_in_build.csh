@@ -165,7 +165,7 @@ else if ( ${OCN_GRID} =~ bs2* ) then
 else if ( ${OCN_GRID} =~ bs01* ) then
   setenv DT_COUNT 2800
 else if ( ${OCN_GRID} =~ bs05* ) then
-  setenv DT_COUNT 576
+  setenv DT_COUNT 1440
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -538,7 +538,7 @@ else if ( ${OCN_GRID} =~ bs05* ) then
   set ltavg_streams_index_present  = .true.
   set tavg_freq_opt_values         = ("'nhour'")
   set tavg_freq_values             = (    6    )
-  set tavg_stream_filestrings      = ("'FF.hydro.stream1'" )
+  set tavg_stream_filestrings      = ("'FF.hydro'" )
   set tavg_file_freq_opt           = ("'nday'")
   set tavg_file_freq_values        = (    1    )
   set tavg_start_opt_values        = ("'nstep'")
@@ -1061,7 +1061,7 @@ else if ( ${OCN_GRID} =~ bs01* ) then
 else if ( ${OCN_GRID} =~ bs05* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
-  set am_del4_value    = -3.e16
+  set am_del4_value    = -3.e14
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1101,7 +1101,7 @@ else if ( ${OCN_GRID} =~ bs01* ) then
 else if ( ${OCN_GRID} =~ bs05* ) then
   set lauto_hmix       = .false.
   set lvariable_hmix   = .false.
-  set ah_del4_value    = -0.3e16
+  set ah_del4_value    = -0.3e14
 endif
 
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1528,8 +1528,10 @@ set slvl_filename       = unknown-slvl
 set slvl_file_fmt       = bin
 set slvl_data_renorm    = 1.
 set slvl_mask           = .false.
+set sslvl_mask          = .false.
 set slvl_mask_file      = unknown-slvl
 set slvl_mask_file_fmt  = bin
+
 if ( ${OCN_GRID} =~ bs01* ) then
    set slvl_data_type      = n-hour
    set slvl_data_inc       = 6
@@ -1540,6 +1542,7 @@ if ( ${OCN_GRID} =~ bs01* ) then
    set slvl_file_fmt       = bin
    set slvl_data_renorm    = 100.
    set slvl_mask           = .true.
+   set sslvl_mask          = .true.
    set slvl_mask_file      = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/slvl_mask.bin
    set slvl_mask_file_fmt  = bin
 endif
@@ -1553,7 +1556,8 @@ if ( ${OCN_GRID} =~ bs05* ) then
    set slvl_file_fmt       = bin
    set slvl_data_renorm    = 100.
    set slvl_mask           = .true.
-   set slvl_mask_file      = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/slvl_mask.bin
+   set sslvl_mask          = .false.
+   set slvl_mask_file      = /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/slvl_mask_ff_06032020.bin
    set slvl_mask_file_fmt  = bin
 endif
 cat >> $POP2BLDSCRIPT << EOF2
@@ -1567,6 +1571,7 @@ cat >> $POP2BLDSCRIPT << EOF2
    slvl_file_fmt       = '$slvl_file_fmt'
    slvl_data_renorm    = $slvl_data_renorm
    use_slvl_mask       = $slvl_mask
+   suse_slvl_mask      = $sslvl_mask
    slvl_mask_file      = '$slvl_mask_file'
    slvl_mask_file_fmt  = '$slvl_mask_file_fmt'
 /
@@ -1719,7 +1724,7 @@ if ( ${OCN_GRID} =~ bs05* ) then
   set sfwf_strong_restore_ms = 0.6648
   set ladjust_precip         = .false.
   set lms_balance            = .false.
-  set lfw_as_salt_flx        = .true.
+  set lfw_as_salt_flx        = .false.
   set lsend_precip_fact      = .false.
 endif
 
@@ -1836,15 +1841,15 @@ if ( ${OCN_GRID} =~ bs01v1 ) then
   set pt_mask_file_fmt = bin
 endif
 if ( ${OCN_GRID} =~ bs05v1 ) then
-  set pt_data_type         = none
+  set pt_data_type         = n-hour
   set pt_data_inc          = 6
   set pt_interp_freq       = every-timestep
   set pt_interp_type       = linear
   set pt_interp_inc        = 72.
-  set pt_restore_tau       = 0.5
+  set pt_restore_tau       = 0.25
   set pt_filename          = unknown-pt_interior
   set pt_file_fmt          = bin
-  set pt_restore_max_level = 33
+  set pt_restore_max_level = 26
   set pt_formulation       = restoring
   set pt_data_renorm       = 1.
   set pt_variable_restore  = .false.
@@ -1919,15 +1924,15 @@ if ( ${OCN_GRID} =~ bs01v1) then
   set s_mask_file_fmt = bin
 endif
 if ( ${OCN_GRID} =~ bs05v1) then
-  set s_data_type         = none
+  set s_data_type         = n-hour
   set s_data_inc          = 6
   set s_interp_freq       = every-timestep
   set s_interp_type       = linear
   set s_interp_inc        = 72.
-  set s_restore_tau       = 0.5
+  set s_restore_tau       = 0.25
   set s_filename          = unknown-pt_interior
   set s_file_fmt          = bin
-  set s_restore_max_level = 33
+  set s_restore_max_level = 26
   set s_formulation       = restoring
   set s_data_renorm       = 1.
   set s_variable_restore  = .false.

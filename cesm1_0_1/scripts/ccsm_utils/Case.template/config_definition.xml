@@ -961,10 +961,10 @@ inside strings.
 
 <entry id="DLND_RUNOFF_MODE" 
  type="char"
- valid_values="CPLHIST,RX1,NULL,RUNOFF.BS2,RUNOFF.WP01" 
+ valid_values="CPLHIST,RX1,NULL,RUNOFF.BS2,RUNOFF.WP01,RUNOFF.FF" 
  value="RX1" 
  group="conf_dlnd"
- sdesc="valid values: CPLHIST,RX1,NULL" 
+ sdesc="valid values: CPLHIST,RX1,NULL,RUNOFF.BS2,RUNOFF.WP01,RUNOFF.FF" 
  ldesc="DLND runoff mode"
 ></entry> 
 

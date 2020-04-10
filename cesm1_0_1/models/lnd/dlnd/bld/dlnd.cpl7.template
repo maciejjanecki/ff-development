@@ -38,6 +38,7 @@ if ( $GRID =~ ar9v2_ar9v2      ) set DOMAINFILE = domain.lnd.ar9v2_ar9v2.090521.
 if ( $GRID =~ wr50a_ar9v2      ) set DOMAINFILE = domain.lnd.wr50a_ar9v2.090614.nc
 if ( $GRID =~ bs2v1_bs2v1      ) set DOMAINFILE = lnd_domain_bs2km_24082011.nc
 if ( $GRID =~ bs01v1_bs01v1    ) set DOMAINFILE = WP_atm_domain_1000x640_13122017.nc
+if ( $GRID =~ bs05v1_bs05v1    ) set DOMAINFILE = FF_atm_domain_1000x640_21112019.nc
 
 
 if ( $DOMAINFILE == "unset") then
@@ -243,6 +244,33 @@ cat >> $CASEBUILD/dlnd.buildnml.csh << EOF
 
 EOF
 
+#--- FindFish  -----------------------------------------------------------------------
+else if ($DLND_RUNOFF_MODE  == "RUNOFF.FF" ) then
+
+cat >> $CASEBUILD/dlnd.buildnml.csh << EOF
+
+#----- define runoff stream -----
+
+set year_align = 2010
+set year_start = 2010  
+set year_end   = 2025 
+set STREAMRTXT = "runoff.FF.stream.txt"
+set STREAMR    = "\$STREAMRTXT \$year_align \$year_start \$year_end "
+
+cat >! \$STREAMRTXT << EOF1
+EOF
+$UTILROOT/Tools/build_streams -t dlnd.template.streams.xml -s RUNOFF.FF  >> $CASEBUILD/dlnd.buildnml.csh || exit 3
+cat >> $CASEBUILD/dlnd.buildnml.csh << EOF
+EOF1
+
+EOF
+
+cat >> $CASEBUILD/dlnd.buildnml.csh << EOF
+
+\$CASETOOLS/listfilesin_streams -input_data_list -t \$STREAMRTXT >> \$CASEBUILD/dlnd.input_data_list
+
+EOF
+
 #--- null mode -----------------------------------------------------------------
 
 else if ($DLND_RUNOFF_MODE  == "NULL" ) then
@@ -303,6 +331,11 @@ set DLND_RUNOFF_MODE_F = RX1
 else
 set DLND_RUNOFF_MODE_F = $DLND_RUNOFF_MODE
 endif
+if ($DLND_RUNOFF_MODE  == "RUNOFF.FF" ) then
+set DLND_RUNOFF_MODE_F = RX1
+else
+set DLND_RUNOFF_MODE_F = $DLND_RUNOFF_MODE
+endif
 
 cat >! ${rof_in} << EOF1
  &shr_strdata_nml
@@ -313,7 +346,8 @@ cat >! ${rof_in} << EOF1
                     'null' 
    tintalgo       = 'upper',
                     'null' ,
-                    'null' 
+                    'null'
+   dtlimit        = 25000.,1.5
   /
 EOF1
 

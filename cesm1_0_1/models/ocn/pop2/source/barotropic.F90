@@ -390,7 +390,7 @@
    !$OMP                     WORK1, WORK2, WORK3, WORK4)
    slFact = 0.25 !this value works fine - it is only for testing
    if (iyear0 == iyear) then
-       slFact = min(tsecond/(30._r8*86400._r8),slFactLimit)
+       slFact = min(tsecond/(90._r8*86400._r8),slFactLimit)
    else
        slFact = slFactLimit
    endif

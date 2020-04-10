@@ -14,6 +14,7 @@
 <xndt_dyn hgrid="tx0.1v2"    > 3.0 </xndt_dyn>
 <xndt_dyn hgrid="bs2v1"      > 1.0 </xndt_dyn>
 <xndt_dyn hgrid="bs01v1"      > 1.0 </xndt_dyn>
+<xndt_dyn hgrid="bs05v1"      > 1.0 </xndt_dyn>
 
 <!--------------------------->
 <!-- grid_nml settings ------>
@@ -36,6 +37,7 @@
 <grid_type hgrid="tx1v1"     >'tripole'      </grid_type> 
 <grid_type hgrid="bs2v1"     >'displaced_pole'</grid_type>
 <grid_type hgrid="bs01v1"    >'displaced_pole'</grid_type> 
+<grid_type hgrid="bs05v1"    >'displaced_pole'</grid_type>
 <grid_type                   >'displaced_pole'</grid_type>
 
 <grid_format hgrid="128x256"   >'nc' </grid_format> 
@@ -53,7 +55,8 @@
 <grid_format hgrid="tx0.1v2"   >'bin'</grid_format> 
 <grid_format hgrid="tx1v1"     >'bin'</grid_format> 
 <grid_format hgrid="bs2v1"     >'bin'</grid_format>
-<grid_format hgrid="bs01v1"     >'bin'</grid_format>
+<grid_format hgrid="bs01v1"    >'bin'</grid_format>
+<grid_format hgrid="bs05v1"    >'bin'</grid_format>
 <grid_format                   >'bin'</grid_format> 
 
 <grid_file hgrid="128x256"   >'atm/cam/ocnfrac/domain.camocn.128x256_USGS_070807.nc'   </grid_file> 
@@ -78,6 +81,7 @@
 
 <grid_file hgrid="bs2v1"     >'ice/cice/grid.bs2v1.ocn.20110427.ieeer8'       </grid_file>
 <grid_file hgrid="bs01v1"    >'ice/cice/bs01v1/grid/grid.bs01v1.ocn.20170627.ieeer8' </grid_file>
+<grid_file hgrid="bs05v1"    >'ice/cice/bs05v1/grid/grid_bs05v1_1000x640.bin'        </grid_file>
 
 <kmt_file hgrid="128x256"   >'atm/cam/ocnfrac/domain.camocn.128x256_USGS_070807.nc'   </kmt_file> 
 <kmt_file hgrid="64x128"    >'atm/cam/ocnfrac/domain.camocn.64x128_USGS_070807.nc'    </kmt_file> 
@@ -101,6 +105,7 @@
 
 <kmt_file hgrid="bs2v1"     >'ice/cice/kmt.bs2v1.ocn.20130206.ieeei4'       </kmt_file>
 <kmt_file hgrid="bs01v1"    >'ice/cice/bs01v1/grid/kmt.bs01v1.ocn.20180432.ieeer4'</kmt_file>
+<kmt_file hgrid="bs05v1"    >'ice/cice/bs05v1/grid/kmt.bs05v1.ocn.20170627.ieeei4'</kmt_file>
 
 <kcatbound> 0 </kcatbound>
 
@@ -225,6 +230,7 @@
 
 <ew_boundary_type hgrid ='bs2v1'   >'closed'</ew_boundary_type>
 <ew_boundary_type hgrid ='bs01v1'   >'closed'</ew_boundary_type>
+<ew_boundary_type hgrid ='bs05v1'   >'closed'</ew_boundary_type>
 
 <ns_boundary_type hgrid ='tx0.1v2' >'tripole'</ns_boundary_type>
 <ns_boundary_type hgrid ='tx1v1'   >'tripole'</ns_boundary_type>
@@ -232,6 +238,7 @@
 
 <ns_boundary_type hgrid ='bs2v1'   >'closed'   </ns_boundary_type>
 <ns_boundary_type hgrid ='bs01v1'   >'closed'   </ns_boundary_type>
+<ns_boundary_type hgrid ='bs05v1'   >'closed'   </ns_boundary_type>
 
 <!--------------------------->
 <!-- Prescribed namelist- --->

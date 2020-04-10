@@ -66,7 +66,7 @@
    real (r8), dimension(20) :: &
       slvl_data_renorm   ! scale factors for changing input units
                        ! to model units
-   logical (log_kind) :: use_slvl_mask
+   logical (log_kind) :: use_slvl_mask,suse_slvl_mask
 
    real (r8) ::       &
       slvl_data_inc,    &! time increment between values of forcing data
@@ -168,7 +168,8 @@
                              slvl_interp_type, slvl_interp_freq, &
                              slvl_interp_inc,  slvl_filename,    &
                              slvl_data_renorm, slvl_file_fmt,    &
-                             use_slvl_mask, slvl_mask_file,slvl_mask_file_fmt
+                             use_slvl_mask, slvl_mask_file,slvl_mask_file_fmt, &
+                             suse_slvl_mask
 
 !-----------------------------------------------------------------------
 !
@@ -215,6 +216,7 @@
    call broadcast_scalar(slvl_file_fmt,      master_task)
    call broadcast_array (slvl_data_renorm,   master_task)
    call broadcast_scalar(use_slvl_mask,      master_task)
+   call broadcast_scalar(suse_slvl_mask,     master_task)
    call broadcast_scalar(slvl_mask_file_fmt, master_task)
    call broadcast_scalar(slvl_mask_file,     master_task)
 
@@ -555,7 +557,8 @@
 
    if (my_task == master_task) then
      write(stdout,'(A)') 'sea level mask options: '
-     write(stdout,*) 'sea level mask: ',use_slvl_mask
+     write(stdout,*) '        sea level mask: ',use_slvl_mask
+     write(stdout,*) 'special sea level mask: ',suse_slvl_mask
      write(stdout,'(A,A)') 'sea level mask file: ',trim(slvl_mask_file)
    endif
 
@@ -589,9 +592,14 @@
       call data_set (slvl_data_file, 'close')
       call destroy_file(slvl_data_file)
       if (my_task == master_task) then
+        
         allocate(WORK(nx_global,ny_global))
-        WORK = 1._r8
-        WORK(:,510:ny_global) = 0._r8
+        if (suse_slvl_mask) then
+             WORK = 1._r8
+             WORK(:,510:ny_global) = 0._r8
+        else
+             WORK = 1._r8
+        endif
         
       endif
        
@@ -637,7 +645,7 @@
 !  local variables
 !
 !-----------------------------------------------------------------------
-
+   integer (int_kind) :: iblock  
 !-----------------------------------------------------------------------
 !
 !  check if new data is necessary for interpolation.  if yes, then
@@ -678,7 +686,6 @@
    case ('n-hour')
 
 
-    
 
       slvl_data_label = 'Sea Level n-hour'
       if (thour00 >= slvl_data_update)                                  &
@@ -695,7 +702,6 @@
 !    write(*,*) 'SEA_LEVEL_DATA/slvl_data_names(1)/slvl_bndy_loc  (1)/slvl_bndy_type (1) = ',&
 !              slvl_data_names,slvl_bndy_loc ,slvl_bndy_type 
 
-
       call interpolate_forcing(SEA_LEVEL_DATA(:,:,:,:,0),             &
                            SEA_LEVEL_DATA(:,:,:,:,1:slvl_interp_order), &
                                slvl_data_time, slvl_interp_type,          &
@@ -703,8 +709,11 @@
                                slvl_interp_freq, slvl_interp_inc,         &
                                slvl_interp_next, slvl_interp_last,        &
                                nsteps_run)
-
-      SEA_LEVEL = SEA_LEVEL_DATA(:,:,:,1,0)
+      !$OMP PARALLEL DO
+      do iblock=1,nblocks_clinic
+         SEA_LEVEL(:,:,iblock) = SEA_LEVEL_DATA(:,:,iblock,1,0)
+      end do
+      !$OMP END PARALLEL DO
 
    end select
 

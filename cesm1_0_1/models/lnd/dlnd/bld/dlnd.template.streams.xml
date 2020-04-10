@@ -218,9 +218,58 @@
    </fieldInfo>
 </stream>
 
+<stream datasource="RUNOFF.FF">
+   <comment>
+      run off for the Find Fish, 575 m resolution 
+   </comment>
+   <dataSource>
+      SMHI
+      </dataSource>
+   <domainInfo>
+      <variableNames>
+         time          time
+         xc            lon
+         yc            lat
+         area          area
+         mask          mask
+      </variableNames>
+      <filePath>
+         /scratch/lustre/plgjjakacki/LD/cesm_input_data/lnd/dlnd7/bs05v1/grid
+      </filePath>
+      <fileNames> 
+         FF_atm_domain_1000x640_21112019.nc
+      </fileNames>
+   </domainInfo>
+   <fieldInfo>
+      <variableNames>
+         runoff roff
+      </variableNames>
+      <filePath>
+         /scratch/lustre/plgjjakacki/LD/cesm_input_data/lnd/dlnd7/bs05v1/runoff
+      </filePath>
+      <fileNames> 
+         runoff-2010-findfish.nc
+         runoff-2012-findfish.nc
+         runoff-2013-findfish.nc
+         runoff-2014-findfish.nc
+         runoff-2015-findfish.nc
+         runoff-2016-findfish.nc
+         runoff-2017-findfish.nc
+         runoff-2018-findfish.nc
+         runoff-2019-findfish.nc
+         runoff-2020-findfish.nc
+         runoff-2021-findfish.nc
+         runoff-2022-findfish.nc
+         runoff-2023-findfish.nc
+         runoff-2024-findfish.nc
+         runoff-2025-findfish.nc
+      </fileNames>
+   </fieldInfo>
+</stream>
+<!----------------------------------------------------------------------------->
 <stream datasource="RUNOFF.WP01">
    <comment>
-      run off for the Baltic Sea, 2km resolution 
+      run off for the Baltic Sea, 2km resolution
    </comment>
    <dataSource>
       SMHI
@@ -236,7 +285,7 @@
       <filePath>
          /scratch/lustre/plgjjakacki/LD/cesm_input_data/lnd/dlnd7/bs01v1
       </filePath>
-      <fileNames> 
+      <fileNames>
          WP_atm_domain_1000x640_13122017.nc
       </fileNames>
    </domainInfo>
@@ -247,7 +296,7 @@
       <filePath>
          /scratch/lustre/plgjjakacki/LD/cesm_input_data/lnd/dlnd7/bs01v1/data
       </filePath>
-      <fileNames> 
+      <fileNames>
          roff_2010_waterpuck.nc
          roff_2011_waterpuck.nc
          roff_2012_waterpuck.nc
@@ -264,5 +313,5 @@
       </fileNames>
    </fieldInfo>
 </stream>
-<!----------------------------------------------------------------------------->
+
 </streamstemplate>

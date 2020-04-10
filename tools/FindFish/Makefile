@@ -34,7 +34,8 @@ OBJ  = \
         SSH_boundaries_data.o \
         create_slvl_mask.o \
         cnvts3d.o \
-        fix_kmt_ff.o
+        fix_kmt_ff.o \
+        read_ssh.o
 
 all: rst2init_ts \
      read_init_ts \
@@ -45,7 +46,14 @@ all: rst2init_ts \
      SSH_boundaries_data \
      create_slvl_mask \
      cnvts3d \
-     fix_kmt_ff
+     fix_kmt_ff \
+     read_ssh
+
+read_ssh: $(OBJ) read_ssh.o
+	$(COMP) $(FLAGS) read_ssh.o $(LIB) -o $(EXEDIR)/read_ssh
+
+read_ssh.o: read_ssh.f90
+	$(COMP) $(FLAGS) $(INCL) -c read_ssh.f90
 
 cnvts3d: $(OBJ) cnvts3d.o
 	$(COMP) $(FLAGS) cnvts3d.o $(LIB) -o $(EXEDIR)/cnvts3d
@@ -108,4 +116,4 @@ fix_kmt_ff.o: fix_kmt_ff.f90
 	$(COMP) $(FLAGS) $(INCL) -c fix_kmt_ff.f90
 
 clean: 
-	/bin/rm *.o rst2init_ts read_init_ts create_init_ts_WP SSH_boundaries_data TS_boundaries_data create_rest_mask fix_kmt_ff cnvts3d read_temp fix_kmt_ff
+	/bin/rm *.o rst2init_ts read_init_ts create_init_ts_WP SSH_boundaries_data TS_boundaries_data create_rest_mask fix_kmt_ff cnvts3d read_temp read_ssh

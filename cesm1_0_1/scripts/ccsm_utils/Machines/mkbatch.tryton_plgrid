@@ -1,6 +1,6 @@
 #! /bin/csh -f
 
-set mach = tryton
+set mach = tryton_plgrid
 
 #################################################################################
 if ($PHASE == set_batch) then
@@ -33,13 +33,17 @@ cat >! $CASEROOT/${CASE}.${mach}.run << EOF1
 #===============================================================================
 
 #SBATCH -J ${jobname}
-#SBATCH -p batch
+#SBATCH -p plgrid
 #SBATCH -N ${nodes}
 #SBATCH --ntasks-per-node ${taskpn}
-#SBATCH --mem 1000
-#SBATCH --time 01:00:00
-#SBATCH --mail-type=END
-#SBATCH --mail-user=jjakacki@iopan.gda.pl
+#SBATCH --time 24:00:00
+#SBATCH --reservation="baltic"
+##SBATCH --switches=3@60
+##SBATCH -C hp
+#SBATCH -C intel
+####PBS -j oe
+####PBS -m abe
+##SBATCH -M jjakacki@iopan.gda.pl
 
 EOF1
 

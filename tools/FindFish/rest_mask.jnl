@@ -1,0 +1,15 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.5 (optimized)
+ ! Linux 2.6.32-754.11.1.el6.x86_64 64-bit - 04/25/19
+ !  6-Mar-20 10:02     
+
+DEFINE AXIS/X=1:1000:1 x10
+DEFINE AXIS/Y=1:640:1 y5
+DEFINE GRID/X=x10/Y=y5 g10x5
+FILE/VAR=kmt/GRID=g10x5/FORMAT=stream/swap/type=i4 "/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/kmt.bs05v1.ocn.20170627.ieeei4"
+set win 1
+shade/palete=rainbow kmt
+set win 2
+FILE/VAR=mask/GRID=g10x5/FORMAT=stream/swap/type=r8 tsrst_mask.bin
+shade mask
+exit

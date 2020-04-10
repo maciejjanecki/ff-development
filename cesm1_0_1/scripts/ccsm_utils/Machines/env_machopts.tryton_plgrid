@@ -14,7 +14,13 @@ limit stacksize unlimited
 
 ###module add pilot/intel/compiler/2015
 ###module add pilot/mpi/openmpi/1.6.5
-module add intel/15.1
-module add openmpi/1.8.8-intel-15.1-ib
+#module add intel/15.1
+#module add openmpi/1.8.8-intel-15.1-ib
+
+#module add plgrid/tools/intel/12.1
+#module add plgrid/tools/openmpi/1.4.5-intel-12.1.0-ib
+
+module add intel/17.1
+module add openmpi/2.0.2-intel-17.1-ib
 
 

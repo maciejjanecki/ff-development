@@ -20,6 +20,20 @@
     <decomptype>cartesian</decomptype>
   </decomp>
 -->
+  <decomp nproc="96" res="bs05v1" model="cice">
+    <maxblocks >30</maxblocks>
+    <bsize_x   >24</bsize_x>
+    <bsize_y   >24</bsize_y>
+    <decomptype>cartesian</decomptype>
+  </decomp>
+
+  <decomp nproc="120" res="bs05v1" model="cice">
+    <maxblocks >30</maxblocks>
+    <bsize_x   >20</bsize_x>
+    <bsize_y   >20</bsize_y>
+    <decomptype>cartesian</decomptype>
+  </decomp>
+
   <decomp nproc="480" res="tx0.1v2" model="cice">
     <maxblocks >15</maxblocks>
     <bsize_x   >48</bsize_x>

@@ -5,12 +5,13 @@ nmonths=12
 
 
 my_pwd=$PWD
-cyy=2010
+cyy=2012
 syy=0001
 cmm=01
 cdd=01
 
 pathIn=/scratch/lustre/plgjjakacki/LD/tmp_data/ARTUR/ICM_FF/${cyy}
+#${cyy}
 #pathOut=/scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs01v1/data_v2
 pathOut=/scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs05v1/data
 #pathOut=/scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs01v1/data
@@ -35,7 +36,7 @@ while [[ $m -lt $nmonths ]]; do #### 12 ]]; do
     if [[ $d -le 9 ]]
          then dd=0${d}
     fi  
-    fin=${pathIn}/0001${mm}${dd}_575m.nc
+    fin=${pathIn}/${cyy}${mm}${dd}_575m.nc
     fout=${syy}${mm}${dd}_575m.nc
     rm $fout
     ln -s $fin $fout    
