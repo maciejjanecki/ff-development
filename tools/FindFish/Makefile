@@ -5,6 +5,7 @@
 
 ##COMP = gfortran
 COMP = mpif90
+COMP = ifort
 FLAGS = -O3 -assume byterecl -convert big_endian -assume ieee_fpe_flags
 #FLAGS = -O3 -assume byterecl -convert big_endian
 NETCDF_DIR = /usr/local/netcdf-4.0-gfortran-openmpi.1.7.5_gcc48

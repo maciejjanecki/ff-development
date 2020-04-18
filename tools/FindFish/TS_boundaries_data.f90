@@ -6,18 +6,20 @@
  
 !***********
  real*8 :: t(nk),s(nk),odata(ni,nj,nk),factors(ntracers)
- integer :: ii,jj,kk,ll,daysInMonths(mnths),year,month,day,hour, &
+ integer :: ii,jj,kk,ll,lvls,daysInMonths(mnths),year,month,day,hour, &
             sDate(4),eDate(4),hours(nhours),sHH,eHH,seconds(nhours)
  character*256 :: pathIn,pathOut
  character*4 :: tracer(ntracers)
  integer :: yy,mm,dd,hh,dayOfYear
+ integer :: iidx,jidx
  character(len=8),dimension(4) :: outFNames
  character*256 :: inFile,outFile
- character*4   ::sDateC,eDateC
+ character*4   :: sDateC,eDateC
+ logical :: lbath = .true.
 
 !ustawienia*
  data sDate /2012, 1, 1, 1/ !data poczatkowa 
- data eDate /2012,7,31, 4/ !data koncowa
+ data eDate /2012,12,31, 4/ !data koncowa
  data seconds /3600,25200,46800,68400/
 ! data hours /0,6,12,18/
  data hours /3,9,15,21/
@@ -60,12 +62,99 @@
 !                 write(*,'(i4,2f14.6,"   ",A)') kk,maxval(odata(:,:,kk)),minval(odata(:,:,kk)),tracer(ii) 
                  write(outFile,"(a4,i2.2,'.bin')") tracer(ii),kk
 !                 write(*,'(A)') outFile
+                 
+                 if (lbath) then
+                    !! correction for changet bathymetry
+                           ! set edges
+                           !    bath(1:3,:)=ic0
+                           !    bath(imt-2:imt,:)=ic0
+                           !    bath(:,1:3)=ic0
+                           !    bath(:,jmt-2:jmt)=ic0
+                           !! set boundaries
+                           !    bath(1:50,316:510) = 5
+                           !    bath(51:80,330:510) = 5
+                           !    bath(327:900,590:640) = 5
+                    do lvls=3,5
+                       if (lvls==4) then
+                             odata(493,628,lvls) = ((odata(492,628,lvls)+odata(494,628,lvls))/2 + &
+                                                    (odata(493,627,lvls)+odata(493,629,lvls))/2)/2
+                             odata(494,627,lvls) = ((odata(493,627,lvls)+odata(495,627,lvls))/2 + &
+                                                    (odata(494,626,lvls)+odata(494,628,lvls))/2)/2
+                       endif
+                       if (lvls==5) then
+                             do jidx=630,631
+                                odata(492:495,jidx,lvls) = (odata(491,jidx,lvls)+odata(496,jidx,lvls))/2
+                             enddo
+                             jidx = 629
+                             odata(491:496,jidx,lvls) = (odata(490,jidx,lvls)+odata(497,jidx,lvls))/2
+                             odata(500:503,jidx,lvls) = (odata(499,jidx,lvls)+odata(504,jidx,lvls))/2
+                             do jidx=627,628
+                                odata(491:503,jidx,lvls) = (odata(490,jidx,lvls)+odata(504,jidx,lvls))/2
+                             enddo
+                             jidx = 626
+                             odata(492:500,jidx,lvls) = (odata(491,jidx,lvls)+odata(501,jidx,lvls))/2
+                             do jidx=624,625
+                                odata(488:500,jidx,lvls) = (odata(487,jidx,lvls)+odata(501,jidx,lvls))/2
+                             enddo
+                             jidx = 623
+                             odata(489:497,jidx,lvls) = (odata(488,jidx,lvls)+odata(498,jidx,lvls))/2
+                             jidx = 622
+                             odata(486:495,jidx,lvls) = (odata(485,jidx,lvls)+odata(496,jidx,lvls))/2
+                             jidx = 621
+                             odata(487:494,jidx,lvls) = (odata(486,jidx,lvls)+odata(495,jidx,lvls))/2
+                             jidx = 620
+                             odata(487:493,jidx,lvls) = (odata(486,jidx,lvls)+odata(494,jidx,lvls))/2
+                             jidx = 619
+                             odata(486:493,jidx,lvls) = (odata(485,jidx,lvls)+odata(494,jidx,lvls))/2
+                             jidx = 618
+                             odata(485:493,jidx,lvls) = (odata(484,jidx,lvls)+odata(494,jidx,lvls))/2
+                             jidx = 618
+                             odata(485:493,jidx,lvls) = (odata(484,jidx,lvls)+odata(494,jidx,lvls))/2
+                             jidx = 617
+                             odata(485:492,jidx,lvls) = (odata(484,jidx,lvls)+odata(493,jidx,lvls))/2
+                             jidx = 616
+                             odata(485:490,jidx,lvls) = (odata(484,jidx,lvls)+odata(491,jidx,lvls))/2
+                             jidx = 615
+                             odata(486:491,jidx,lvls) = (odata(485,jidx,lvls)+odata(492,jidx,lvls))/2
+                             jidx = 614
+                             odata(486:490,jidx,lvls) = (odata(485,jidx,lvls)+odata(491,jidx,lvls))/2
+                             jidx = 613
+                             odata(487:490,jidx,lvls) = (odata(486,jidx,lvls)+odata(491,jidx,lvls))/2
+                             jidx = 612
+                             odata(487:488,jidx,lvls) = (odata(486,jidx,lvls)+odata(489,jidx,lvls))/2
+                       endif
+                       do jidx = 590,640
+                          odata(857:900,jidx,lvls) =  odata(857,jidx,lvls)
+                          !odata(400:410,jidx,lvls) =  odata(410,jidx,lvls)
+                          if (jidx<=597) then
+                             odata(327:370,jidx,lvls) =  (odata(326,jidx,lvls)+odata(370,jidx,lvls))/2
+                          else
+                             odata(327:370,jidx,lvls) =  odata(370,jidx,lvls)
+                          endif
+                          odata(390:393,jidx,lvls) =  odata(390,jidx,lvls)
+                          odata(766:793,jidx,lvls) = (odata(766,jidx,lvls)+odata(793,jidx,lvls))/2
+                          odata(484:494,jidx,lvls) = (odata(484,jidx,lvls)+odata(494,jidx,lvls))/2
+                          odata(387:410,jidx,lvls) = (odata(387,jidx,lvls)+odata(410,jidx,lvls))/2
+                          odata(387:410,jidx,lvls) = (odata(387,jidx,lvls)+odata(410,jidx,lvls))/2
+                       enddo
+                       do iidx=1,80
+                          odata(iidx,469:510,lvls)=odata(iidx,469,lvls)
+                          odata(iidx,310:367,lvls)=odata(iidx,367,lvls)
+                       enddo
+                       if (lvls == 5) then
+                          do iidx=3,28
+                             odata(iidx,422:435,lvls) = (odata(iidx,421,lvls)+odata(iidx,436,lvls))/2
+                          enddo
+                       endif
+                    enddo
+                 endif
                  open(22,file=trim(outFile),status='replace',access='direct', &
                            form='unformatted',recl=ni*nj*8)
                  write(22,rec=1) odata(:,:,kk)
                  close(22)
               enddo
               close(10)
+
               
               !save data in POP's flux correction formats
               !SST and SSS
