@@ -4,6 +4,7 @@
 nmonths=12
 
 
+
 my_pwd=$PWD
 cyy=2012
 syy=0001
