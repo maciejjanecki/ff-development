@@ -20,8 +20,8 @@
 ! kmtFile = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/kmt.bs01v1.ocn.20180432.ieeer4'
  kmtFile = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/kmt.bs05v1.ocn.20170627.ieeei4'
 !ustawienia*
- data sDate /2012, 1, 1, 1/ !data poczatkowa 
- data eDate /2012,12,31, 4/ !data koncowa
+ data sDate /2019, 1, 1, 1/ !data poczatkowa 
+ data eDate /2019,12,31, 4/ !data koncowa
  data seconds /3600,25200,46800,68400/
 ! data hours /0,6,12,18/
  data hours /3,9,15,21/

@@ -6,8 +6,8 @@
  logical :: res
  character*256 :: slvlFile,rstFile,dataPath, kmtFile
  integer :: slvlMaskPoints,rstMaskPoints,slvlNPoints,rstNPoints 
- slvlFile = 'slvl_mask_ff_06032020.bin'
- rstFile  = 'tsrst_mask_ff_06032020.bin'
+ slvlFile = 'slvl_mask_ff_06032020XX.bin'
+ rstFile  = 'tsrst_mask_ff_06032020XX.bin'
  dataPath = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid'
 ! kmt file /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/kmt.bs05v1.ocn.20170627.ieeei4 
  kmtFile = 'kmt.bs05v1.ocn.20170627.ieeei4'
@@ -18,10 +18,10 @@
   close(22)
   real_kmt_mask = 0._r8
   where (imask > 0) real_kmt_mask = 1._r8
- slvlMaskPoints=34
- rstMaskPoints =60
- slvlNPoints = 44
- rstNPoints = 30 
+ slvlMaskPoints=2*34
+ rstMaskPoints =2*60
+ slvlNPoints = 2*44
+ rstNPoints = 2*30 
  jb = 300
  ib = 3
  mask = 0._r8
@@ -40,10 +40,10 @@
     write(*,*) maskPoints+ii,':',ni,'|',jb,':',nj-maskPoints-1-ii,'|||',1._r8-real((ii-1),r8)*dp
  enddo
  !extend mask into whole domain
-! where (mask <= 0.25_r8) mask=0.25_r8
+ where (mask <= 0.25_r8) mask=0.25_r8
  mask = mask * real_kmt_mask
- mask(50:100,300:325)=0._r8
- mask(150:327,550:640)=0._r8
+ !mask(50:100,300:325)=0._r8
+ !mask(150:327,550:640)=0._r8
  write(*,*) trim(slvlFile)
  open(10,file=trim(slvlFile),access='direct',form='unformatted', &
                status='replace',recl=ni*nj*8)
@@ -55,12 +55,12 @@
  write(10,rec=1) mask
  close(10)
  write(*,*) trim(slvlFile)
- stop
+! stop
 !===== restoring
 !clear mask
  mask = 0._r8
- maskPoints=rstMaskPoints
- npoints=rstNPoints
+ maskPoints=slvlMaskPoints
+ npoints=slvlNPoints
  mask(ib:maskPoints,jb:nj) = 1._r8
  mask(:,nj-maskPoints-1:nj) = 1._r8
  dp=1._r8/real(npoints,r8)
@@ -73,7 +73,11 @@
     mask(maskPoints+ii:ni,nj-maskPoints-ii) = 1._r8-real((ii-1),r8)*dp
     write(*,*) maskPoints+ii,':',ni,'|',jb,':',nj-maskPoints-1-ii,'|||',1._r8-real((ii-1),r8)*dp
  enddo
- write(*,*) trim(rstFile)
+ !extend mask into whole domain
+ where (mask <= 0.05_r8) mask=0.05_r8
+ mask = mask * real_kmt_mask
+ 
+write(*,*) trim(rstFile)
  open(10,file=trim(rstFile),access='direct',form='unformatted', &
                status='replace',recl=ni*nj*8)
  write(10,rec=1) mask
@@ -84,6 +88,15 @@
  write(10,rec=1) mask
  close(10) 
  write(*,*) trim(rstFile)
+ close(10)
+
+
+
+stop
+
+
+
+
 
  write(*,*) '============== kmt =============='
  kmtFile=trim(dataPath)//'/'//trim(kmtFile)
