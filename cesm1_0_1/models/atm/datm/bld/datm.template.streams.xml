@@ -2464,7 +2464,7 @@
          mask   mask
       </variableNames>
       <filePath>
-        /scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs05v1/grid
+        $DIN_LOC_ROOT/atm/datm7/bs05v1/grid
       </filePath>
       <fileNames>
          atm_domain_info_FF.nc
@@ -2492,7 +2492,7 @@
         rainl  rainl
       </variableNames>
       <filePath>
-          /scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs05v1/data
+          $DIN_LOC_ROOT/atm/datm7/bs05v1/data
        </filePath>
       <tInterpAlgo>
          linear

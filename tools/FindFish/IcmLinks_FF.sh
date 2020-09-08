@@ -11,10 +11,10 @@ syy=0001
 cmm=01
 cdd=01
 
-pathIn=/scratch/lustre/plgjjakacki/LD/tmp_data/ARTUR/ICM_FF/${cyy}
+pathIn=/users/work/ffish/ICM_575m/${cyy}
 #${cyy}
 #pathOut=/scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs01v1/data_v2
-pathOut=/scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs05v1/data
+pathOut=/users/work/ffish/cesm_input_data/atm/datm7/bs05v1/data
 #pathOut=/scratch/lustre/plgjjakacki/LD/cesm_input_data/atm/datm7/bs01v1/data
 echo $pathIn
 echo $pathOut

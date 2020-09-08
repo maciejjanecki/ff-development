@@ -848,6 +848,19 @@
          CPL_EPBAL="ocn"
          CPL_ALBAV="true" />
 
+<compset NAME="FindFishFC Eco" SHORTNAME="FFFCE"
+         DESC="Baltic Proper coupled ice-ocean, IOPAN version 575m with ICM atmospheric data and ecosystem"
+         COMP_ATM="datm" COMP_LND="dlnd" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"
+         DATM_MODE="COPYALL_FF"
+         DLND_RUNOFF_MODE="RUNOFF.FF"
+         OCN_COUPLING="partial"
+         OCN_ICE_FORCING="active"
+         CCSM_CCOST="-1"
+         ATM_NCPL="144"
+         CPL_EPBAL="ocn"
+         CPL_ALBAV="true"
+         OCN_TRACER_MODULES="iage ecosys" />
+
 <compset NAME="WaterPuckFC" SHORTNAME="WPFC"
          DESC="Puck Bay coupled ocean ice IOPAN version 115m  ICM atmospheric data"
          COMP_ATM="datm" COMP_LND="dlnd" COMP_ICE="cice" COMP_OCN="pop2" COMP_GLC="sglc"

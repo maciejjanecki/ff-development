@@ -39,7 +39,7 @@ cat >! $CASEROOT/${CASE}.${mach}.run << EOF1
 #SBATCH --mem 1000
 #SBATCH --time 01:00:00
 #SBATCH --mail-type=END
-#SBATCH --mail-user=jjakacki@iopan.gda.pl
+#SBATCH --mail-user=maciej.janecki@gmail.com
 
 EOF1
 

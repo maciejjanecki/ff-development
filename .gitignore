@@ -1,0 +1,14 @@
+*.o
+*~
+FF_kmt_out.bin
+SSH_boundaries_data
+TS_boundaries_data
+cnvts3d
+create_init_ts_WP
+create_rest_mask
+create_slvl_mask
+fix_kmt_ff
+kmt_file
+read_init_ts
+read_temp
+rst2init_ts

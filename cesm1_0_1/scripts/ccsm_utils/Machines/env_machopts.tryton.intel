@@ -5,8 +5,7 @@
 # -------------------------------------------------------------------------
 
 # TASK - tryton - new computer (18.03.2015)
-# Jaromir Jakacki (JJ): jjakacki@iopan.gda.pl
-# zmiany - 06.05.2020 - JJ
+# Jaromir Jakacki: jjakacki@iopan.gda.pl
 
 source /etc/csh.cshrc
 source /etc/csh.login
@@ -17,14 +16,7 @@ source /etc/csh.login
 ###module add pilot/mpi/openmpi/1.6.5
 #module add pilot/intel/2015
 
-
-
-module purge
 module add tryton/compiler/intel/2019
 module add tryton/mpi/intel/2019
 module add tryton/hdf5/1.10.6-intel19-mpi
 module add tryton/netcdf/4.7.4-intel19-mpi
-
-#module purge
-#module add tryton/compiler/pgi/20.1 
-#module add tryton/mpi/openmpi4/4.0-pgi

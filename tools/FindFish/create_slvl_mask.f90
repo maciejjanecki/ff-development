@@ -8,7 +8,7 @@
  integer :: slvlMaskPoints,rstMaskPoints,slvlNPoints,rstNPoints 
  slvlFile = 'slvl_mask_ff_06032020.bin'
  rstFile  = 'tsrst_mask_ff_06032020.bin'
- dataPath = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid'
+ dataPath = '/users/work/ffish/cesm_input_data/ocn/pop/bs05v1/grid'
 ! kmt file /scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/kmt.bs05v1.ocn.20170627.ieeei4 
  kmtFile = 'kmt.bs05v1.ocn.20170627.ieeei4'
 !read in kmt file
@@ -18,9 +18,11 @@
   close(22)
   real_kmt_mask = 0._r8
   where (imask > 0) real_kmt_mask = 1._r8
- slvlMaskPoints=34
+ ! slvlMaskPoints=34  !1st version
+ slvlMaskPoints=60
  rstMaskPoints =60
- slvlNPoints = 44
+ ! slvlNPoints = 44
+ slvlNPoints = 60
  rstNPoints = 30 
  jb = 300
  ib = 3
@@ -40,7 +42,7 @@
     write(*,*) maskPoints+ii,':',ni,'|',jb,':',nj-maskPoints-1-ii,'|||',1._r8-real((ii-1),r8)*dp
  enddo
  !extend mask into whole domain
-! where (mask <= 0.25_r8) mask=0.25_r8
+ where (mask <= 0.25_r8) mask=0.25_r8
  mask = mask * real_kmt_mask
  mask(50:100,300:325)=0._r8
  mask(150:327,550:640)=0._r8

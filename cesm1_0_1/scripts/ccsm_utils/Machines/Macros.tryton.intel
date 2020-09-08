@@ -71,9 +71,7 @@ CC            := mpicc
 #MOD_NETCDF    := /users/kdm/mjanecki/netcdf4/include
 #NETCDF_PATH   := /home/plgrid/plgjjakacki/local/netcdf-4.0
 #NETCDF_PATH   := /home/plgrid/plgjjakacki/tryton/local/netcdf-current
-###NETCDF_PATH   := $(NETCDF4_DIR) #<---intel 2020 module add
-NETCDF_PATH   := /users/kdm/wpuck/netcdf
-
+NETCDF_PATH   := $(NETCDF4_DIR)
 INC_NETCDF    := $(NETCDF_PATH)/include
 LIB_NETCDF    := $(NETCDF_PATH)/lib
 MOD_NETCDF    := $(NETCDF_PATH)/include
@@ -87,9 +85,8 @@ LAPACK_LIBDIR :=
 CFLAGS        := $(CPPDEFS) -gopt -Mlist
 FIXEDFLAGS    := -Mfixed
 FREEFLAGS     := 
-#FFLAGS        :=  -c -fpp $(CPPDEFS) -132 -fp-model precise -O2 -convert big_endian -assume byterecl -ftz -traceback
+FFLAGS        :=  -c -fpp $(CPPDEFS) -132 -fp-model precise -O2 -convert big_endian -assume byterecl -ftz -traceback
 #FFLAGS        := $(CPPDEFS) -i4 -gopt -Mlist -Mextend -byteswapio -Mflushz -Kieee -Ktrap=fp -convert big_endian 
-FFLAGS        :=  -c -fpp $(CPPDEFS) -132 -fp-model precise -O2 -convert big_endian -assume byterecl -ftz -traceback -mcmodel=large
 FFLAGS_OPT    := 
 LDFLAGS       := -Wl,--allow-multiple-definition -lnetcdff
 AR            := ar

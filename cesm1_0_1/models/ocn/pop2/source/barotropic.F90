@@ -392,7 +392,7 @@
    if (iyear0 == iyear) then
        slFact = min(tsecond/(90._r8*86400._r8),slFactLimit)
    else
-       slFact = slFactLimit
+       slFact = 0.45 !slFactLimit
    endif
 
 

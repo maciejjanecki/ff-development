@@ -1,0 +1,12 @@
+#! /bin/csh -f
+
+# -------------------------------------------------------------------------
+# Modules
+# -------------------------------------------------------------------------
+
+# TASK - tryton - new computer (11.05.2015)
+# Maciej Janecki: maciej.janecki@gmail.com
+
+source /etc/csh.cshrc
+source /etc/csh.login
+

@@ -234,7 +234,7 @@
          mask          mask
       </variableNames>
       <filePath>
-         /scratch/lustre/plgjjakacki/LD/cesm_input_data/lnd/dlnd7/bs05v1/grid
+         $DIN_LOC_ROOT/lnd/dlnd7/bs05v1/grid
       </filePath>
       <fileNames> 
          FF_atm_domain_1000x640_21112019.nc
@@ -245,10 +245,10 @@
          runoff roff
       </variableNames>
       <filePath>
-         /scratch/lustre/plgjjakacki/LD/cesm_input_data/lnd/dlnd7/bs05v1/runoff
+         $DIN_LOC_ROOT/lnd/dlnd7/bs05v1/runoff
       </filePath>
       <fileNames> 
-         runoff-2010-findfish.nc
+         runoff-2011-findfish.nc
          runoff-2012-findfish.nc
          runoff-2013-findfish.nc
          runoff-2014-findfish.nc

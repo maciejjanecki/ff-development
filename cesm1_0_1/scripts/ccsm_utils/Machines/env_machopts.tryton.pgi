@@ -19,12 +19,12 @@ source /etc/csh.login
 
 
 
-module purge
-module add tryton/compiler/intel/2019
-module add tryton/mpi/intel/2019
-module add tryton/hdf5/1.10.6-intel19-mpi
-module add tryton/netcdf/4.7.4-intel19-mpi
-
 #module purge
-#module add tryton/compiler/pgi/20.1 
-#module add tryton/mpi/openmpi4/4.0-pgi
+#module add tryton/compiler/intel/2019
+#module add tryton/mpi/intel/2019
+#module add tryton/hdf5/1.10.6-intel19-mpi
+#module add tryton/netcdf/4.7.4-intel19-mpi
+
+module purge
+module add tryton/compiler/pgi/20.1 
+module add tryton/mpi/openmpi4/4.0-pgi

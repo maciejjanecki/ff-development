@@ -19,7 +19,7 @@
 
 !ustawienia*
  data sDate /2012, 1, 1, 1/ !data poczatkowa 
- data eDate /2012,12,31, 4/ !data koncowa
+ data eDate /2019,12,31, 4/ !data koncowa
  data seconds /3600,25200,46800,68400/
 ! data hours /0,6,12,18/
  data hours /3,9,15,21/
@@ -30,8 +30,9 @@
 
 !!! >>>>>>  pathIn  = '../../tmp_data/ARTUR/lbc_FF/'//sDateC
 ! pathIn  
- 2000 format('../../../tmp_data/ARTUR/lbc_FF/',i4.4)
- pathOut = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/forcing' 
+! 2000 format('../../../tmp_data/ARTUR/lbc_FF/',i4.4)
+ 2000 format('/users/work/ffish/boundary_575m/',i4.4) 
+ pathOut = '/users/work/ffish/cesm_input_data/ocn/pop/bs05v1/forcing' 
  1000 format(i4.4,'-',i2.2,'-',i2.2,'-',i5.5,'_',a4,'_1000_0640_0026_0001.ieeer8') 
  1010 format(A,'.',i4.4,'.',i3.3,'.',i2.2)
 !***********

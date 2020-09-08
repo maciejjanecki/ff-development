@@ -23,7 +23,7 @@
 # F_OPTIMIZATION_OVERRIDE
 #                    Use this to replace default Fortran compiler optimization.  
 #===============================================================================
-# Makefile macros for Sun Cluster using PGI compilers
+# Makefile macros for Atlas using PGI compilers
 #
 # Notes:  (see pgi man page & user's guide for the details)
 #  -Mextend        => Allow 132-column source lines
@@ -49,9 +49,11 @@
 #                     * ovf: floating point overflow
 #  -Mlist          => Create a listing file
 #  -F              => leaves file.f for each preprocessed file.F file
+#  -time           => Print execution time for each compiler step
 #===============================================================================
 
 # Note that CPPDEFS is set in Macros.cppdefs
+#jw CPPDEFS += -DLINUX -DSEQ_$(FRAMEWORK) -DFORTRANUNDERSCORE -DNO_SHR_VMATH -DNO_R16?
 CPPDEFS += -DLINUX -DSEQ_$(FRAMEWORK) -DFORTRANUNDERSCORE -DNO_SHR_VMATH 
 
 ifeq ($(compile_threaded), true)
@@ -62,36 +64,42 @@ ifeq ($(strip $(MODEL)),cam)
   CPPDEFS += -DNO_R16
 endif
 
-# Note that NETCDF_DIR is obtained from invoking modules
+# Note that NETCDF_PATH is obtained from env_machopts
 FC            := mpif90
 CC            := mpicc
-#NETCDF_PATH   := /users/kdm/mjanecki/netcdf4
-#INC_NETCDF    := /users/kdm/mjanecki/netcdf4/include
-#LIB_NETCDF    := /users/kdm/mjanecki/netcdf4/lib
-#MOD_NETCDF    := /users/kdm/mjanecki/netcdf4/include
-#NETCDF_PATH   := /home/plgrid/plgjjakacki/local/netcdf-4.0
-#NETCDF_PATH   := /home/plgrid/plgjjakacki/tryton/local/netcdf-current
-###NETCDF_PATH   := $(NETCDF4_DIR) #<---intel 2020 module add
-NETCDF_PATH   := /users/kdm/wpuck/netcdf
 
+#=====================================================
+# GENERIC_USER
+# The netcdf and mpi paths need to be set somewhere.  In CCSM, this
+# is normally done by setting the NETCDF_PATH and MPI_PATH
+# variables in this Macros file.  But they could also be set in the 
+# default user paths, by an explicit addition to the local path 
+# in the env_mach_specific file, or via setting NETCDF_PATH 
+# and MPI_PATH environment variables in the env_mach_specific file.  
+# Also, review the relative paths of the INC_, LIB_, and MOD_ paths
+# below.  Ignore PNETCDF stuff initially, it's not required.  
+
+#NETCDF_PATH   := /usr/local/netcdf-3.6.3-pgi-hpf-cc-7.2-5
+NETCDF_PATH   := /users/kdm/ffish/local/netcdf-4.0-pgi2020
 INC_NETCDF    := $(NETCDF_PATH)/include
 LIB_NETCDF    := $(NETCDF_PATH)/lib
 MOD_NETCDF    := $(NETCDF_PATH)/include
-INC_MPI       := 
-LIB_MPI       := 
-MPI_LIB_NAME  := 
+MPICH_PATH    := 
+INC_MPI       :=
+LIB_MPI       :=
+MPI_LIB_NAME  :=
+PNETCDF_PATH  :=
 INC_PNETCDF   :=
-LIB_PNETCDF   := 
+LIB_PNETCDF   :=
 LAPACK_LIBDIR := 
+#=====================================================
 
 CFLAGS        := $(CPPDEFS) -gopt -Mlist
 FIXEDFLAGS    := -Mfixed
-FREEFLAGS     := 
-#FFLAGS        :=  -c -fpp $(CPPDEFS) -132 -fp-model precise -O2 -convert big_endian -assume byterecl -ftz -traceback
-#FFLAGS        := $(CPPDEFS) -i4 -gopt -Mlist -Mextend -byteswapio -Mflushz -Kieee -Ktrap=fp -convert big_endian 
-FFLAGS        :=  -c -fpp $(CPPDEFS) -132 -fp-model precise -O2 -convert big_endian -assume byterecl -ftz -traceback -mcmodel=large
+FREEFLAGS     := -Mfree
+FFLAGS        := $(CPPDEFS) -i4 -gopt -Mlist -Mextend -byteswapio -Mflushz -Kieee -Ktrap=fp 
 FFLAGS_OPT    := 
-LDFLAGS       := -Wl,--allow-multiple-definition -lnetcdff
+LDFLAGS       := 
 AR            := ar
 MOD_SUFFIX    := mod
 CONFIG_SHELL  :=
@@ -146,20 +154,20 @@ endif
 #===============================================================================
 
 ifeq ($(MODEL),datm)
-  CFLAGS     += -O2
-  FFLAGS_OPT += -O2 -Kieee
+  CFLAGS     += -O2 -Mnovect
+  FFLAGS_OPT += -O2 -Mnovect -Kieee
 endif
 ifeq ($(MODEL),dice)
-  CFLAGS     += -O2
-  FFLAGS_OPT += -O2 -Kieee
+  CFLAGS     += -O2 -Mnovect
+  FFLAGS_OPT += -O2 -Mnovect -Kieee
 endif
 ifeq ($(MODEL),dlnd)
-  CFLAGS     += -O2
-  FFLAGS_OPT += -O2 -Kieee
+  CFLAGS     += -O2 -Mnovect
+  FFLAGS_OPT += -O2 -Mnovect -Kieee
 endif
 ifeq ($(MODEL),docn)
-  CFLAGS     += -O2
-  FFLAGS_OPT += -O2 -Kieee
+  CFLAGS     += -O2 -Mnovect
+  FFLAGS_OPT += -O2 -Mnovect -Kieee
 endif
 
 ifeq ($(strip $(MODEL)),cam)
@@ -168,21 +176,21 @@ ifeq ($(strip $(MODEL)),cam)
   ifneq ($(F_OPTIMIZATION_OVERRIDE),$(null))
      FFLAGS_OPT := $(F_OPTIMIZATION_OVERRIDE)
   else
-     CFLAGS     += -O2
-     FFLAGS_OPT += -O2 -Kieee
+     CFLAGS     += -O2 -Mvect=nosse 
+     FFLAGS_OPT += -O2 -Mvect=nosse -Kieee
   endif
 endif
 ifeq ($(MODEL),cice)
-  CFLAGS     += -O2
-  FFLAGS_OPT += -O2 -Kieee
+  CFLAGS     += -O2 -Mvect=nosse 
+  FFLAGS_OPT += -O2 -Mvect=nosse -Kieee
 endif
 ifeq ($(MODEL),clm)
-  CFLAGS     += -O2
-  FFLAGS_OPT += -O2 -Kieee
+  CFLAGS     += -O2 -Mvect=nosse 
+  FFLAGS_OPT += -O2 -Mvect=nosse -Kieee
 endif
 ifeq ($(MODEL),pop2)
-  CFLAGS     += -O2
-  FFLAGS_OPT += -O2 -Kieee
+  CFLAGS     += -O2 -Mvect=nosse 
+  FFLAGS_OPT += -O2 -Mvect=nosse -Kieee
 endif
 
 ifeq ($(DEBUG),TRUE)
@@ -193,10 +201,10 @@ else
 endif
 
 ifeq ($(compile_threaded), true)
-   FFLAGS       += -mp=nonuma
-   FFLAGS_NOOPT += -mp=nonuma
-   CFLAGS       += -mp=nonuma
-   LDFLAGS      += -mp=nonuma
+   FFLAGS       += -mp
+   FFLAGS_NOOPT += -mp
+   CFLAGS       += -mp
+   LDFLAGS      += -mp
 endif
 
 ifeq ($(strip $(MODEL)),cam)
@@ -211,23 +219,25 @@ endif
 
 CONFIG_ARGS :=
 
+#=====================================================
+# GENERIC_USER
+# Options passed to the mct and pio build are set here
+
 ifeq ($(MODEL),mct)
-        #add arguments for mct configure here
-#CONFIG_ARGS += CC="$(CC)" F90="$(FC)" ENDIAN="-convert big_endian"
- CONFIG_ARGS += CC="$(CC)" FC="$(FC)" F90="$(FC)" OPT="-O2" F90FLAGS="-extend_source -g -fp-model precise" ENDIAN="-convert big_endian"
+	#add arguments for mct configure here
+  CONFIG_ARGS+= FC="$(FC)" F90="$(FC)" FFLAGS="$(FFLAGS)" --host=Linux 
 endif
 
 ifeq ($(MODEL),pio)
   ifneq ($(strip $(PIO_CONFIG_OPTS)),)
     CONFIG_ARGS += $(PIO_CONFIG_OPTS)
-  endif 
-  CONFIG_ARGS += CC="$(CC)" F90="$(FC)" NETCDF_PATH="$(NETCDF_PATH)"
+  endif
+  CONFIG_ARGS += FC="$(FC)" F90="$(FC)" NETCDF_PATH=$(NETCDF_PATH) FFLAGS="$(FFLAGS)" PNETCDF_PATH=$(PNETCDF_PATH) --enable-filesystem-hints lustre
+ost=Linux
 endif
+#=====================================================
 
 # Append user defined compiler and load flags to Makefile defaults
 CFLAGS   += $(USER_CFLAGS)
 FFLAGS   += $(USER_FFLAGS)
 LDFLAGS  += $(USER_LDFLAGS)
-
-
-

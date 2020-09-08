@@ -10,6 +10,7 @@ FLAGS = -O3 -assume byterecl -convert big_endian -assume ieee_fpe_flags
 #FLAGS = -O3 -assume byterecl -convert big_endian
 NETCDF_DIR = /usr/local/netcdf-4.0-gfortran-openmpi.1.7.5_gcc48
 NETCDF_DIR = /home/plgrid/plgjjakacki/local/netcdf-4.0
+NETCDF_DIR = $(NETCDF4_DIR)
 #NETCDF_DIR = /home/plgrid/plgjaniopan/local/netcdf-4.4.2_hdf5-1.8.13_mpich
 #HDF5_DIR = /home/plgrid/plgjaniopan/local/hdf5-1.8.13_mpich
 NETCDF_INC = -I$(NETCDF_DIR)/include
