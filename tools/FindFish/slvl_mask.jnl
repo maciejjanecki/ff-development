@@ -10,6 +10,6 @@ FILE/VAR=kmt/GRID=g10x5/FORMAT=stream/swap/type=i4 "/scratch/lustre/plgjjakacki/
 set win 1
 shade/palete=rainbow kmt
 set win 2
-FILE/VAR=mask/GRID=g10x5/FORMAT=stream/swap/type=r8 slvl_mask_ff_06032020.bin
+FILE/VAR=mask/GRID=g10x5/FORMAT=stream/swap/type=r8 slvl_mask_ff_06032020X.bin
 shade mask
 exit

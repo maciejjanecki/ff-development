@@ -1,14 +1,6 @@
  ! NOAA/PMEL TMAP
  ! FERRET v7.5 (optimized)
  ! Linux 2.6.32-754.11.1.el6.x86_64 64-bit - 04/25/19
- ! 15-Mar-20 08:51     
+ ! 29-May-20 14:10     
 
-go rest_mask.jnl
-go rest_mask.jnl
-go rest_mask.jnl
-go rest_mask.jnl
-go rest_mask.jnl
-go rest_mask.jnl
-go rest_mask.jnl
-go rest_mask.jnl
-exit
+go slvl_mask

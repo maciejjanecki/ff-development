@@ -1,6 +1,7 @@
  program TS_boundaries_data
 
- integer,parameter :: ni=1000,nj=640,nk=26,mnths=12
+ integer,parameter :: ni=1000,nj=640,nk=26,mnths=12, &
+                      r8 = selected_real_kind(13)
 !ustawienia*
  integer, parameter :: nhours = 4,ntracers=2,yearOffset = 0
  
@@ -15,7 +16,8 @@
  character(len=8),dimension(4) :: outFNames
  character*256 :: inFile,outFile
  character*4   :: sDateC,eDateC
- logical :: lbath = .true.
+ logical ::         lbath = .true., &
+            writeTestData = .false.
 
 !ustawienia*
  data sDate /2012, 1, 1, 1/ !data poczatkowa 
@@ -149,10 +151,19 @@
                        endif
                     enddo
                  endif
-                 open(22,file=trim(outFile),status='replace',access='direct', &
-                           form='unformatted',recl=ni*nj*8)
-                 write(22,rec=1) odata(:,:,kk)
-                 close(22)
+                 if (tracer(ii)=='SALT') then 
+                 !    write(*,*) 'max/min tracer(',ii,') : ',tracer(ii),maxval(odata(:,:,kk)),minval(odata(:,:,kk))
+                     where(odata(:,:,kk) <= 0._r8)
+                          odata(:,:,kk) = 0._r8
+                     endwhere
+                  !   write(*,*) 'max/min tracer(',ii,') : ',tracer(ii),maxval(odata(:,:,kk)),minval(odata(:,:,kk))
+                 endif
+                 if (writeTestData) then  
+                    open(22,file=trim(outFile),status='replace',access='direct', &
+                                 form='unformatted',recl=ni*nj*8)
+                    write(22,rec=1) odata(:,:,kk)
+                    close(22)
+                 endif
               enddo
               close(10)
 

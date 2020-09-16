@@ -18,20 +18,23 @@
  character*256 :: inFile,outFile, kmtFile
 
 ! kmtFile = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs01v1/grid/kmt.bs01v1.ocn.20180432.ieeer4'
- kmtFile = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/kmt.bs05v1.ocn.20170627.ieeei4'
+! kmtFile = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/grid/kmt.bs05v1.ocn.20170627.ieeei4'
+ kmtFile = '/users/work/ffish/cesm_input_data/ocn/pop/bs05v1/grid/kmt.bs05v1.ocn.20170627.ieeei4'
 !ustawienia*
  data sDate /2012, 1, 1, 1/ !data poczatkowa 
- data eDate /2012,12,31, 4/ !data koncowa
+ data eDate /2018,12,31, 4/ !data koncowa
  data seconds /3600,25200,46800,68400/
 ! data hours /0,6,12,18/
  data hours /3,9,15,21/
  data outFnames /"SSH"/
 
 ! pathIn  = '../../tmp_data/ARTUR/lbc/2011'
- 2000 format('../../../tmp_data/ARTUR/lbc_FF/',i4.4)
- write(pathIn,2000) sDate(1)
- pathIn = trim(pathIn)
- pathOut = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/forcing'
+! 2000 format('../../../tmp_data/ARTUR/lbc_FF/',i4.4)
+ 2000 format('/users/work/ffish/boundary_575m/',i4.4)
+! write(pathIn,2000) sDate(1)
+! pathIn = trim(pathIn)
+! pathOut = '/scratch/lustre/plgjjakacki/LD/cesm_input_data/ocn/pop/bs05v1/forcing'
+ pathOut = '/users/work/ffish/cesm_input_data/ocn/pop/bs05v1/forcing'
 ! for testing only pathOut = '.' 
  1000 format(i4.4,'-',i2.2,'-',i2.2,'-',i5.5,'_',a3,'_1000_0640_0001_0001.ieeer8') 
 !2011/2011-01-01-03600_SSH_1000_0640_0001_0001.ieeer8 
@@ -61,6 +64,8 @@
          do hh=sDate(4),eDate(4)
            do ii = 1,ntracers
               !read in data
+              write(pathIn,2000) yy
+              pathIn = trim(pathIn)
               write(inFile,1000) yy,mm,dd,seconds(hh),tracer(ii)
               inFile = trim(pathIn)//'/'//trim(inFile)
               write(*,'(A)') trim(inFile)
